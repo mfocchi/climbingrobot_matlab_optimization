@@ -1,0 +1,66 @@
+
+% Vectors
+\def\x{{\mathbf x}}
+
+% Sets
+\def\R{\mathbb{R}}
+\def\N{\mathbb{N}}
+\def\Z{\mathbb{Z}}
+
+% Stochastic
+\def\Pr#1{\ensuremath{\text{Pr}\left [#1 \right ]}}
+\def\E#1{\ensuremath{\text{E}\left \{#1 \right \}}}
+
+% Matrix measures
+\newcommand{\tr}[1]{{\mbox{Trace}\left (#1\right) }}
+
+% CBS
+\newcommand{\cbs}{\textsf{CBS}}
+
+% Math operations
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\softmax}{softmax}
+
+% Frames
+\newcommand{\frm}[1]{\langle #1\rangle}
+
+% Theorems
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+%\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{property}[theorem]{Property}
+
+% Comments
+\newcommand{\lui}[1]{\color{green}{{\bf #1}}\color{black}}
+\newcommand{\dan}[1]{\color{red}{{\bf #1}}\color{black}}
+\newcommand{\ale}[1]{\textcolor{blue}{\bf #1}}
+\newcommand{\pla}[1]{\textcolor{cyan}{\bf #1}}
+\newcommand{\rev}[1]{\color{blue}{{#1}}\color{black}}
+
+% Cartesian product
+\global\long\def\cart{\operatorname*{\diagup\hspace{-9pt}\diagdown}}
+
+% Text rotation
+\newcommand\RotText[1]{\rotatebox{90}{\parbox{3.5cm}{\centering#1}}}
