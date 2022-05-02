@@ -9,6 +9,12 @@
 
 \usepackage{amsmath, amssymb}
 \usepackage{amsfonts}
+
+\let\yesnumberold=\yesnumber\relax
+\let\yesnumber\relax
+\usepackage[math]{easyeqn}
+\let\yesnumber\yesnumberold
+
 \usepackage{bm}
 \usepackage{multirow}
 \usepackage{graphicx}
@@ -26,6 +32,9 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+
+
+
 
 \usepackage{hyperref}
 
@@ -219,6 +228,79 @@ From this equation it is possible to compute the velocity of the mass and hence 
          &\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{1}{m} F_r 
       \end{align}
 
+
+\section{System in canonical form}
+The system derived from the physical model is
+%%%
+\begin{EQ}[rcl]
+\ddot{\theta}+2\dot{\theta}\dot{l}-l\dot{\phi}^2\sin\theta\cos\theta+g\sin\theta &=& \frac{F_{u,n}}{m},\\
+\ddot{\phi}l\sin^2\theta+2\dot{\phi}\left(\dot{l}\sin^2\theta+l\dot{\theta}\sin\theta\cos\theta\right)&=& \frac{F_{u,t}\sin\theta}{m},\\
+\ddot{l}+l\left(\dot{\theta}^2+\dot{\phi}^2\sin^2\theta\right)+g\cos\theta&=&\frac{F_{r}}{m}.
+\end{EQ}
+
+%%%%
+%\begin{EQ}[rcl]
+%\ddot{\theta}(t)+2\dot{\theta}(t)\dot{l}(t)-l(t)\sin\theta(t)\cos\theta(t)\dot{\phi}^2(t)+g\sin\theta(t) &=& \frac{F_{u,n}(t)}{m},\\
+%\ddot{\phi}(t)l(t)\sin^2\theta(t)+2\dot{\phi}(t)\left(\dot{l}(t)\sin^2\theta(t)+l(t)\sin\theta(t)\cos\theta(t)\dot{\theta}(t)\right)&=& \frac{F_{u,t}(t)\sin\theta(t)}{m},\\
+%\ddot{l}(t)+l(t)\left(\dot{\theta}^2(t)+\sin^2\theta(t)\dot{\phi}^2(t)\right)+g\cos\theta(t)&=&\frac{F_{r}(t)}{m}.
+%\end{EQ}
+
+
+Recast as a first order system with the substitutions
+%%%
+\begin{EQ}
+\dot{\theta} = \omega,\quad \dot{\phi}=\psi,\quad \dot{l}=r.
+\end{EQ}
+%%%
+Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$:
+%%
+\begin{EQ}[rcl]
+\dot{\theta} &=& \omega,\\
+\dot{\phi}&=&\psi,\\
+\dot{l}&=&r,\\
+\dot{\omega} &=& -2\omega r +2l\psi^2\sin\theta\cos\theta -g\sin\theta+\frac{F_{u,n}}{m},\\
+\dot{\psi} &=& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
+\dot{r} &=& -l\left(\omega^2+\psi^2\sin^2\theta\right)-g\cos\theta +\frac{F_{r}}{m}.
+\end{EQ}
+%%%
+The boundary conditions for a movement starting and ending at rest ($v=0$) are
+%%%
+\begin{EQ}[rclcl]
+x &=& l\sin\theta\cos\phi &=& x_0\\
+y &=& l\sin\theta\sin\phi &=& y_0\\
+z &=& -l\cos\theta        &=& z_0\\
+x &=& l\sin\theta\cos\phi &=& x_T\\
+y &=& l\sin\theta\sin\phi &=& y_T\\
+z &=& -l\cos\theta        &=& z_T\\
+\end{EQ}
+%%%
+from which,
+%%%
+\begin{EQ}
+l = \sqrt{x_0^2+y_0^2+z_0^2}, \quad \theta= \atandue\left(-z_0,\sqrt{x_0^2+y_0^2}\right), \quad \phi = \atandue(y_0,x_0).
+\end{EQ}
+
+For the velocity, at $t=0$:
+
+\begin{EQ}[rclcl]
+\dot{x} &=& (\cos(\theta)l\omega+r\sin(\theta))\cos(\phi)-l\sin(\theta)\psi\sin(\phi) &=& 0\\
+\dot{y} &=& (\cos(\theta)l\omega+r\sin(\theta))\sin(\phi)+l\sin(\theta)\psi\cos(\phi) &=& 0\\
+\dot{z} &=& -r\cos(\theta)+l\omega\sin(\theta) &=& 0
+\end{EQ}
+
+At $t=T$:
+\begin{EQ}[rclcl]
+\dot{x} &=& r\sin(\theta)\cos(\phi)+l\omega\cos(\theta)\cos(\phi)-l\sin(\theta)\psi\sin(\phi) &=& 0\\
+\dot{y} &=& r\sin(\theta)\sin(\phi)+l\omega\cos(\theta)\sin(\phi)+l\sin(\theta)\psi\cos(\phi) &=& 0\\
+\dot{z} &=& -r\cos(\theta)+l\omega\sin(\theta)  &=& 0.
+\end{EQ}
+
+Sufficient conditions to have zero velocity at $t=0$ and at $t=T$ are
+%%%
+\begin{EQ}
+\dot{l}=r=0, \qquad \dot{\theta}=\omega=0, \quad \dot{\phi}=\psi = 0.
+\end{EQ}
+%%%
       
       %\bibliographystyle{IEEEtran}
 %\bibliography{biblio}

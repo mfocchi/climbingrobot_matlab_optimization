@@ -48,3 +48,7 @@ Thumbs.db
 *.mov
 *.wmv
 
+main.synctex.gz
+main.out
+main.aux
+main.pdf
