@@ -391,6 +391,28 @@ the differentiability at $t = T_{th}$is ensured   because we set the second deri
 	\label{fig:polynomial}
 \end{figure}
 
+\section{Actuation and Friction cone constraints}
+We assume at the beginning the robot is attached to the wall so $\theta \approx 0$, hence the thrusting force has no component along the radial direction. 
+The robot has a maximum actuation effort that can deliver, we model this with an upper bound on the norm $F_{u,n}$ of the force:
+
+\begin{align*}
+\sqrt{ F_{u,n}^2 + F_{u,t}^2} \leq F_{max}  
+\end{align*} 
+
+where we set  $F_{max} = 200 N$ in  our optimization. Both, $F_{u,n}$ and $F_{u,t}$ will have the shape in Fig. \ref{fig:gaussian}. Additionally, the nature of the contact imposes some (friction) constraint on the tangential component w.r.t. the normal one, to maintain the grip:
+
+\begin{align*}
+F_{u,t}\leq \mu F_{u,n}
+\end{align*} 
+
+where $\mu = 0.8$ is the friction coefficient. We consider this constraint only on the $t$ component because we assumed the force vector $F_u$ lies in the plane $t-n$ without component in the radial component along $r$.
+Finally, because the robot cannot pull himself towards the wall but only push:
+
+\begin{align*}
+F_{u,n}\geq  0
+\end{align*} 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

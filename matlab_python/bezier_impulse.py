@@ -94,7 +94,6 @@ t = 0.
 while t<(T_thrust/2.):
     #normalize bw 0 and 1
     t_norm = t/(T_thrust/2.)   
-    print(t_norm)
     force.append( max_force * RationalBezier3(t_norm, up_bezier_control_points, bezier_cp_influence))
     t+=dt
     
