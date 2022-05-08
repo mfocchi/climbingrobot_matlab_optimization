@@ -45,265 +45,271 @@
 
 \author{Marco Frego, MIchele Focchi, 
 	Luigi Palopoli, .....
-%Alessandro Antonucci$^{1}$, Placido Falqueto$^{1}$,
-%	Luigi Palopoli$^{1}$, Daniele Fontanelli$^{2}$ %\vspace{0.1cm}
-%\IEEEoverridecommandlockouts
-% \IEEEpubid{\makebox[\columnwidth]
-% 	{\hfill : 978-1-5090-6299-7/17/\$31.00~\copyright~2017 European Union}
-%	\hspace{\columnsep}\makebox[\columnwidth]{ }}
-%\thanks{$^{1}$A. Antonucci,	P. Falqueto, and L. Palopoli
-%    are with the Department of Information Engineering and Computer Science (DISI), University of Trento, Via Sommarive 9, Trento, Italy (e-mail:
-%		\{alessandro.antonucci, placido.falqueto, luigi.palopoli\}@unitn.it) }%
-%\thanks{$^{2}$D. Fontanelli is with the Department
-%	of Industrial Engineering (DII), University of Trento, Via
-%	Sommarive 9, Trento, Italy (e-mail:
-%	daniele.fontanelli@unitn.it) }
+	%Alessandro Antonucci$^{1}$, Placido Falqueto$^{1}$,
+	%	Luigi Palopoli$^{1}$, Daniele Fontanelli$^{2}$ %\vspace{0.1cm}
+	%\IEEEoverridecommandlockouts
+	% \IEEEpubid{\makebox[\columnwidth]
+		% 	{\hfill : 978-1-5090-6299-7/17/\$31.00~\copyright~2017 European Union}
+		%	\hspace{\columnsep}\makebox[\columnwidth]{ }}
+	%\thanks{$^{1}$A. Antonucci,	P. Falqueto, and L. Palopoli
+		%    are with the Department of Information Engineering and Computer Science (DISI), University of Trento, Via Sommarive 9, Trento, Italy (e-mail:
+		%		\{alessandro.antonucci, placido.falqueto, luigi.palopoli\}@unitn.it) }%
+	%\thanks{$^{2}$D. Fontanelli is with the Department
+		%	of Industrial Engineering (DII), University of Trento, Via
+		%	Sommarive 9, Trento, Italy (e-mail:
+		%	daniele.fontanelli@unitn.it) }
 }
 
 \begin{document}
-
-\maketitle
-\thispagestyle{empty}
-\pagestyle{empty}
-
-
-
-\begin{abstract}
 	
-\end{abstract}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Model}
-Consider a spherical pendulum shown as in figure \ref{fig:sp} .
-\begin{figure}
-\includegraphics[width=\columnwidth]{figs/spherical_pendulum.png}
-\caption{Spherical pendulum}
-\label{fig:sp}
-\end{figure}
-We assume that:
-\begin{enumerate}
-\item The friction can be neglected
-\item The mass is entirely concentrated in the body attached to the wire
-\item The wire can be unwounded and rewounded but it is rigid and remains completely elongated (i.e., it cannot make bends)
-\item The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase)
-\item The system is acted on by the following forces:
-  \begin{itemize}
-  \item The mass weight
-  \item The rewinder pull action or braking action $\mathbf{F}_r$ oriented along the wire
-  \item An impulsive push force $\mathbf{F}_u$ that the robot can generate when it is attached to the mountain wall
-  \end{itemize}
-\end{enumerate}
-Let $e$ be a frame attached to the mass and with axis oriented along the $x$ axis and let $w$ be the world frame attached to
-the suspension point of the pendulum.
-If we consider the homogeneous transformation linking $e$ to $w$, we can write:
-\[
-  T_e^w = \begin{bmatrix} R_z(\phi) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} R_y(\pi/2 - \theta) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} I_{3,3} &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} L &0 &0 \end{matrix} & 1\end{bmatrix}  
-\]
-where $R_z(\phi)$ is the rotation matrix of $\phi$ around $z$ and $R_y(\alpha)$ is the rotation matrix of $\alpha$ around $y$.
-Overall, we have:
-\[
-  T_e^w = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
-    s_\phi s_\theta & c_\phi & c_\theta s_\phi & l s_\phi s_\theta\\
-  -c_\theta & 0 & s_\theta &-l c_\theta\\
-  0 & 0 &0 &1\end{bmatrix}
-\]
-where $c_x$ is a shorthand for $\cos x$ and $s_x$ is a shorthand for $\sin x$.
-From this equation, we have that the position $\mathbf{p}$ of the mass is given by:
-\begin{align*}
-  \mathbf{p} = \begin{bmatrix} x\\ y\\ z \end{bmatrix} =
-  \begin{bmatrix} l s_\theta c_\phi\\
-   l s_\theta s_\phi\\
-  -l c_\theta \end{bmatrix}
-\end{align*}
-From this equation it is possible to compute the velocity of the mass and hence the kinetic $T$ and the potential energy $V$:
-\begin{align*}
-  T &=\frac{ m v^2}{2} = \\
-    &= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) = \\
-    &=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2\\
-  V &= mgz\\
-  &= -mgl c_\theta
-\end{align*}
-    The Lagrangian function is given by:
-    \begin{equation}
-      L = T - V = \frac{m}{2}\dot{l}^2+\frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + mgl c_\theta
-    \end{equation}
-    The generalized coordinates are in this case given by $q_1 = \theta, q_2 = \phi,$ and $q_3 = l$ .
-    If we apply the d'Alembert principle, the Lagrangian Equation can be written as:
-    \[
-      \frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
-      \]
-      where $Q_i^p$ is the generalized force $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$.
-      Observe that  $\mathbf{F}_r$ oriented along the rope and $\mathbf{F}_u$ does not have any component along the rope (otherwise
-       it will forms bends):
-      \begin{align*}
-        \mathbf{F}_r = F_r \begin{bmatrix}
-          c_\phi s_\theta\\
-          s_\phi s_\theta\\
-          -c_\theta
-        \end{bmatrix}^T = F_r \mathbf{f}_r\\
-        \mathbf{F}_u = F_{u,t}\begin{bmatrix}
-          -s_\phi\\
-          c_\phi\\
-            0
-          \end{bmatrix}^T + F_{u,n} \begin{bmatrix}
-          c_\phi c_\theta \\
-          s_\phi c_\theta\\
-            s_\theta
-          \end{bmatrix}^T = F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n},   
-      \end{align*}  
-      while
-      \begin{align*}
-        \frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
-          l c_\phi c_\theta\\
-          l s_\phi c_\theta\\
-          l s_\theta
-        \end{bmatrix}\\
-        \frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
-          - l s_\phi s_\theta\\
-          l c_\phi s_\theta\\
-          0
-        \end{bmatrix}\\
-        \frac{\partial \mathbf{p}}{\partial q_3} = \frac{\partial \mathbf{p}}{\partial l} &= \begin{bmatrix}
-          c_\phi s_\theta\\
-          s_\phi s_\theta\\
-          -c_\theta
-        \end{bmatrix}\\
-      \end{align*}
-      Hence,
-       \begin{align*}
-         Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1}\\
-               &= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-               &+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-               &+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
-               &= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
-         &= F_{u,n} l ,
-       \end{align*}
-       \begin{align*}
-         Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}\\
-               &= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-               &+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-               &+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
-               &= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
-         &= F_{u,t} l s_\theta,
-       \end{align*}
-              \begin{align*}
-         Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}\\
-               &= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-               &+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-               &+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
-               &= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
-         &= F_{r} .
-       \end{align*}
-
-      
-      
-      The first Lagrangian equation yields
-      \begin{align*}
-        &\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p    \\
-        &\frac{d}{dt}\left(m l^2 \dot{\theta}\right) - (m l^2 s_\theta c_\theta \dot{\phi}^2 - m g l s_\theta) = F_{u,n} . l \\ 
-        &  m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
-        & \ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{F_{u,n}  }{ml}    
-      \end{align*}
-
-      The second Lagrangian equation yields
-   \begin{align*}
-	&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
-	&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) - 0 = F_{u,t} . l . s_\theta\\
-	& \ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t} . l . s_\theta\\
-	&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
-   \end{align*}
-     
-      The third Lagrangian equation is as follows:
-      \begin{align*}
-        &\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{l}} \right) - \frac{\partial L}{\partial l} = Q_3^p    \\
-        &\frac{d}{dt}\left(m\dot{l}\right) - (m l \dot{\theta}^2 + m l s^2_\theta \dot{\phi}^2 + m g c_\theta) = F_r \\
-        &m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r \\
-        &\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{F_r}{m} 
-      \end{align*}
-      Overall, the nonlinear equations of the system are:
-      \begin{align}
-         &\ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta  \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{1}{ml}F_{u,n} \\
-         &\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{1}{ml s_\theta} F_{u,t} \\
-         &\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{1}{m} F_r 
-      \end{align}
-
-
-\section{System in canonical form}
-The system derived from the physical model is
-%%%
-\begin{EQ}[rcl]
-\ddot{\theta}+2\dot{\theta}\dot{l}-l\dot{\phi}^2\sin\theta\cos\theta+g\sin\theta &=& \frac{F_{u,n}}{m},\\
-\ddot{\phi}l\sin^2\theta+2\dot{\phi}\left(\dot{l}\sin^2\theta+l\dot{\theta}\sin\theta\cos\theta\right)&=& \frac{F_{u,t}\sin\theta}{m},\\
-\ddot{l}+l\left(\dot{\theta}^2+\dot{\phi}^2\sin^2\theta\right)+g\cos\theta&=&\frac{F_{r}}{m}.
-\end{EQ}
-
-%%%%
-%\begin{EQ}[rcl]
-%\ddot{\theta}(t)+2\dot{\theta}(t)\dot{l}(t)-l(t)\sin\theta(t)\cos\theta(t)\dot{\phi}^2(t)+g\sin\theta(t) &=& \frac{F_{u,n}(t)}{m},\\
-%\ddot{\phi}(t)l(t)\sin^2\theta(t)+2\dot{\phi}(t)\left(\dot{l}(t)\sin^2\theta(t)+l(t)\sin\theta(t)\cos\theta(t)\dot{\theta}(t)\right)&=& \frac{F_{u,t}(t)\sin\theta(t)}{m},\\
-%\ddot{l}(t)+l(t)\left(\dot{\theta}^2(t)+\sin^2\theta(t)\dot{\phi}^2(t)\right)+g\cos\theta(t)&=&\frac{F_{r}(t)}{m}.
-%\end{EQ}
-
-
-Recast as a first order system with the substitutions
-%%%
-\begin{EQ}
-\dot{\theta} = \omega,\quad \dot{\phi}=\psi,\quad \dot{l}=r.
-\end{EQ}
-%%%
-Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$:
-%%
-\begin{EQ}[rcl]
-\dot{\theta} &=& \omega,\\
-\dot{\phi}&=&\psi,\\
-\dot{l}&=&r,\\
-\dot{\omega} &=& -2\omega r +2l\psi^2\sin\theta\cos\theta -g\sin\theta+\frac{F_{u,n}}{m},\\
-\dot{\psi} &=& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
-\dot{r} &=& -l\left(\omega^2+\psi^2\sin^2\theta\right)-g\cos\theta +\frac{F_{r}}{m}.
-\end{EQ}
-%%%
-The boundary conditions for a movement starting and ending at rest ($v=0$) are
-%%%
-\begin{EQ}[rclcl]
-x &=& l\sin\theta\cos\phi &=& x_0\\
-y &=& l\sin\theta\sin\phi &=& y_0\\
-z &=& -l\cos\theta        &=& z_0\\
-x &=& l\sin\theta\cos\phi &=& x_T\\
-y &=& l\sin\theta\sin\phi &=& y_T\\
-z &=& -l\cos\theta        &=& z_T\\
-\end{EQ}
-%%%
-from which,
-%%%
-\begin{EQ}
-l = \sqrt{x_0^2+y_0^2+z_0^2}, \quad \theta= \atandue\left(-z_0,\sqrt{x_0^2+y_0^2}\right), \quad \phi = \atandue(y_0,x_0).
-\end{EQ}
-
-For the velocity, at $t=0$:
-
-\begin{EQ}[rclcl]
-\dot{x} &=& (\cos(\theta)l\omega+r\sin(\theta))\cos(\phi)-l\sin(\theta)\psi\sin(\phi) &=& 0\\
-\dot{y} &=& (\cos(\theta)l\omega+r\sin(\theta))\sin(\phi)+l\sin(\theta)\psi\cos(\phi) &=& 0\\
-\dot{z} &=& -r\cos(\theta)+l\omega\sin(\theta) &=& 0
-\end{EQ}
-
-At $t=T$:
-\begin{EQ}[rclcl]
-\dot{x} &=& r\sin(\theta)\cos(\phi)+l\omega\cos(\theta)\cos(\phi)-l\sin(\theta)\psi\sin(\phi) &=& 0\\
-\dot{y} &=& r\sin(\theta)\sin(\phi)+l\omega\cos(\theta)\sin(\phi)+l\sin(\theta)\psi\cos(\phi) &=& 0\\
-\dot{z} &=& -r\cos(\theta)+l\omega\sin(\theta)  &=& 0.
-\end{EQ}
-
-Sufficient conditions to have zero velocity at $t=0$ and at $t=T$ are
-%%%
-\begin{EQ}
-\dot{l}=r=0, \qquad \dot{\theta}=\omega=0, \quad \dot{\phi}=\psi = 0.
-\end{EQ}
-%%%
-      
-      %\bibliographystyle{IEEEtran}
-%\bibliography{biblio}
+	\maketitle
+	\thispagestyle{empty}
+	\pagestyle{empty}
+	
+	
+	
+	\begin{abstract}
+		
+	\end{abstract}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\section{Model}
+	The spherical pendulum model is shown in figure \ref{fig:sp} . where $\theta$ is the polar angle [rad] and $\phi$ is the Azimuth angle [rad] . \\ 
+	\begin{figure}
+		\includegraphics[width=\columnwidth]{figs/spherical_pendulum.png}
+		\caption{Spherical pendulum}
+		\label{fig:sp}
+	\end{figure}
+	We assume that:
+	\begin{enumerate}
+		\item The friction can be neglected
+		\item The mass is entirely concentrated in the body attached to the wire
+		\item The wire can be unwounded and rewounded but it is rigid and remains completely elongated (i.e., it cannot make bends)
+		\item The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase)
+		\item The system is acted on by the following forces:
+		\begin{itemize}
+			\item The mass weight
+			\item The rewinder pull action or braking action $\mathbf{F}_r$ oriented along the wire
+			\item An impulsive push force $\mathbf{F}_u$ that the robot can generate when it is attached to the mountain wall
+		\end{itemize}
+	\end{enumerate}
+	Let $e$ be a frame attached to the mass and with axis oriented along the $x$ axis and let $w$ be the world frame attached to
+	the suspension point of the pendulum.
+	If we consider the homogeneous transformation linking $e$ to $w$, we can write:
+	\[
+	T_e^w = \begin{bmatrix} R_z(\phi) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} R_y(\pi/2 - \theta) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} I_{3,3} &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} L &0 &0 \end{matrix} & 1\end{bmatrix}  
+	\]
+	where $R_z(\phi)$ is the rotation matrix of $\phi$ around $z$ and $R_y(\alpha)$ is the rotation matrix of $\alpha$ around $y$.
+	Overall, we have:
+	\[
+	T_e^w = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
+		s_\phi s_\theta & c_\phi & c_\theta s_\phi & l s_\phi s_\theta\\
+		-c_\theta & 0 & s_\theta &-l c_\theta\\
+		0 & 0 &0 &1\end{bmatrix}
+	\]
+	where $c_x$ is a shorthand for $\cos x$ and $s_x$ is a shorthand for $\sin x$.
+	From this equation, we have that the position $\mathbf{p}$ of the mass is given by:
+	\begin{align*}
+		\mathbf{p} = \begin{bmatrix} x\\ y\\ z \end{bmatrix} =
+		\begin{bmatrix} l s_\theta c_\phi\\
+			l s_\theta s_\phi\\
+			-l c_\theta \end{bmatrix}
+	\end{align*}
+	From this equation it is possible to compute the velocity of the mass and hence the kinetic $T$ and the potential energy $V$:
+	\begin{align*}
+		T &=\frac{ m v^2}{2} = \\
+		&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) = \\
+		&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2\\
+		V &= mgz\\
+		&= -mgl c_\theta
+	\end{align*}
+ The Lagrangian function is given by:
+	\begin{equation}
+		L = T - V = \frac{m}{2}\dot{l}^2+\frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + mgl c_\theta
+	\end{equation}
+	The generalized coordinates are in this case given by $q_1 = \theta, q_2 = \phi,$ and $q_3 = l$ .
+	If we apply the d'Alembert principle, the Lagrangian Equation can be written as:
+	\[
+	\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
+	\]
+	where $Q_i^p$ is the generalized force $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$.
+	Observe that  $\mathbf{F}_r$ oriented along the rope and $\mathbf{F}_u$ does not have any component along the rope (otherwise
+	it will forms bends):
+	\begin{align*}
+		\mathbf{F}_r = F_r \begin{bmatrix}
+			c_\phi s_\theta\\
+			s_\phi s_\theta\\
+			-c_\theta
+		\end{bmatrix}^T = F_r \mathbf{f}_r\\
+		\mathbf{F}_u = F_{u,t}\begin{bmatrix}
+			-s_\phi\\
+			c_\phi\\
+			0
+		\end{bmatrix}^T + F_{u,n} \begin{bmatrix}
+			c_\phi c_\theta \\
+			s_\phi c_\theta\\
+			s_\theta
+		\end{bmatrix}^T = F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n},   
+	\end{align*}  
+	while
+	\begin{align*}
+		\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
+			l c_\phi c_\theta\\
+			l s_\phi c_\theta\\
+			l s_\theta
+		\end{bmatrix}\\
+		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
+			- l s_\phi s_\theta\\
+			l c_\phi s_\theta\\
+			0
+		\end{bmatrix}\\
+		\frac{\partial \mathbf{p}}{\partial q_3} = \frac{\partial \mathbf{p}}{\partial l} &= \begin{bmatrix}
+			c_\phi s_\theta\\
+			s_\phi s_\theta\\
+			-c_\theta
+		\end{bmatrix}\\
+	\end{align*}
+	Hence,
+	\begin{align*}
+		Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1}\\
+		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
+		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
+		&= F_{u,n} l ,
+	\end{align*}
+	\begin{align*}
+		Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}\\
+		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
+		&= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
+		&= F_{u,t} l s_\theta,
+	\end{align*}
+	\begin{align*}
+		Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}\\
+		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
+		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
+		&= F_{r} .
+	\end{align*}
+	
+	
+	
+	The first Euler-Lagrange equation yields
+	\begin{align*}
+		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p    \\
+		&\frac{d}{dt}\left(m l^2 \dot{\theta}\right) - (m l^2 s_\theta c_\theta \dot{\phi}^2 - m g l s_\theta) = F_{u,n} . l \\ 
+		&  m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
+		& \ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{F_{u,n}  }{ml}    
+	\end{align*}
+	
+	The second Euler-Lagrange equation yields
+	\begin{align*}
+		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
+		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) - 0 = F_{u,t} . l . s_\theta\\
+		& \ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t} . l . s_\theta\\
+		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
+	\end{align*}
+	
+	The third Euler-Lagrange equation is as follows:
+	\begin{align*}
+		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{l}} \right) - \frac{\partial L}{\partial l} = Q_3^p    \\
+		&\frac{d}{dt}\left(m\dot{l}\right) - (m l \dot{\theta}^2 + m l s^2_\theta \dot{\phi}^2 + m g c_\theta) = F_r \\
+		&m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r \\
+		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{F_r}{m} 
+	\end{align*}
+	Overall, the nonlinear equations of the system are:
+	\begin{align}
+		&\ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta  \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{1}{ml}F_{u,n} \\
+		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{1}{ml s_\theta} F_{u,t} \\
+		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{1}{m} F_r 
+	\end{align}
+	
+	
+	\section{System in canonical form}
+	The system derived from the physical model is
+	%%%
+	\begin{EQ}[rcl]
+		l\ddot{\theta}+2\dot{\theta}\dot{l}-l\dot{\phi}^2\sin\theta\cos\theta+g\sin\theta &=& \frac{F_{u,n}}{m},\\
+		\ddot{\phi}l\sin^2\theta+2\dot{\phi}\left(\dot{l}\sin^2\theta+l\dot{\theta}\sin\theta\cos\theta\right)&=& \frac{F_{u,t}\sin\theta}{m},\\
+		\ddot{l}-l\left(\dot{\theta}^2+\dot{\phi}^2\sin^2\theta\right)-g\cos\theta&=&\frac{F_{r}}{m}.
+	\end{EQ}
+	
+	%%%%
+	%\begin{EQ}[rcl]
+	%\ddot{\theta}(t)+2\dot{\theta}(t)\dot{l}(t)-l(t)\sin\theta(t)\cos\theta(t)\dot{\phi}^2(t)+g\sin\theta(t) &=& \frac{F_{u,n}(t)}{m},\\
+	%\ddot{\phi}(t)l(t)\sin^2\theta(t)+2\dot{\phi}(t)\left(\dot{l}(t)\sin^2\theta(t)+l(t)\sin\theta(t)\cos\theta(t)\dot{\theta}(t)\right)&=& \frac{F_{u,t}(t)\sin\theta(t)}{m},\\
+	%\ddot{l}(t)+l(t)\left(\dot{\theta}^2(t)+\sin^2\theta(t)\dot{\phi}^2(t)\right)+g\cos\theta(t)&=&\frac{F_{r}(t)}{m}.
+	%\end{EQ}
+	
+	
+	Recast as a first order system with the substitutions
+	%%%
+	\begin{EQ}
+		\dot{\theta} = \omega,\quad \dot{\phi}=\psi,\quad \dot{l}=r.
+	\end{EQ}
+	%%%
+	Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$, where x is the state and u is the control input. 
+	For the spherical pendulum system, the state is defined as : 
+	
+	\begin{equation*}
+		x^T= [\theta \quad \phi \quad l \quad \dot{\theta} \quad \dot{\phi} \quad \dot{l}] 
+	\end{equation*}
+	
+	%%
+	\begin{EQ}[rcl]
+		\dot{\theta} &=& \omega,\\
+		\dot{\phi}&=&\psi,\\
+		\dot{l}&=&r,\\
+		\dot{\omega} &=& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
+		\dot{\psi} &=& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
+		\dot{r} &=& l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta +\frac{F_{r}}{m}.
+	\end{EQ}
+	%%%
+	The boundary conditions for a movement starting and ending at rest ($v=0$) are
+	%%%
+	\begin{EQ}[rclcl]
+		x &=& l\sin\theta\cos\phi &=& x_0\\
+		y &=& l\sin\theta\sin\phi &=& y_0\\
+		z &=& -l\cos\theta        &=& z_0\\
+		x &=& l\sin\theta\cos\phi &=& x_T\\
+		y &=& l\sin\theta\sin\phi &=& y_T\\
+		z &=& -l\cos\theta        &=& z_T\\
+	\end{EQ}
+	%%%
+	from which,
+	%%%
+	\begin{EQ}
+		l = \sqrt{x_0^2+y_0^2+z_0^2}, \quad \theta= \atandue\left(-z_0,\sqrt{x_0^2+y_0^2}\right), \quad \phi = \atandue(y_0,x_0).
+	\end{EQ}
+	
+	For the velocity, at $t=0$:
+	
+	\begin{EQ}[rclcl]
+		\dot{x} &=& \cos(\theta)\cos(\phi)l\omega-\sin(\phi)\sin(\theta)l\psi+\sin(\theta)\cos(\phi)r &=& 0\\
+		\dot{y} &=& \cos(\theta)\sin(\phi)l\omega-\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
+		\dot{z} &=& \sin(\theta)l\omega -\cos(\theta)r &=& 0
+	\end{EQ}
+	
+	At $t=T$:
+	\begin{EQ}[rclcl]
+		\dot{x} &=& \cos(\theta)\cos(\phi)l\omega-\sin(\phi)\sin(\theta)l\psi+\sin(\theta)\cos(\phi)r &=& 0\\
+	    \dot{y} &=& \cos(\theta)\sin(\phi)l\omega-\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
+	    \dot{z} &=& \sin(\theta)l\omega -\cos(\theta)r &=& 0
+	\end{EQ}
+	
+	Sufficient conditions to have zero velocity at $t=0$ and at $t=T$ are
+	%%%
+	\begin{EQ}
+		\dot{l}=r=0, \qquad \dot{\theta}=\omega=0, \quad \dot{\phi}=\psi = 0.
+	\end{EQ}
+	%%%
+	
+	%\bibliographystyle{IEEEtran}
+	%\bibliography{biblio}
 
 
 \section{Input parametrization}
