@@ -11,11 +11,17 @@ dtol = 1e-05;
 global delta_duration;
 delta_duration = 2e-1;
 
-global Fu0;       
-Fu0 = 80;
+global friction_coefficient
+friction_coefficient = 0.8;
 
-global Ft0;
-Ft0 = 60;
+global Fun0;       
+Fun0 = 80;
+
+global Fut0;
+% this sets the tangential force always at the boundary of the cone (TODO
+% set separate impulses connected with a friction cone constraint if you
+% want to be more robust (i.e. stay more in the middle of the cone)
+Fut0 = friction_coefficient*Fun0
 
 m = 10;   % Mass [kg]
 
@@ -31,7 +37,10 @@ x0 = [asin(dmin/5); 0; 0; 0; 5; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/d
 %%Simulation:
 
 %Solve differential equations
-[t,x] = ode23(@(t,x) diffEq(t,x,m,@Fr,@Fu, @Ft), tspan, x0); 
+[t,x] = ode23(@(t,x) diffEq(t,x,m,@Fr,@Fun, @Fut), tspan, x0); 
+
+
+
 
 %Coordinates
 X = x(:,5).*cos(x(:,3)).*sin(x(:,1));
@@ -108,29 +117,32 @@ else
 end
 %fr = [1, 0];
 end
+
 function [f] = myGaussian(t, sigma, m)
     f = (1/(sqrt(2*pi*sigma^2)))*exp(-0.5*((t-m)/sigma)^2);
 end
-function [fu] = Fu(t)
+
+
+function [fun] = Fun(t)
     global delta_duration;
-    global Fu0;
+    global Fun0;
 %     if (t <= delta_duration)
 %         fu = Fu0* 1/delta_duration;
 %     else
 %         fu = 0;
 %     end
-fu = Fu0*myGaussian(t,delta_duration/6, delta_duration/2);
+fun = Fun0*myGaussian(t,delta_duration/6, delta_duration/2);
 end
 
-function [ft] = Ft(t)
+function [fut] = Fut(t)
      global delta_duration;
-     global Ft0;
+     global Fut0;
 %     if (t <= delta_duration)
 %         ft = Ft0* 1/delta_duration;
 %     else
 %         ft = 0;
 %     end
-ft = Ft0*myGaussian(t,delta_duration/6, delta_duration/2);
+fut = Fut0*myGaussian(t,delta_duration/6, delta_duration/2);
 end
 
 function [dxdt] = diffEq(t,x, m, Fr, Fun ,Fut)
