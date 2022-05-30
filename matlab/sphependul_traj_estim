@@ -1,0 +1,273 @@
+%% Spherical pendulum
+% Simulation and animation of a spherical pendulum.
+%
+%% 
+clear ; close all ; clc
+warning off ;
+%% Scenario
+% Parameters
+
+global g l m E
+l = 4;  
+g = 9.81;                       % Gravity               [m/s2]
+m = 1 ;
+% Length                [m]
+% Initial conditions
+theta0  = pi/6;                     % Polar angle           [rad]
+phi0    = 0;                        % Azimuth               [rad]
+dtheta0 = 0;                        % d/dt(theta)           [rad/s]
+dphi0   = 3;                        % d/dt(phi)             [rad/s]
+
+x0 = [theta0 phi0 dtheta0 dphi0]';
+% Parameters
+tf      = 10;                       % Final time            [s]
+fR     = 20;                       % Frame rate            [fps]
+dt      = 1/fR;                     % Time resolution       [s]
+time    = linspace(0,tf,tf*fR)';     % Time                  [s]
+%% Simulation
+[TOUT,XOUT] = ode45(@(t,x) pendulum(t,x,l),time,x0);
+% Retrieving states
+theta   = XOUT(:,1);
+phi    = XOUT(:,2);
+dtheta  = XOUT(:,3);
+dphi   = XOUT(:,4);
+% Coordinates
+X = l*sin(theta).*cos(phi);
+Y = l*sin(theta).*sin(phi);
+Z = -l*cos(theta);
+
+    
+%% Animation
+% Min-max axis
+min_x = min(X)-l/2;
+max_x = max(X)+l/2;
+min_y = min(Y)-l/2;
+max_y = max(Y)+l/2;
+min_z = min(Z)-l/2;
+max_z = 0;
+figure(1)
+% set(gcf,'Position',[50 50 1280 720]) % YouTube: 720p
+% set(gcf,'Position',[50 50 854 480]) % YouTube: 480p
+set(gcf,'Position',[50 50 640 640]) % Social
+% Create and open video writer object
+% v = VideoWriter('spherical_pendulum.mp4','MPEG-4');
+% v.Quality = 100;
+% open(v);
+    
+hold on ; grid on ; axis equal
+% set(gca,'CameraPosition',[42.0101   30.8293   16.2256])
+set(gca,'CameraPosition',[10.0101   30.8293   16.2256])
+set(gca,'XLim',[min_x max_x])
+set(gca,'YLim',[min_y max_y])
+set(gca,'ZLim',[min_z max_z]) 
+% set(gca,'XTickLabel',[],'YTickLabel',[],'ZTickLabel',[])
+M=[];
+C=[];
+phy= []; 
+Edata = [];
+
+% phi1sec= readtable("phi_time_onesec.txt");
+
+% timedata = phi1sec.time; % acces variables
+% phidata = phi1sec.phi; % acces variables 
+% [fitresult, gof] = createFit(timedata, phidata) ; 
+   
+for i = 1:length(X)
+    
+%     S= [S ; [X(1:i) Y(1:i) Z(1:i) TOUT(1:i)]]
+  phy=[ XOUT(1:i,2) TOUT(1:i,1)];
+  C= [ X(1:i) Y(1:i) Z(1:i) TOUT(1:i)];
+
+% %%Energy E calculated from simulation  
+%   dz= l*sin(theta).*XOUT(:,3);
+%  E = abs((m*(l^2).*(dz.^2))./(2*(l^2-Z.^2)) + (m*(l^2-Z.^2).*XOUT(:,4).^2)/2 + m*g.*Z) ;
+%   Edata = [E(1:i,1)  TOUT(1:i,1)] ;
+
+%Estimating bot
+  if i == 21   % for 1second time 
+%Estimating the phi(t) 
+    timedata = evalin('base', 'time(1:21,1)'); % acces variables
+    phidata = evalin('base', 'phi(1:21,1)'); % acces variables 
+    [fitresult, gof] = createFit(timedata, phidata)  
+    coeffValphi = coeffvalues(fitresult)
+    polyfitphi = formula(fitresult)
+ 
+ %Estimating the z(t) 
+     timdata = evalin('base', 'time(1:21,1)'); % acces variables
+     zdata = evalin('base', 'Z(1:21,1)'); % acces variables 
+     [fitresult, gof] = createFitz( timdata, zdata)
+     coeffValz = coeffvalues(fitresult)
+     polyfitz = formula(fitresult)
+
+% getting estimated polynomial coefficients and use them to calculate
+% z(t),dzi(t) and dphi(t)
+z = coeffValz(1,1).*time.^5 +coeffValz(1,2).*time.^4 +coeffValz(1,3).*time.^3 +coeffValz(1,4).*time.^2 +coeffValz(1,5).*time +coeffValz(1,6) ;
+dZ = (coeffValz(1,1)*5).*time.^4 +(coeffValz(1,2)*4).*time.^3 +(coeffValz(1,3)*3).*time.^2 +(coeffValz(1,4)*2).*time + coeffValz(1,5) ;
+dph = (coeffValphi(1,1)*5).*time.^4 +(coeffValphi(1,2)*4).*time.^3 +(coeffValphi(1,3)*3).*time.^2 +(coeffValphi(1,4)*2).*time + coeffValphi(1,5) ;  ;
+
+%Estimate E from estimated z(t),dzi(t) and dphi(t)
+  E = abs((m*(l^2).*(dZ.^2))./(2*(l^2-z.^2)) + (m*(l^2-z.^2).*dph.^2)/2 + m*g.*z) ;
+  Edata = [E(1:21,1)  TOUT(1:21,1)] ;
+
+  end
+
+  figure(1)
+  
+    %    writetable(phy,S,'myTable.txt')
+%     save('time_phi.txt','phy')
+
+%    T = readtable('xyztrajectorycoordinates.txt');
+%    xcoordinate = T.Xcoordinates; % acces variables 
+%    
+%     if ( X(i) < 0 && X(i) > -0.05)     % if rx id between [-0.2 and 0] 
+%    M=[M; [ X(i) Y(i) Z(i) TOUT(i)]];
+%    L=[L ; XOUT(:,2)];
+%  
+%     disp(C);
+%     disp(phy);
+    disp(Edata);
+
+%    figure;
+%    D=M(:,4);
+%    d=diff(D);
+%    plot(d);
+
+   
+%     else
+%    fprintf('false')
+% end
+    cla
+    % Vertical line
+    plot3([0 0],[0 0],[0 -l],'k--')
+    % Point fix
+    poi = plot3(0,0,0,'Marker','*','Color','k','MarkerSize',10);
+    % Pendulum trajectory
+    plot3(X(1:i),Y(1:i),Z(1:i),'b')
+    title('3D plot animation')
+    xlabel('X'); ylabel('Y'); zlabel('Z')
+    % Pendulum rod
+    plot3([0 X(i)],[0 Y(i)],[0 Z(i)],'r')
+    % Pendulum sphere
+    plot3(X(i),Y(i),Z(i),'Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
+    % Projections
+%     plot3(min_x*ones(1,i),ry(1:i),rz(1:i),'g')
+%     plot3(rx(1:i),min_y*ones(1,i),rz(1:i),'g')
+%     plot3(rx(1:i),ry(1:i),min_z*ones(1,i),'g')
+    frame = getframe(gcf);
+%     writeVideo(v,frame);
+end
+% close(v);
+
+% figure
+%  plot3(T.Xcoordinates,T.Ycoordinates,T.Zcoordinates)
+% figure
+% scatter3(T.Xcoordinates,T.Ycoordinates,T.Zcoordinates)
+% 
+%     timedata = evalin('base', 'time(1:21,1)'); % acces variables
+%     phidata = evalin('base', 'phi(1:21,1)'); % acces variables 
+%     [fitresult, gof] = createFit(timedata, phidata)  
+%     coefficientValues = coeffvalues(fitresult)
+%     polyfit = formula(fitresult)
+
+% for j = 1:10    
+% timedata = evalin('base', 'time((20*j-20)+1:j*20,1)'); % acces variables
+% phidata = evalin('base', 'phi((20*j-20)+1:j*20,1)'); % acces variables
+% [fitresult, gof] = createFit(timedata, phidata)  
+% coefficientValues = coeffvalues(fitresult)
+% polyfit = formula(fitresult)
+% end 
+
+function dx = pendulum(~,x,l)
+     global g 
+
+    % States
+    x1 = x(1);
+    x2 = x(2);    % phi is not explicitly shown in the equations when l= constant
+    x3 = x(3);
+    x4 = x(4);
+    % State equations
+    dx1 = x3;
+    dx2 = x4;
+    dx3 = (l*x4^2*sin(x1)*cos(x1) - g*sin(x1))/l;
+    dx4 = -2*x3*x4/tan(x1);
+    dx = [dx1 dx2 dx3 dx4]';
+         
+end
+
+function [fitresult, gof] = createFit(timedata, phidata)
+%CREATEFIT(TIME,PHI)
+%  Create a fit.
+%
+%  Data for 'polynomialfit_phi_3' fit:
+%      X Input: time from phi1sec
+%      Y Output: phi from phi1sec
+%  Output:
+%      fitresult : a fit object representing the fit.
+%      gof : structure with goodness-of fit info.
+%
+%  See also FIT, CFIT, SFIT.
+
+
+%% Fit: 'polynomialfit_phi_3'.
+% phi1sec= readtable("phi_time_onesec.txt");
+% 
+% timedata = phi1sec.time; % acces variables
+% phidata = phi1sec.phi; % acces variables 
+
+[xData, yData] = prepareCurveData(timedata, phidata);
+
+% Set up fittype and options.
+ft = fittype( 'poly5' );
+
+% Fit model to data.
+[fitresult, gof] = fit( xData, yData, ft );
+
+% Plot fit with data.
+figure( 'Name', 'polynomialfit_phi_3' );
+h = plot( fitresult, xData, yData );
+legend( h, 'phi vs. time', 'polynomialfit_phi_3', 'Location', 'NorthEast', 'Interpreter', 'none' );
+% Label axes
+xlabel( 'time', 'Interpreter', 'none' );
+ylabel( 'phi', 'Interpreter', 'none' );
+grid on
+end   
+
+function [fitresult, gof] = createFitz( timdata, zdata)
+%CREATEFIT(TIME,ZCOORDINATE)
+%  Create a fit.
+%
+%  Data for 'polynomial_fit_z_3' fit:
+%      X Input: time from z1sec
+%      Y Output: zcoordinate from z1sec
+%  Output:
+%      fitresult : a fit object representing the fit.
+%      gof : structure with goodness-of fit info.
+%
+%  See also FIT, CFIT, SFIT.
+
+%  Auto-generated by MATLAB on 27-May-2022 15:24:19
+
+
+%% Fit: 'polynomial_fit_z_3'.
+% z1sec= readtable("z_time_onesec.txt");
+% 
+% timdata = z1sec.time; % acces variables
+% zdata = z1sec.zcoordinate; % acces variables 
+
+[xData, yData] = prepareCurveData(timdata, zdata);
+
+% Set up fittype and options.
+ft = fittype( 'poly5' );
+
+% Fit model to data.
+[fitresult, gof] = fit( xData, yData, ft );
+
+% Plot fit with data.
+figure( 'Name', 'polynomial_fit_z_3' );
+h = plot( fitresult, xData, yData );
+legend( h, 'zcoordinate vs. time', 'polynomial_fit_z_3', 'Location', 'NorthEast', 'Interpreter', 'none' );
+% Label axes
+xlabel( 'time', 'Interpreter', 'none' );
+ylabel( 'zcoordinate', 'Interpreter', 'none' );
+grid on
+end
