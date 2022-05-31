@@ -1,5 +1,5 @@
 function plot_curve(x, Tf, p0, pf)
-    global l  OLD_FORMULATION 
+    global l m g OLD_FORMULATION 
     %eval trajectory
     a_10 = x(1);
     a_11 = x(2);
@@ -21,7 +21,7 @@ function plot_curve(x, Tf, p0, pf)
         phid =  a_21 + 2*a_22*t  + 3*a_23*t.^2;
         phidd =   2*a_22 + 6*a_23*t;
 
-        p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)] ;   
+        p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)];    
 
 
     else
@@ -44,7 +44,29 @@ function plot_curve(x, Tf, p0, pf)
     grid on;
     
     xlabel('X');
-    
     ylabel('Y');
     zlabel('Z');
+    
+    % Calculating and ploting the Energy from the new fit: theta, thetad and phid
+
+%Energy for OLD_FORMULATION
+    E = ((m*l^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) - m*g*l.*cos(theta); 
+    figure(2)
+    plot(t,E(1,:))
+    title('Ploting the Energy')
+    grid on
+    xlabel('time');
+    ylabel('Energy');
+
+% %Energy else
+% E = m*(l^2).*(zd.^2))./(2*(l^2-z.^2)) + (m*(l^2-z.^2).*phid.^2)/2 + m*g.*z ;
+%     figure(2)
+%     plot(t,E(1,:))
+%     title('Ploting the Energy')
+%     grid on
+%     xlabel('time');
+%     ylabel('Energy');
+
+
+    
 end
