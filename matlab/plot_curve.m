@@ -1,4 +1,4 @@
-function [thetad, phid] = plot_curve(x, Tf, p0, pf)
+function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
     global l m g OLD_FORMULATION   POLY_TYPE
     %eval trajectory
     a_10 = x(1);
@@ -17,7 +17,7 @@ function [thetad, phid] = plot_curve(x, Tf, p0, pf)
     a_25 = x(12);
     end
     
-    t = linspace(0, Tf, 1000);
+    t = linspace(0, Tf, 1/dt);
     
     
     if (OLD_FORMULATION)
@@ -41,7 +41,7 @@ function [thetad, phid] = plot_curve(x, Tf, p0, pf)
             phidd =   2*a_22 + 6*a_23*t;
         end
 
-        p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)];    
+        p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)]  ; 
         disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) )
 
     else
@@ -57,12 +57,28 @@ function [thetad, phid] = plot_curve(x, Tf, p0, pf)
         p = [sqrt(l^2 - z.^2).*cos(phi) ; sqrt(l^2 - z.^2).*sin(phi);   z];  
         
     end
+    
+    % velocity 
+    pd = [cos(theta).*cos(phi).*thetad*l - sin(phi).*sin(theta).*phid*l;
+          cos(theta).*sin(phi).*thetad *l + cos(phi).*sin(theta).*phid*l;
+          sin(theta).*thetad*l];
+    norm_pd = vecnorm(pd);
+    
 
+    % check length is always l
+%     a = vecnorm(p)
+%     a -  ones(1,length(a))*l
+    
+    
     plot3(p(1,:), p(2,:), p(3,:))   ;   
     hold on ;
      plot3(p0(1), p0(2), p0(3), 'Marker', '*', 'Color','g', 'MarkerSize',10) ;
      plot3(pf(1), pf(2), pf(3), 'Marker', '*', 'Color','r', 'MarkerSize',10) ;
     grid on;
+      view(3)
+    xlim([0 4])    
+    ylim([-2 4])    
+    zlim([-4 0])
     
     xlabel('X');
     ylabel('Y');
@@ -77,12 +93,15 @@ function [thetad, phid] = plot_curve(x, Tf, p0, pf)
         E = m*(l^2).*(zd.^2)./(2*(l^2-z.^2)) + (m*(l^2-z.^2).*phid.^2)/2 + m*g.*z ;
         
     end
-    figure(2)
-    plot(t,E(1,:))
-    title('Ploting the Energy')
-    grid on
-    xlabel('time');
-    ylabel('Energy');
-
+    
+    
+    if (plot_energy)
+        figure(2)
+        plot(t,E(1,:))    
+        title('Ploting the Energy')
+        grid on
+        xlabel('time');
+        ylabel('Energy');
+    end
     
 end
