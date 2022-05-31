@@ -1,27 +1,26 @@
 
 
 
-
 %
-clc
-global m l g  w1 w2 w3 p0 pf N time  OLD_FORMULATION
-m = 1
+clear all ; close all ; clc
+global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION
+m = 1;
 l = 4;
 g = 9.81;
 Tf = 1.0;
 
-w1 = 1 % green initial
-w2 = 1 %red final
-w3 = 0.01
+w1 = 1 ; % green initial
+w2 = 1 ; %red final
+w3 = 0.01 ;
 
-N = 10
-OLD_FORMULATION = 1
+N = 10 ;
+OLD_FORMULATION = 1 ;
 
-time = linspace(0, Tf, N);
-theta0 = pi/6
-phi0 = 0
-thetaf= 0.8864
-phif = 1.5468
+time = linspace(0, Tf, N) ;
+theta0 = pi/6 ; %theta0 = 0.523
+phi0 = 0 ;
+thetaf= 0.8864 ;
+phif = 1.5468 ;
 
 p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
 pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
@@ -39,9 +38,7 @@ slacks = sum(x(9:end))
 plot_curve(x, Tf, p0, pf);
 
 
-
-
-function [cost] = cost(x)
+function [coste] = cost(x)
 
     global N l p0 pf w1 w2 w3 time OLD_FORMULATION
 
@@ -82,7 +79,8 @@ function [cost] = cost(x)
  
     end
 
-    cost = w1 * norm(p_0 - p0) + w2 * norm(p_f -pf)+ w3 * sum(x(9:end));
+    coste = w1 * norm(p_0 - p0) + w2 * norm(p_f -pf)+ w3 * sum(x(9:end));
+   
    
 end
 
@@ -102,9 +100,7 @@ function [ineq, eq] = contraints(x)
     a_23 = x(8);
     
     
-
-    
-    for i=2:N-1
+    for i=2:N-1 
         sigma(i) = x(8+i);
         
         if (OLD_FORMULATION)
@@ -115,8 +111,11 @@ function [ineq, eq] = contraints(x)
             phi = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3;
             phid =  a_21 + 2*a_22*time(i)  + 3*a_23*time(i).^2;
             phidd =   2*a_22 + 6*a_23*time(i);
-            ineq(i) = norm(l*( thetad*thetadd  + 2*sin(theta)*cos(theta)*thetad^2 +...
-                        sin(theta)^2.*thetad*thetadd) + g*sin(theta)) - sigma(i);
+%             ineq(i) = norm(l*( thetad*thetadd  + 2*sin(theta)*cos(theta)*thetad^2 +...
+%                         sin(theta)^2.*thetad*thetadd) + g*sin(theta)) - sigma(i);
+            ineq(i) = norm(l*( thetad*thetadd  + sin(theta)*cos(theta)*thetad*phid^2 +...
+                        sin(theta)^2*phid*phidd) + g*sin(theta)*thetad - sigma(i));
+
                 
         else 
          
@@ -132,7 +131,9 @@ function [ineq, eq] = contraints(x)
             thetad = zd / sqrt(l^2 - z^2);
             thetadd = zd^2 / nthroot(l^2-z^2,3) + zdd / sqrt(l^2 - z^2);
 
-            ineq(i) = norm( l* (thetad * thetadd + 2+s_theta*c_theta * phid^2 + s_theta^2*phid*phidd) + g*s_theta) - sigma(i);
+%             ineq(i) = norm( l* (thetad * thetadd + 2+s_theta*c_theta * phid^2 + s_theta^2*phid*phidd) + g*s_theta) - sigma(i);
+       ineq(i) = norm(l*( thetad*thetadd  + s_theta*c_theta*thetad*phid^2 +...
+                        s_theta^2*phid*phidd) + g*s_theta*thetad - sigma(i));
         end
 
 
