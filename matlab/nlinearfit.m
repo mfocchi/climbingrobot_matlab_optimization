@@ -114,7 +114,7 @@ function [ineq, eq] = contraints(x)
 %             ineq(i) = norm(l*( thetad*thetadd  + 2*sin(theta)*cos(theta)*thetad^2 +...
 %                         sin(theta)^2.*thetad*thetadd) + g*sin(theta)) - sigma(i);
             ineq(i) = norm(l*( thetad*thetadd  + sin(theta)*cos(theta)*thetad*phid^2 +...
-                        sin(theta)^2*phid*phidd) + g*sin(theta)*thetad - sigma(i));
+                        sin(theta)^2*phid*phidd) + g*sin(theta)*thetad) - sigma(i);
 
                 
         else 
@@ -132,8 +132,8 @@ function [ineq, eq] = contraints(x)
             thetadd = zd^2 / nthroot(l^2-z^2,3) + zdd / sqrt(l^2 - z^2);
 
 %             ineq(i) = norm( l* (thetad * thetadd + 2+s_theta*c_theta * phid^2 + s_theta^2*phid*phidd) + g*s_theta) - sigma(i);
-       ineq(i) = norm(l*( thetad*thetadd  + s_theta*c_theta*thetad*phid^2 +...
-                        s_theta^2*phid*phidd) + g*s_theta*thetad - sigma(i));
+             ineq(i) = norm(l*( thetad*thetadd  + s_theta*c_theta*thetad*phid^2 +...
+                        s_theta^2*phid*phidd) + g*s_theta*thetad) - sigma(i);
         end
 
 
