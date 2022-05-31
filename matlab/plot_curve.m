@@ -49,23 +49,19 @@ function plot_curve(x, Tf, p0, pf)
     
     % Calculating and ploting the Energy from the new fit: theta, thetad and phid
 
-%Energy for OLD_FORMULATION
-    E = ((m*l^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) - m*g*l.*cos(theta); 
+    if (OLD_FORMULATION)
+        E = ((m*l^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) - m*g*l.*cos(theta); 
+ 
+    else
+        E = m*(l^2).*(zd.^2)./(2*(l^2-z.^2)) + (m*(l^2-z.^2).*phid.^2)/2 + m*g.*z ;
+        
+    end
     figure(2)
     plot(t,E(1,:))
     title('Ploting the Energy')
     grid on
     xlabel('time');
     ylabel('Energy');
-
-% %Energy else
-% E = m*(l^2).*(zd.^2))./(2*(l^2-z.^2)) + (m*(l^2-z.^2).*phid.^2)/2 + m*g.*z ;
-%     figure(2)
-%     plot(t,E(1,:))
-%     title('Ploting the Energy')
-%     grid on
-%     xlabel('time');
-%     ylabel('Energy');
 
 
     
