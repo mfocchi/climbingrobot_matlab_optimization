@@ -3,18 +3,25 @@
 
 %
 clear all ; close all ; clc
-global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION
+global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
 m = 1;
 l = 4;
 g = 9.81;
 Tf = 1.0;
 
 w1 = 1 ; % green initial
-w2 = 1 ; %red final
-w3 = 0.01 ;
+w2 = 0.6; %red final
+w3 = 0.1 ;
 
 N = 10 ;
-OLD_FORMULATION = 1 ;
+OLD_FORMULATION = 1;
+POLY_TYPE = 0  % 0 cubic, 1 quintic
+
+if (POLY_TYPE)
+    num_params = 12
+else 
+    num_params = 8 
+end
 
 time = linspace(0, Tf, N) ;
 theta0 = pi/6 ; %theta0 = 0.523
@@ -25,9 +32,9 @@ phif = 1.5468 ;
 p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
 pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
 
-x0 = [0.1*ones(1,8), zeros(1,N)] ;
-lb = [-1*ones(1,8), zeros(1,N)];
-ub = [1*ones(1,8), 10*ones(1,N)];
+x0 = [0.1*ones(1,num_params), zeros(1,N)] ;
+lb = [-10*ones(1,num_params), zeros(1,N)];
+ub = [10*ones(1,num_params), 10*ones(1,N)];
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
 
@@ -40,8 +47,7 @@ plot_curve(x, Tf, p0, pf);
 
 function [coste] = cost(x)
 
-    global N l p0 pf w1 w2 w3 time OLD_FORMULATION
-
+    global N l p0 pf w1 w2 w3 time OLD_FORMULATION POLY_TYPE
 
     a_10 = x(1);
     a_11 = x(2);
@@ -51,15 +57,30 @@ function [coste] = cost(x)
     a_21 = x(6);
     a_22 = x(7);
     a_23 = x(8);
+    
+    if (POLY_TYPE) %quintic
+        a_14 = x(9);
+        a_15 = x(10);
+        a_24 = x(11);
+        a_25 = x(12);
+    end
 
     
     if (OLD_FORMULATION)
-        theta0 = a_10 + a_11*time(1) + a_12*time(1).^2 +  a_13*time(1).^3;
-        phi0 = a_20 + a_21*time(1) + a_22*time(1).^2 + a_23*time(1).^3;
+        if (POLY_TYPE) %quintic
+            theta0 = a_10 + a_11*time(1) + a_12*time(1).^2 +  a_13*time(1).^3 + a_14*time(1).^4 + a_15*time(1).^5;
+            phi0 = a_20 + a_21*time(1) + a_22*time(1).^2 + a_23*time(1).^3 + a_24*time(1).^4 + a_25*time(1).^5;
+            thetaf = a_10 + a_11*time(end) + a_12*time(end).^2 +  a_13*time(end).^3 + a_14*time(end).^4 + a_15*time(end).^5;
+            phif = a_20 + a_21*time(end) + a_22*time(end).^2 + a_23*time(end).^3 + a_24*time(end).^4 + a_25*time(end).^5;
+      
+        else
+            theta0 = a_10 + a_11*time(1) + a_12*time(1).^2 +  a_13*time(1).^3;
+            phi0 = a_20 + a_21*time(1) + a_22*time(1).^2 + a_23*time(1).^3;
+            thetaf = a_10 + a_11*time(end) + a_12*time(end).^2 +  a_13*time(end).^3;
+            phif = a_20 + a_21*time(end) + a_22*time(end).^2 + a_23*time(end).^3;
+        end
+        
         p_0 = [l*sin(theta0).*cos(phi0); l*sin(theta0).*sin(phi0); -l*cos(theta0)];
-
-        thetaf = a_10 + a_11*time(end) + a_12*time(end).^2 +  a_13*time(end).^3;
-        phif = a_20 + a_21*time(end) + a_22*time(end).^2 + a_23*time(end).^3;
         p_f = [l*sin(thetaf).*cos(phif); l*sin(thetaf).*sin(phif); -l*cos(thetaf)]; 
     else 
         
@@ -87,7 +108,7 @@ end
 
 function [ineq, eq] = contraints(x)
 
-    global  g N time l OLD_FORMULATION
+    global  g N time l OLD_FORMULATION POLY_TYPE num_params
 
     close all 
     a_10 = x(1);
@@ -98,19 +119,39 @@ function [ineq, eq] = contraints(x)
     a_21 = x(6);
     a_22 = x(7);
     a_23 = x(8);
-    
+        
+    if (POLY_TYPE)  %quintic
+        a_14 = x(9);
+        a_15 = x(10);
+        a_24 = x(11);
+        a_25 = x(12);
+    end
     
     for i=2:N-1 
-        sigma(i) = x(8+i);
+        sigma(i) = x(num_params+i);
         
         if (OLD_FORMULATION)
-            theta = a_10 + a_11*time(i) + a_12*time(i).^2 +  a_13*time(i).^3;
-            thetad =  a_11 + 2*a_12*time(i) + 3*a_13*time(i).^2;
-            thetadd = 2*a_12 + 6*a_13*time(i);
+            
+            if (POLY_TYPE) %quintic
+                theta = a_10 + a_11*time(i) + a_12*time(i).^2 +  a_13*time(i).^3 + a_14*time(i).^4 + a_15*time(i).^5;
+                thetad =  a_11 + 2*a_12*time(i) + 3*a_13*time(i).^2 + 4*a_14*time(i).^3 + 5*a_15*time(i).^4 ;
+                thetadd = 2*a_12 + 6*a_13*time(i) + 12*a_14*time(i).^2  + 20*a_15*time(i).^3 ;
 
-            phi = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3;
-            phid =  a_21 + 2*a_22*time(i)  + 3*a_23*time(i).^2;
-            phidd =   2*a_22 + 6*a_23*time(i);
+
+                phi = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3 + a_24*time(i).^4 + a_25*time(i).^5;
+                phid =  a_21 + 2*a_22*time(i)  + 3*a_23*time(i).^2 + 4*a_24*time(i).^3 + 5*a_25*time(i).^4 ;
+                phidd =   2*a_22 + 6*a_23*time(i) + 12*a_24*time(i).^2  + 20*a_25*time(i).^3 ;
+            else
+                theta = a_10 + a_11*time(i) + a_12*time(i).^2 +  a_13*time(i).^3;
+                thetad =  a_11 + 2*a_12*time(i) + 3*a_13*time(i).^2;
+                thetadd = 2*a_12 + 6*a_13*time(i);
+
+                phi = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3;
+                phid =  a_21 + 2*a_22*time(i)  + 3*a_23*time(i).^2;
+                phidd =   2*a_22 + 6*a_23*time(i);
+            end
+            
+        
 %             ineq(i) = norm(l*( thetad*thetadd  + 2*sin(theta)*cos(theta)*thetad^2 +...
 %                         sin(theta)^2.*thetad*thetadd) + g*sin(theta)) - sigma(i);
             ineq(i) = norm(l*( thetad*thetadd  + sin(theta)*cos(theta)*thetad*phid^2 +...
