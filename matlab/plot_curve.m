@@ -1,4 +1,4 @@
-function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
+function [E,  path_length] = plot_curve(x, Tf, p0, pf, dt ,plot_energy, converged)
     global l m g OLD_FORMULATION   POLY_TYPE
     %eval trajectory
     a_10 = x(1);
@@ -42,7 +42,7 @@ function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
         end
 
         p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)]  ; 
-        disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) )
+        %disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) );
 
     else
 
@@ -62,24 +62,37 @@ function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
     pd = [cos(theta).*cos(phi).*thetad*l - sin(phi).*sin(theta).*phid*l;
           cos(theta).*sin(phi).*thetad *l + cos(phi).*sin(theta).*phid*l;
           sin(theta).*thetad*l];
-    norm_pd = vecnorm(pd,2);
     
+    for i=1:length(pd(1,:))  
+        norm_pd(i) = sqrt(pd(1,i)^2 + pd(2,i)^2 + pd(3,i)^2);
+        
+    end
+    
+     path_length = sum(norm_pd*dt);
 
     % check length is always l
 %     a = vecnorm(p)
 %     a -  ones(1,length(a))*l
     
-    
-    plot3(p(1,:), p(2,:), p(3,:))   ;   
-    hold on ;
-     plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
+ if (converged)
+
+        plot3(p(1,:), p(2,:), p(3,:),'r')   ;   
+        hold on ;
+       
+ else
+      plot3(p(1,:), p(2,:), p(3,:) ,'k' ) ;   
+        hold on ;
+        
+        
+ end
+   plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
      plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
     grid on;
       view(3)
-    xlim([0 4])    
+    xlim([-2 4])    
     ylim([-2 4])    
     zlim([-4 0])
-    
+
     xlabel('X');
     ylabel('Y');
     zlabel('Z');

@@ -7,33 +7,38 @@ global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
 m = 1;
 l = 4;
 g = 9.81;
-Tf_vec=1:0.05:3;
+Tf_vec=0.1:0.2:5;
 
 % physical limits
-Fun_max = 5;
-mu = 0.5;
-tol = 0.008;
+Fun_max = 10;
+mu = 1.0;
+tol = 0.1;
+
+w1 = 1 ; % green initial
+w2 = 0.6; %red final
+w3 = 0.01 ;
+N = 10 ; % energy constraints
 
 index_constraints = [];
+friction_violation = [];
+actuation_violation = [];
+unilater_violation = [];
+cost_violation = [];
 
 for i=1:length(Tf_vec)
     Tf = Tf_vec(i);
 
-%     
-%     
-% for i=1:1
-%     Tf = 1.5;
     
+    
+% for i=1:1
+%     Tf = 1.;
+%     
     
     
    
     dt=0.001;
 
-    w1 = 1 ; % green initial
-    w2 = 0.6; %red final
-    w3 = 0.1 ;
 
-    N = 10 ;
     OLD_FORMULATION = 1;
     POLY_TYPE = 0; % 0 cubic, 1 quintic
 
@@ -44,7 +49,7 @@ for i=1:length(Tf_vec)
     end
 
     time = linspace(0, Tf, N) ;
-    theta0 = pi/6 ; %theta0 = 0.523
+    theta0 = 0.1; %theta0 = 0.523
     phi0 = 0 ;
     thetaf= 0.8864 ;
     phif = 1.5468 ;
@@ -53,43 +58,61 @@ for i=1:length(Tf_vec)
     pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
 
     x0 = [0.1*ones(1,num_params), zeros(1,N)] ;
-    lb = [-10*ones(1,num_params), zeros(1,N)];
-    ub = [10*ones(1,num_params), 10*ones(1,N)];
+    lb = [-35*ones(1,num_params), zeros(1,N)];
+    ub = [35*ones(1,num_params), 10*ones(1,N)];
 
-    options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
+    %options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
+    options = optimoptions('fmincon','Display','none','Algorithm','sqp', 'MaxIterations', 1500);
 
-    [x, final_cost] = fmincon(@cost,x0,[],[],[],[],lb,ub,@constraints, options)
+    [x, final_cost, EXITFLAG] = fmincon(@cost,x0,[],[],[],[],lb,ub,@constraints, options);
     slacks = sum(x(9:end));
 
 
-    [E, norm_pd] = plot_curve(x, Tf, p0, pf,dt, false);
+    [E, path_length(i)] = plot_curve(x, Tf, p0, pf,dt, false, false);
 
-    path_length(i) = sum(norm_pd*dt);
+   
     energy(i) =mean(E); 
     poly_coeff(i,:) = x;
-    
+     path_length(i)
     
     % evaluate constraints 
-    [Fun , Fut] = evaluate_initial_impulse( x, Tf_vec(i))
+    [Fun , Fut] = evaluate_initial_impulse( x, Tf_vec(i));
     actuation_constr = Fun <=  Fun_max;
     friction_constr = abs(Fut) <=  mu*Fun_max ;
     unilat_constr = Fun >=0 ;
-    feasible_traj = abs(final_cost )<= tol
+    low_cost = abs(final_cost )<= tol;
+    problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
     
     Fun_vec(i) = Fun;
     Fut_vec(i) = Fut;
     final_cost_vec(i) = final_cost;
     
-    
-    if  actuation_constr && friction_constr && unilat_constr &&feasible_traj
-      
-        index_constraints = [index_constraints i]
+    if  ~friction_constr
+        friction_violation = [friction_violation i];
     end
     
+     if (~  actuation_constr)
+         actuation_violation = [actuation_violation i];
+     end
+    
+   if (~ ( unilat_constr))
+         unilater_violation = [unilater_violation i];
+   end
+    
+      if (~ ( low_cost))
+         cost_violation = [cost_violation i];
+    end
+    
+    if  actuation_constr && friction_constr && unilat_constr   && problem_solved && low_cost
+        plot_curve(x, Tf, p0, pf,dt, false, true);
+        index_constraints = [index_constraints i];
+       
+    end
+    pause(4)
 end
 % 
 
-[min, index_min] = min(path_length(index_constraints))
+[min, index_min] = min(path_length(index_constraints));
 
 figure
 subplot(5,1,1)
@@ -112,12 +135,16 @@ plot(Tf_vec, log(tol*ones(1, length(Tf_vec))),'ro');
 
 
 opt_Tf = Tf_vec(index_constraints(index_min))
-number_of_solutions = length(index_constraints)
 
+number_of_friction_violation = length(friction_violation)
+number_of_actuation_violation = length(actuation_violation)
+number_of_unilat_violation = length(unilater_violation)
+number_of_cost_violation = length(cost_violation)
+number_of_solutions = length(index_constraints)
 
 if number_of_solutions >0
     figure
-    plot_curve(poly_coeff(index_constraints(index_min),:), opt_Tf, p0, pf,dt, false);
+    plot_curve(poly_coeff(4,:), Tf_vec(4), p0, pf,dt, false, true);
 end
 
  
