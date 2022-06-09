@@ -62,7 +62,7 @@ function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
     pd = [cos(theta).*cos(phi).*thetad*l - sin(phi).*sin(theta).*phid*l;
           cos(theta).*sin(phi).*thetad *l + cos(phi).*sin(theta).*phid*l;
           sin(theta).*thetad*l];
-    norm_pd = vecnorm(pd);
+    norm_pd = vecnorm(pd,2);
     
 
     % check length is always l
@@ -72,8 +72,8 @@ function [E, norm_pd] = plot_curve(x, Tf, p0, pf, dt ,plot_energy)
     
     plot3(p(1,:), p(2,:), p(3,:))   ;   
     hold on ;
-     plot3(p0(1), p0(2), p0(3), 'Marker', '*', 'Color','g', 'MarkerSize',10) ;
-     plot3(pf(1), pf(2), pf(3), 'Marker', '*', 'Color','r', 'MarkerSize',10) ;
+     plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
+     plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
     grid on;
       view(3)
     xlim([0 4])    
