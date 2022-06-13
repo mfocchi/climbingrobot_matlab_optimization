@@ -10,12 +10,12 @@ g = 9.81;
 Tf_vec=0.1:0.2:5;
 
 % physical limits
-Fun_max = 10;
-mu = 1.0;
+Fun_max = 5;
+mu = 0.5;
 tol = 0.1;
 
 w1 = 1 ; % green initial
-w2 = 0.6; %red final
+w2 = 0.2; %red final
 w3 = 0.01 ;
 N = 10 ; % energy constraints
 
@@ -49,7 +49,7 @@ for i=1:length(Tf_vec)
     end
 
     time = linspace(0, Tf, N) ;
-    theta0 = 0.1; %theta0 = 0.523
+    theta0 = 0.05; %theta0 = 0.523
     phi0 = 0 ;
     thetaf= 0.8864 ;
     phif = 1.5468 ;
@@ -73,10 +73,10 @@ for i=1:length(Tf_vec)
    
     energy(i) =mean(E); 
     poly_coeff(i,:) = x;
-     path_length(i)
+
     
     % evaluate constraints 
-    [Fun , Fut] = evaluate_initial_impulse( x, Tf_vec(i));
+    [Fun , Fut] = evaluate_initial_impulse(x, 0.0);
     actuation_constr = Fun <=  Fun_max;
     friction_constr = abs(Fut) <=  mu*Fun_max ;
     unilat_constr = Fun >=0 ;
@@ -108,7 +108,7 @@ for i=1:length(Tf_vec)
         index_constraints = [index_constraints i];
        
     end
-    pause(4)
+
 end
 % 
 
