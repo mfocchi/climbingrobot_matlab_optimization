@@ -63,12 +63,18 @@ function [E,  path_length] = plot_curve(x, Tf, p0, pf, dt ,plot_energy, converge
           cos(theta).*sin(phi).*thetad *l + cos(phi).*sin(theta).*phid*l;
           sin(theta).*thetad*l];
     
-    for i=1:length(pd(1,:))  
-        norm_pd(i) = sqrt(pd(1,i)^2 + pd(2,i)^2 + pd(3,i)^2);
+  %  for i=1:length(pd(1,:))  
+   %     norm_pd(i) = sqrt(pd(1,i)^2 + pd(2,i)^2 + pd(3,i)^2);
         
-    end
+  %  end
     
-     path_length = sum(norm_pd*dt);
+  %   path_length = sum(norm_pd*dt);
+     
+     
+      deltax = diff(p(1,:));  % diff(X);
+        deltay = diff(p(2,:));   % diff(Y);
+        deltaz = diff(p(3,:));    % diff(Z);    
+  path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2))
 
     % check length is always l
 %     a = vecnorm(p)
