@@ -1,0 +1,143 @@
+
+%
+clear all ; close all ; clc
+warning off
+global m g  w1 w2 w3 p0 pf N time num_params 
+   
+m = 1;
+g = 9.8;
+Tf = 1.0;
+
+
+% w1 = 1 ; % green initial
+% w2 = 0.6; %red final
+% w3 = 0.1 ;
+
+w1 = 1 ; % green initial
+w2 = 0.6; %red final
+w3 = 0.1 ;
+
+N = 10 ;
+time = linspace(0, Tf, N) ;
+
+
+p0 = [2;0;-3.464];
+pf = [0.074;3.098;-2.528]; 
+
+
+num_params = 19 ;
+
+x0 = [1*ones(1,num_params), 1*ones(1,N)] ;
+lb = [-10*ones(1,num_params), -10*ones(1,N)];
+ub = [50*ones(1,num_params), 10*ones(1,N)];
+
+% x0 = [1*ones(1,num_params)] ;
+% lb = [-10*ones(1,num_params)];
+% ub = [50*ones(1,num_params)];
+
+options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
+
+[x, final_cost] = fmincon(@cost,x0,[],[],[],[],lb,ub,@contraints, options);
+
+
+plot_fit_var_l_forces(x, Tf, p0, pf);
+
+
+function [coste] = cost(x)
+
+    global p0 pf w1 w2 w3 time
+    
+    a_10 = x(1);
+    a_11 = x(2);
+    a_12 = x(3);
+    a_13 = x(4);
+    a_20 = x(5);
+    a_21 = x(6);
+    a_22 = x(7);
+    a_23 = x(8);
+    a_30 = x(9);
+    a_31 = x(10);
+    a_32 = x(11);
+    a_33 = x(12);
+    
+
+    theta0 = a_10 + a_11*time(1) + a_12*time(1).^2 +  a_13*time(1).^3;
+    phi0 = a_20 + a_21*time(1) + a_22*time(1).^2 + a_23*time(1).^3;
+    l0 = a_30 + a_31*time(1) + a_32*time(1).^2 +  a_33*time(1).^3;
+
+    thetaf = a_10 + a_11*time(end) + a_12*time(end).^2 +  a_13*time(end).^3;
+    phif = a_20 + a_21*time(end) + a_22*time(end).^2 + a_23*time(end).^3;
+    lf = a_30 + a_31*time(end) + a_32*time(end).^2 + a_33*time(end).^3;
+     
+        
+    p_0 = [l0*sin(theta0)*cos(phi0); l0*sin(theta0)*sin(phi0); -l0*cos(theta0)];
+    p_f = [lf*sin(thetaf)*cos(phif); lf*sin(thetaf)*sin(phif); -lf*cos(thetaf)];
+    
+
+    coste = w1 * norm(p_0 - p0) + w2 * norm(p_f - pf) + w3 * sum(x(20:end));
+   
+  
+end
+
+
+function [ineq, eq] = contraints(x)
+
+    global  g l num_params N m fr fun fut time 
+        
+    close all 
+    a_10 = x(1);
+    a_11 = x(2);
+    a_12 = x(3);
+    a_13 = x(4);
+    a_20 = x(5);
+    a_21 = x(6);
+    a_22 = x(7);
+    a_23 = x(8);
+    a_30 = x(9);
+    a_31 = x(10);
+    a_32 = x(11);
+    a_33 = x(12);
+
+    mea1 = x(13);
+    sig1 = x(14);
+    fn0 = x(15);
+    mea2 = x(16);
+    sig2 = x(17);
+    ft0 = x(18);
+    fr0 =  x(19);       
+
+ 
+       for i=2:N-1 
+        sigma(i) = x(num_params+i);
+
+%   fun = a_10 + a_11*time(i) + a_12*time(i).^2 +  a_13*time(i).^3 ;
+%   fut = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3;
+%   fr = a_30 + a_31*time(i) + a_32*time(i).^2 + a_33*time(i).^3;
+  
+     fun = fn0.*(1./(sqrt(2.*pi.*sig1.^2)))*exp(-0.5.*((time(i)-mea1)./sig1).^2);
+     fut = ft0.*(1./(sqrt(2.*pi.*sig2.^2)))*exp(-0.5.*((time(i)-mea2)./sig2).^2);
+     fr = fr0;
+         
+
+     theta = a_10 + a_11*time(i) + a_12*time(i).^2 +  a_13*time(i).^3 ;
+     dtheta =  a_11 + 2*a_12*time(i) + 3*a_13*time(i).^2  ;
+
+      phi = a_20 + a_21*time(i) + a_22*time(i).^2 + a_23*time(i).^3 ;
+      dphi =  a_21 + 2*a_22*time(i)  + 3*a_23*time(i).^2  ;
+
+       l = a_30 + a_31*time(i) + a_32*time(i).^2 + a_33*time(i).^3 ;
+       dl =  a_31 + 2*a_32*time(i)  + 3*a_33*time(i).^2 ;
+
+
+        ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+fun/(m*l);
+        ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta -(2/l)*dphi*dl+ fut/(m*l*sin(theta));
+        ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*fr;
+ 
+              
+               ineq(i) = norm(l*( dtheta*ddtheta  + sin(theta)*cos(theta)*dtheta*dphi^2 +...
+                 sin(theta)^2*dphi*ddphi) + g*sin(theta)*dtheta + dl^2*ddl + l*dl*(dtheta^2+sin(theta)^2*dphi)^2 + g*cos(theta))- sigma(i);
+
+       end
+    eq = [];
+end
+
