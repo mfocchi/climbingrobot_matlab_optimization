@@ -74,7 +74,7 @@ function [E,  path_length] = plot_curve(x, Tf, p0, pf, dt ,plot_energy, converge
       deltax = diff(p(1,:));  % diff(X);
         deltay = diff(p(2,:));   % diff(Y);
         deltaz = diff(p(3,:));    % diff(Z);    
-  path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2))
+  path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2));
 
     % check length is always l
 %     a = vecnorm(p)
@@ -95,9 +95,9 @@ function [E,  path_length] = plot_curve(x, Tf, p0, pf, dt ,plot_energy, converge
      plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
     grid on;
       view(3)
-    xlim([-2 4])    
-    ylim([-2 4])    
-    zlim([-4 0])
+    xlim([-l l])    
+    ylim([-l l])    
+    zlim([-l 0])
 
     xlabel('X');
     ylabel('Y');
@@ -115,7 +115,7 @@ function [E,  path_length] = plot_curve(x, Tf, p0, pf, dt ,plot_energy, converge
     
     
     if (plot_energy)
-        figure(2)
+        figure
         plot(t,E(1,:))    
         title('Ploting the Energy')
         grid on

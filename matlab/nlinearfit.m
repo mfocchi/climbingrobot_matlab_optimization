@@ -7,15 +7,21 @@ global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
 m = 1;
 l = 4;
 g = 9.81;
-Tf_vec=0.1:0.2:5;
+
+%pendulum period
+
+T_pend = 2*pi*sqrt(l/g)/4; % half period
+N_search = 20;
+Tf_vec=linspace(0.8*T_pend, 1.3*T_pend, N_search);
+%Tf_vec=linspace(0.1, 1, N_search);
 
 % physical limits
-Fun_max = 5;
+Fun_max = 7;
 mu = 0.5;
-tol = 0.1;
+tol = .1;
 
 w1 = 1 ; % green initial
-w2 = 0.2; %red final
+w2 = 0.6; %red final
 w3 = 0.01 ;
 N = 10 ; % energy constraints
 
@@ -51,7 +57,7 @@ for i=1:length(Tf_vec)
     time = linspace(0, Tf, N) ;
     theta0 = 0.05; %theta0 = 0.523
     phi0 = 0 ;
-    thetaf= 0.8864 ;
+    thetaf= 0.68864 ;
     phif = 1.5468 ;
 
     p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
@@ -117,21 +123,32 @@ end
 figure
 subplot(5,1,1)
 plot(Tf_vec, path_length);grid on;
+ylabel('path_length')
 subplot(5,1,2)
 plot(Tf_vec, energy) ;grid on;
+ylabel('energy')
+
+
 subplot(5,1,3)
 plot(Tf_vec, Fun_vec); hold on;grid on;
 plot(Tf_vec, Fun_max*ones(1, length(Tf_vec)),'ro'); 
 plot(Tf_vec, 0*ones(1, length(Tf_vec)),'bo'); 
+ylabel('normal constraints')
+
 
 subplot(5,1,4)
 plot(Tf_vec, Fut_vec); hold on;grid on;
 plot(Tf_vec, mu*Fun_max*ones(1, length(Tf_vec)),'ro'); 
 plot(Tf_vec, -mu*Fun_max*ones(1, length(Tf_vec)),'ro'); 
+ylabel('tg constraints')
+
 
 subplot(5,1,5)
 plot(Tf_vec, log(final_cost_vec)); hold on;grid on;
 plot(Tf_vec, log(tol*ones(1, length(Tf_vec))),'ro'); 
+ylabel('cost')
+
+
 
 
 opt_Tf = Tf_vec(index_constraints(index_min))
@@ -144,7 +161,8 @@ number_of_solutions = length(index_constraints)
 
 if number_of_solutions >0
     figure
-    plot_curve(poly_coeff(4,:), Tf_vec(4), p0, pf,dt, false, true);
+    plot_curve(poly_coeff(index_constraints(index_min),:), Tf_vec(index_constraints(index_min)), p0, pf,dt, true, true);
+    energy(index_constraints(index_min))
 end
 
  
