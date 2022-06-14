@@ -1,21 +1,23 @@
 function [ineq, eq] = constraints_force(x)
 
-    global  g theta0 phi0 mu l Fun_max N Tf num_params
+    global  g theta0 phi0 mu l Fun_max N num_params
     mean = x(1);  
     fn0=x(2);
     ft0 = x(3);
      
     x0 = [ theta0, phi0, 0, 0];
-    u = x(1:num_params);
-    sigma = x(num_params: num_params+N);
+    
+    u = x(1:num_params-1);
+    Tf = x(num_params);   
+    sigma = x(num_params+1: num_params+N);
     
      
     % force constraints: friction ft0 <= mu *fn0;
     ineq(1) = abs(ft0) - mu *fn0;
     ineq(2) = -fn0; %fn >= 0
-    ineq(3) = fn0 -Fun_max;%fn <= fnmax      
+    ineq(3) = fn0 - Fun_max;%fn <= fnmax      
     
-    time_instants_energy = linspace(0, Tf, N);
+    time_instants_energy = linspace(mean*3, Tf, N); % energy will have to conserve only after the application of the force
     
     for i=1:N
         [theta , phi , thetad , phid , thetadd, phidd] = integrate_dynamics(x0, u, time_instants_energy(i));     
