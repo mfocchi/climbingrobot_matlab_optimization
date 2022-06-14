@@ -1,9 +1,9 @@
 function [ineq, eq] = constraints_force(x)
 
-    global  g theta0 phi0 mu l Fun_max N num_params
-    mean = x(1);  
-    fn0=x(2);
-    ft0 = x(3);
+    global  g theta0 phi0 mu l Fun_max N num_params impulse_mean
+
+    fn0=x(1);
+    ft0 = x(2);
      
     x0 = [ theta0, phi0, 0, 0];
     
@@ -17,7 +17,7 @@ function [ineq, eq] = constraints_force(x)
     ineq(2) = -fn0; %fn >= 0
     ineq(3) = fn0 - Fun_max;%fn <= fnmax      
     
-    time_instants_energy = linspace(mean*3, Tf, N); % energy will have to conserve only after the application of the force
+    time_instants_energy = linspace(impulse_mean*3, Tf, N); % energy will have to conserve only after the application of the force
     
     for i=1:N
         [theta , phi , thetad , phid , thetadd, phidd] = integrate_dynamics(x0, u, time_instants_energy(i));     
