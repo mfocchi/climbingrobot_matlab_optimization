@@ -1,14 +1,13 @@
 function [ineq, eq] = constraints_force(x)
 
-    global  g theta0 phi0 mu l Fun_max N num_params impulse_mean
+    global  g Tf theta0 phi0 mu l Fun_max N num_params impulse_mean
 
     fn0=x(1);
     ft0 = x(2);
      
     x0 = [ theta0, phi0, 0, 0];
     
-    u = x(1:num_params-1);
-    Tf = x(num_params);   
+    u = x(1:num_params);  
     sigma = x(num_params+1: num_params+N);
     
      

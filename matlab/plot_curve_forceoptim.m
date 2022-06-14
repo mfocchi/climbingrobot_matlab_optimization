@@ -1,10 +1,9 @@
 function [E_vec,  path_length, dist_to_target] = plot_curve_forceoptim(x, p0, pf, plot_energy, converged)
-    global dt num_params theta0 phi0   l m g
+    global time num_params theta0 phi0   l m g
    
     x0 = [ theta0, phi0, 0, 0];
-    u = x(1:num_params-1);
-    Tf = x(num_params);   
-    time = linspace(0, Tf, Tf/dt) ;
+    u = x(1:num_params);
+   
     p_vec(:,1) = p0;
     
         
