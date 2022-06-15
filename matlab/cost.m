@@ -1,6 +1,6 @@
 function coste = cost(x)
 
-    global N l p0 pf w1 w2 w3 time OLD_FORMULATION POLY_TYPE
+    global   l p0 pf w1 w2 w3 time OLD_FORMULATION POLY_TYPE num_params
 
     a_10 = x(1);
     a_11 = x(2);
@@ -52,8 +52,36 @@ function coste = cost(x)
     
  
     end
+    
+    
+            
+    if (POLY_TYPE) %quintic
+        theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3 + a_14*time.^4 + a_15*time.^5;
+        phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3 + a_24*time.^4 + a_25*time.^5;
+       
+    else
+        theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
+        phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
+        
+    end
+    p = [l*sin(theta).*cos(phi); l*sin(theta).*sin(phi); -l*cos(theta)]; 
+    
+    %count row wise how many elemnts are lower than zero
+    negative_el = sum(p<0, 2); 
+    x_inside_wall = negative_el(1);
+    
 
-    coste = w1 * norm(p_0 - p0) + w2 * norm(p_f -pf)+ w3 * sum(x(9:end));
-   
+       deltax = diff(p(1,:));  % diff(X);
+      deltay = diff(p(2,:));   % diff(Y);
+      deltaz = diff(p(3,:));    % diff(Z);    
+      path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2));
+      
+      p0_cost = w1 * norm(p_0 - p0);
+      pf_cost = w2 * norm(p_f -pf);
+      slack_cost= w3 * sum(x(num_params+1:end));
+      wall_cost =  1000*x_inside_wall;
+      
+    coste = wall_cost  + p0_cost  + pf_cost + slack_cost;
+    
    
 end
