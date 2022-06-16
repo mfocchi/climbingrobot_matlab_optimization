@@ -90,8 +90,12 @@ function [p, E,  path_length, initial_error, final_error] = eval_solution(x, Tf,
     % kinetic energy at the beginning
     E.Ekin0x = m/2*pd(1,1)'*pd(1,1);
     E.Ekin0y = m/2*pd(2,1)'*pd(2,1);
-    E.Ekin0z = m/2*pd(3,1)'*pd(3,1);
+    E.Ekin0z = m/2*pd(3,1)'*pd(3,1);       
     E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
+    
+    %compare for sanity check should be equal to  E.Ekin0
+    %E.Ekin0angles=  (m*l^2/2).*(thetad(1)^2 + sin(theta(1))^2 *phid(1)^2);
+    
     E.U0 = -m*g*l*cos(theta(1));
        
     

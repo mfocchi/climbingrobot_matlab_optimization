@@ -4,7 +4,7 @@
 %
 clear all ; close all ; clc
 global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
-m = 1;
+m = 5;
 l = 4;
 g = 9.81;
 
@@ -16,7 +16,7 @@ Tf_vec=linspace(0.5*T_pend, 1.5*T_pend, N_search);
 %Tf_vec=linspace(0.1, 1, N_search);
 
 % physical limits
-Fun_max = 6;
+Fun_max = 20;
 mu = 0.5;
 tol = .1;
 
@@ -135,7 +135,7 @@ end
 [minpath_value, index_min] = min(path_length(index_feasible));
 %LO energy optim
 kin_energy = [energy(:).Ekin0];% + [energy(:).Ekinf];
-%[min_kin_energy, index_min] = min(kin_energy(index_feasible))
+[min_kin_energy, index_min] = min(kin_energy(index_feasible))
 
 
 figure

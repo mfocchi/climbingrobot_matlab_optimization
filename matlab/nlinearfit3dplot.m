@@ -4,14 +4,11 @@
 %
 clear all ; close all ; clc
 global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
-m = 1;
-
+m = 5;
 g = 9.81;
 
-
-
 % physical limits
-Fun_max = 7;
+Fun_max = 20 ;
 mu = 0.5;
 tol = .1;
 
@@ -132,10 +129,14 @@ for k=1:length(l_range)
         % path length optim
         %[minvalue, index_min] = min(path_length(index_feasible))
         %LO energy optim
-        kin_energy = [energy(:).Ekin0];% + [energy(:).Ekinf];
-        [min_kin_energy, index_min] = min(kin_energy(index_feasible));
-
-        
+        kin_energy = [energy(:).Ekin0];% 
+        wasted_energy =  [energy(:).Ekinf];
+        [opt_kin_energy, index_min] = min(kin_energy(index_feasible));
+        %eval the force for the optimal choice
+        opt_Fut = Fut_vec(index_feasible(index_min));
+        opt_Fun = Fun_vec(index_feasible(index_min));
+        opt_wasted = wasted_energy(index_feasible(index_min));
+              
         %number_of_maxforce_violation = length(actuation_violation)
         %number_of_unilat_violation = length(unilater_violation)
         %number_of_friction_violation = length(friction_violation)
@@ -148,16 +149,27 @@ for k=1:length(l_range)
         if length(index_feasible) == 0
             number_of_feasible_solutions = nan;
         end
-        if  isempty(min_kin_energy) % no solution was found
-            min_kin_energy = nan;
+        if  isempty(opt_kin_energy) % no solution was found
+            opt_kin_energy = nan;
+        end
+        if  isempty(opt_wasted) % no solution was found
+            opt_wasted = nan;
+        end
+        if  isempty(opt_Fut) % no solution was found
+            opt_Fut = nan;
+        end
+        if  isempty(opt_Fun) % no solution was found
+            opt_Fun = nan;
         end
       
         lthetaf_vector = [lthetaf_vector [l ; thetaf]];
-        feasible = [feasible number_of_feasible_solutions];        
+        feasible = [feasible number_of_feasible_solutions];    
         converged = [converged number_of_converged_solutions];
-        energy_consumption = [energy_consumption min_kin_energy] ;
+        energy_consumption = [energy_consumption opt_kin_energy] ;
      
-        disp("l = " + num2str(l) + "  thetaf = " +num2str( thetaf)+ "   feas: "+ num2str(number_of_feasible_solutions)+"   conv.: "+ num2str(number_of_converged_solutions)+ "  Ekin0: "+num2str(min_kin_energy))
+        fprintf('l =%3.2f    thetaf =%5.2f    feas=%5d    conv=%5d    Ekin0=%5.2f   Ekinf = %5.2f    Fun=%5.2f   Fut=%5.2f \n',...
+                 l, thetaf, number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut);
+
     end
 end
     
