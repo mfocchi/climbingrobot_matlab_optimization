@@ -43,7 +43,7 @@ for k=1:length(l_range)
         l = l_range(k);
         thetaf= thetaf_range(j);
         %pendulum period
-        T_pend = 2*pi*sqrt(l/g)/4; % half period
+        T_pend = 2*pi*sqrt(l/g)/2; % half period
         N_search = 20;
         Tf_vec=linspace(0.5*T_pend, 1.5*T_pend, N_search);
         
