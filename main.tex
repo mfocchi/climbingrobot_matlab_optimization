@@ -110,17 +110,37 @@
 	\]
 	where $c_x$ is a shorthand for $\cos x$ and $s_x$ is a shorthand for $\sin x$.
 	From this equation, we have that the position $\mathbf{p}$ of the mass is given by:
-	\begin{align*}
+	\begin{align} \label{eq1}
 		\mathbf{p} = \begin{bmatrix} x\\ y\\ z \end{bmatrix} =
 		\begin{bmatrix} l s_\theta c_\phi\\
 			l s_\theta s_\phi\\
 			-l c_\theta \end{bmatrix}
-	\end{align*}
-	From this equation it is possible to compute the velocity of the mass and hence the kinetic $T$ and the potential energy $V$:
+	\end{align}
+	From the equation \ref{eq1}, the velocities along the axes:  
 	\begin{align*}
-		T &=\frac{ m v^2}{2} = \\
-		&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) = \\
+		\dot{x} &= 
+		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
+		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
+		\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
+	\end{align*}
+Next, the velocity of the mass is :
+	\begin{align*}
+		v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 \\		
+		&=  l^2 c_\theta^2 c_\phi^2 \dot{\theta}^2 + l^2 s_\theta^2 s_\phi^2 \dot{\phi}^2 + s_\theta^2 c_\phi^2 \dot{l}^2 + 2l c_\theta s_\theta c_\phi^2  \dot{\theta} \dot{l} + l^2 c_\theta^2 s_\phi^2 \dot{\theta}^2 \\ 
+		&+ l^2 s_\theta^2 c_\phi^2 \dot{\phi}^2 + s_\theta^2 s_\phi^2 \dot{l}^2 + 2l c_\theta s_\theta s_\phi^2  \dot{\theta} \dot{l} + l^2 s_\theta^2  \dot{\theta}^2 + c_\theta^2 \dot{l}^2 - 2l s_\theta c_\theta   \dot{\theta} \dot{l} \\ \\
+		&= l^2 c_\theta^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + l^2 s_\theta^2 \dot{\theta}^2 + \dot{l}^2 s_\theta^2 + \dot{l}^2 c_\theta^2 \\
+		&=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
+		&=  l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \dot{l}^2\\
+	\end{align*}
+	
+	Thus, the kinetic energy $T$ of the system 
+	\begin{align*}
+		T &=\frac{ m }{2} v^2 = \\
+		&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) \\
 		&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2\\
+	\end{align*}
+And the potential energy $V$ 
+		\begin{align*}
 		V &= mgz\\
 		&= -mgl c_\theta
 	\end{align*}
@@ -293,14 +313,14 @@
 	
 	\begin{EQ}[rclcl]
 		\dot{x} &=& \cos(\theta)\cos(\phi)l\omega-\sin(\phi)\sin(\theta)l\psi+\sin(\theta)\cos(\phi)r &=& 0\\
-		\dot{y} &=& \cos(\theta)\sin(\phi)l\omega-\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
+		\dot{y} &=& \cos(\theta)\sin(\phi)l\omega+\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
 		\dot{z} &=& \sin(\theta)l\omega -\cos(\theta)r &=& 0
 	\end{EQ}
 	
 	At $t=T$:
 	\begin{EQ}[rclcl]
 		\dot{x} &=& \cos(\theta)\cos(\phi)l\omega-\sin(\phi)\sin(\theta)l\psi+\sin(\theta)\cos(\phi)r &=& 0\\
-	    \dot{y} &=& \cos(\theta)\sin(\phi)l\omega-\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
+	    \dot{y} &=& \cos(\theta)\sin(\phi)l\omega+\cos(\phi)\sin(\theta)l\psi+\sin(\theta)\sin(\phi)r &=& 0\\
 	    \dot{z} &=& \sin(\theta)l\omega -\cos(\theta)r &=& 0
 	\end{EQ}
 	
