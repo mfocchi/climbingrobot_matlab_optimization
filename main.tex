@@ -34,7 +34,7 @@
 \usepackage{algpseudocode}
 
 
-
+\include{include/math_commands}
 
 \usepackage{hyperref}
 
@@ -441,6 +441,31 @@ Finally, because the robot cannot pull himself towards the wall but only push:
 \begin{align*}
 F_{u,n}\geq  0
 \end{align*} 
+
+
+\section{Multiple Jumps Heuristics}
+
+The usage of the iso-energetic curves allows us to parametrize the curves as polynomials with constraints on derivative of energy, 
+without having to solve an optimal control problem.
+In case of multiple jumps (e.g. 3), the optimization should come up with a set of fixed-rope length jumps $\mat{\theta_1, \theta_2, \theta_3} $ 
+and vertical releases $\mat{l_{p,1},l_{p,2},l_{p,3}}$  we have to enforce also the following kinematic constraints, to reach the target:  
+
+
+\begin{align*}
+...
+\end{align*} 
+
+and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation purposes):
+
+\begin{align*}
+...
+\end{align*} 
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{figs/multiple_jumps_heuristics.pdf}
+	\caption{Heuristics for multiple jumps}
+	\label{fig:muti_jumps}
+\end{figure}
 
 
 
