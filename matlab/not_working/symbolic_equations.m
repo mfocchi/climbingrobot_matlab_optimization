@@ -77,11 +77,21 @@ H4_T_5 = [eye(3) , [0;0;-l3p]
 H5_T_6 = [Rx(th3), [0;0;0]
           zeros(1, 3), 1]
 
-% for fixed axes yoiu need to reverse order    
-H0_T = H5_T_6 *  H4_T_5 * H3_T_4 *H2_T_3*H1_T_2*H0_T_1;
-target = simplify(H0_T(1:3,4))
+% for fixed axes yoiu need to reverse order  
+H0_T_4 =  H3_T_4 *H2_T_3*H1_T_2*H0_T_1;
+H0_T_6 = H5_T_6 *  H4_T_5 * H3_T_4 *H2_T_3*H1_T_2*H0_T_1;
+
+
+target = simplify(H0_T_4(1:3,4))
+target = simplify(H0_T_6(1:3,4))
 
 %sanity check
-H0_Tcheck = subs(H0_T,{'th1', 'th2', 'th3','l1p', 'l2p','l3p'},{pi/2,pi/4,pi/4,1,1,sqrt(2)}) 
+H0_Tcheck = subs(H0_T_6,{'th1', 'th2', 'th3','l1p', 'l2p','l3p'},{pi/2,pi/4,pi/4,1,1,sqrt(2)}) 
 eval(H0_Tcheck(1:3,1:3)) -Rx(pi/2+pi/4+pi/4)
 eval(H0_Tcheck(1:3,4)) -[0;2;0]
+
+% comupute l1 l2 l3 with law of cosines
+% l1 = l1p
+% l2 = l1^2+l2p^2 -2*l1*l2p*cos(pi - th1)
+% l3 = l2^2+l3p^2 -2*l2*l3p*cos(pi - th2)
+

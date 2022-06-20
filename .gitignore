@@ -52,3 +52,15 @@ main.synctex.gz
 main.out
 main.aux
 main.pdf
+/matlab/12.fig
+/matlab/eval_solution.asv
+/matlab/nlinearfit3dplot.asv
+/matlab/sphependul_traj_estim.m
+/matlab_python/bezier/.gitignore
+/matlab_python/bezier/Bezier.py
+/matlab_python/bezier/LICENSE
+/matlab_python/bezier/README.md
+/matlab_python/bezier/__init__.py
+/matlab_python/bezier/examples.py
+/pdf/integrate dirac impulse/1-s2.0-S0020746298000572-main.pdf
+/pdf/integrate dirac impulse/10.1.1.1065.2890.pdf
