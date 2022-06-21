@@ -1,5 +1,6 @@
-function [p, E,  path_length, initial_error, final_error] = eval_solution(x, Tf,  dt)
-    global l m g OLD_FORMULATION   POLY_TYPE p0 pf
+function [p, E,  path_length, initial_error, final_error] = eval_solution(x, Tf,  dt, l, p0, pf)
+
+    global m g OLD_FORMULATION   POLY_TYPE 
         %eval trajectory
         a_10 = x(1);
         a_11 = x(2);

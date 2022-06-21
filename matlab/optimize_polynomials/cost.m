@@ -1,6 +1,6 @@
-function coste = cost(x)
+function coste = cost(x, l, p0,  pf,  time)
 
-    global   l p0 pf w1 w2 w3 time OLD_FORMULATION POLY_TYPE num_params
+    global    w1 w2 w3  OLD_FORMULATION POLY_TYPE num_params
 
     a_10 = x(1);
     a_11 = x(2);

@@ -1,7 +1,5 @@
-function  plot_curve(p, p0,pf,  E, plot_energy, color_input)
+function  plot_curve(l, p, p0,pf,  E, plot_energy, color_input)
       
-global l
-
        plot3(p(1,:), p(2,:), p(3,:) ,color_input ) ;   
        hold on ;
 

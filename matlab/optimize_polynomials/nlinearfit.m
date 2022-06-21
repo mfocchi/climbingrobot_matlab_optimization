@@ -76,18 +76,18 @@ for i=1:length(Tf_vec)
     %'MaxIterations', 1500); %bigger slacks and cost
    
     
-    [x, final_cost, EXITFLAG] = fmincon(@cost,x0,[],[],[],[],lb,ub,@constraints, options);
+    [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf,  time),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, time), options);
     slacks(i) = sum(x(num_params+1:end));
     
-    [p(i,:,:), E, path_length(i), initial_error(i), final_error(i)] = eval_solution(x, Tf,dt);  
+    [p(i,:,:), E, path_length(i), initial_error(i), final_error(i)] = eval_solution(x, Tf,dt, l, p0, pf);  
    
     energy(i) = E; 
     x_vec(i,:) = x;
-    plot_curve(squeeze(p(i,:,:)), p0, pf,  E.Etot, false, 'k');
+    plot_curve(l, squeeze(p(i,:,:)), p0, pf,  E.Etot, false, 'k');
     
 
 
-    [Fun , Fut] = evaluate_initial_impulse(x, 0.0);
+    [Fun , Fut] = evaluate_initial_impulse(x, 0.0, l);
     Fun_vec(i) = Fun;
     Fut_vec(i) = Fut;
     final_cost_vec(i) = final_cost;    
@@ -100,7 +100,7 @@ for i=1:length(Tf_vec)
           cost_violation = [cost_violation i];
      end    
      if  problem_solved && low_cost
-         plot_curve(squeeze(p(i,:,:)),  p0, pf,    E.Etot, false, 'r'); % converged are red
+         plot_curve(l, squeeze(p(i,:,:)),  p0, pf,    E.Etot, false, 'r'); % converged are red
          index_converged = [index_converged i];
          
           % evaluate constraints on converged solutions
@@ -123,7 +123,7 @@ for i=1:length(Tf_vec)
          
          if  actuation_constr &&  unilat_constr &&friction_constr
              index_feasible = [index_feasible i];
-             plot_curve(squeeze(p(i,:,:)),  p0, pf,    E.Etot, false, 'g'); % feasible are green
+             plot_curve(l, squeeze(p(i,:,:)),  p0, pf,    E.Etot, false, 'g'); % feasible are green
          end
      end
 
@@ -226,7 +226,7 @@ if number_of_feasible_solutions >0
     opt_Tf = Tf_vec(index_feasible(index_min));
     opt_position = squeeze(p(index_feasible(index_min),:,:));
     opt_E = energy(index_feasible(index_min));
-    plot_curve(opt_position,p0, pf, opt_E.Etot, true, 'm') ; % optimal is magenta
+    plot_curve(l, opt_position,p0, pf, opt_E.Etot, true, 'm') ; % optimal is magenta
     
 %     opt_E.Ekin0x    
 %     opt_E.Ekin0y    

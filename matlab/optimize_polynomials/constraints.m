@@ -1,6 +1,6 @@
-function [ineq, eq] = constraints(x)
+function [ineq, eq] = constraints(x, l, time)
 
-    global  g N time l OLD_FORMULATION POLY_TYPE num_params
+    global  g N  OLD_FORMULATION POLY_TYPE num_params
 
 
     a_10 = x(1);

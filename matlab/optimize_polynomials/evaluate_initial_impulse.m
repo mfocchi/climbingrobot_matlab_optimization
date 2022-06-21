@@ -1,5 +1,5 @@
-function [Fun , Fut] = evaluate_initial_impulse(x, t)
-    global l m g OLD_FORMULATION   POLY_TYPE
+function [Fun , Fut] = evaluate_initial_impulse(x, t, l)
+    global  m  OLD_FORMULATION   POLY_TYPE
     %eval trajectory
         a_10 = x(1);
         a_11 = x(2);
