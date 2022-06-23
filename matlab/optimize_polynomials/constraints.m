@@ -1,7 +1,7 @@
 function [ineq, eq] = constraints(x, l, time)
 
     global  g N  OLD_FORMULATION POLY_TYPE num_params
-
+    % ineq are <= 0
 
     a_10 = x(1);
     a_11 = x(2);

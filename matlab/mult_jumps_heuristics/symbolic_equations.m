@@ -1,9 +1,9 @@
 
 %l const
-syms l theta(t) phi(t) t g
+syms l theta(t) phi(t) t g f1 f2 g1 g2 g3
 
 
-
+% compute jacobian symblically
 p = [l* sin(theta)*cos(phi); 
     l* sin(theta)*sin(phi); 
     - l*cos(theta)]
@@ -36,6 +36,18 @@ A = [0                1              0    0 ;
     0                0                    0            1 ;
      dg_dtheta ,  dg_dthetad , dg_dphi, dg_dphid ]
 
+A =subs( A,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('thetad'),str2sym('phid')});
+A =subs( A, {str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('theta'),str2sym('phi')});
+
+
+As = [0 1 0 0 ;
+      f1  0 0 f2;
+        0 0 0 1;
+        g1 g2 0 g3]
+
+D= simplify(eig(As))
+simplify(imag(D(4)))
+
 % l non const 
 
 
@@ -43,9 +55,9 @@ A = [0                1              0    0 ;
 
 
 
-% compute target symbolically
+% compute target for mutiple jumps symbolically
 syms th1 th2 th3  l1p l2p l3p
-
+% rotation about X axis
 Rx=@(angle) [1       0        0
             0       cos(angle) -sin(angle)
             0       sin(angle)  cos(angle)]
@@ -78,14 +90,15 @@ H5_T_6 = [Rx(th3), [0;0;0]
           zeros(1, 3), 1]
 
 % for fixed axes yoiu need to reverse order  
+H0_T_2 =  H1_T_2*H0_T_1;
 H0_T_4 =  H3_T_4 *H2_T_3*H1_T_2*H0_T_1;
 H0_T_6 = H5_T_6 *  H4_T_5 * H3_T_4 *H2_T_3*H1_T_2*H0_T_1;
 
+target_1 = simplify(H0_T_2(1:3,4))
+target_2 = simplify(H0_T_4(1:3,4))
+target_3 = simplify(H0_T_6(1:3,4))
 
-target = simplify(H0_T_4(1:3,4))
-target = simplify(H0_T_6(1:3,4))
-
-%sanity check
+%sanity check (thtetavec = [pi/2 pi/4  pi/4], l = [1,1,sqrt(2)] 
 H0_Tcheck = subs(H0_T_6,{'th1', 'th2', 'th3','l1p', 'l2p','l3p'},{pi/2,pi/4,pi/4,1,1,sqrt(2)}) 
 eval(H0_Tcheck(1:3,1:3)) -Rx(pi/2+pi/4+pi/4)
 eval(H0_Tcheck(1:3,4)) -[0;2;0]

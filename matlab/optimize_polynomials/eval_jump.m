@@ -1,4 +1,4 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut] = eval_jump(l, thetaf, dt, tol, Fun_max, mu) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut] = eval_jump(l, thetaf, theta0, dt, tol, Fun_max, mu) 
 
         global g  N  num_params 
 
@@ -20,7 +20,7 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
             Tf = Tf_vec(i);
             
             time = linspace(0, Tf, N) ;
-            theta0 = 0.03; %theta0 = 0.523
+            %theta0 = 0.03; %theta0 = 0.523
             phi0 = 0 ;    
             phif = 1.5468 ;
            

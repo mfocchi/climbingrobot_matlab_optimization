@@ -32,6 +32,7 @@ end
 l_range = [2:1:10];
 thetaf_range = [0.1:0.1:0.9];
 
+theta0 = 0.03;
 lthetaf_vector = [];
 feasible =[];
 converged = [];
@@ -41,7 +42,7 @@ final_kin_energy = [];
 for k=1:length(l_range)    
     for j=1:length(thetaf_range)        
         
-        [number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut] = eval_jump(l_range(k), thetaf_range(j), dt, tol, Fun_max, mu);
+        [number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut] = eval_jump(l_range(k), thetaf_range(j), theta0, dt, tol, Fun_max, mu);
               
         lthetaf_vector = [lthetaf_vector [l_range(k) ; thetaf_range(j)]];
         feasible = [feasible number_of_feasible_solutions];    
