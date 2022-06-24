@@ -1,12 +1,23 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, tol, Fun_max, mu) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT) 
 
-        global g  N  num_params 
+        global g  w1 w2 w3 N  num_params 
         
         
         
         %pendulum period
         T_pend = 2*pi*sqrt(l/g)/4; % half period
        
+        
+        tol = .1;
+        w1 = 1 ; % green initial
+        w2 = 0.6; %red final
+        if DER_ENERGY_CONSTRAINT
+            w3 = 0.01 ; % energy weight dE
+        else
+            w3 = 0.0001 ; % energy weight E
+        end
+        N = 10 ; % number of energy constraints
+
         
         index_converged = [];
         index_feasible = [];
@@ -38,7 +49,7 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         %'MaxIterations', 1500); %bigger slacks and cost
 
 
-        [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l), options);
+        [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, DER_ENERGY_CONSTRAINT), options);
         slacks = sum(x(num_params+1:end));
 
         [p, E, path_length , initial_error , final_error ] = eval_solution(x, x(1),dt, l, p0, pf) ;

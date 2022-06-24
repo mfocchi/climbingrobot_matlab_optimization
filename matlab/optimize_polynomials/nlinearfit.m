@@ -5,7 +5,7 @@
 clear all ; close all ; clc
 global m l g  w1 w2 w3 p0 pf N time OLD_FORMULATION POLY_TYPE num_params
 m = 5;
-l = 4;
+l = 2;
 g = 9.81;
 
 %pendulum period
@@ -49,7 +49,7 @@ for i=1:length(Tf_vec)
     time = linspace(0, Tf, N) ;
     theta0 = 0.05; %theta0 = 0.523
     phi0 = 0 ;
-    thetaf= 0.4 ;
+    thetaf= 0.1 ;
     phif = 1.5468 ;
 
     p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
@@ -235,7 +235,7 @@ if number_of_feasible_solutions >0
     
     
 end
-%[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, tol, Fun_max, mu)
+%[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt,  Fun_max, mu)
        
  
 

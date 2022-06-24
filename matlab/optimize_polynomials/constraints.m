@@ -43,8 +43,6 @@ function [ineq, eq] = constraints(x, l, time)
             end
             
         
-%             ineq(i) = norm(l*( thetad*thetadd  + 2*sin(theta)*cos(theta)*thetad^2 +...
-%                         sin(theta)^2.*thetad*thetadd) + g*sin(theta)) - sigma(i);
             ineq(i) = norm(l*( thetad*thetadd  + sin(theta)*cos(theta)*thetad*phid^2 +...
                         sin(theta)^2*phid*phidd) + g*sin(theta)*thetad) - sigma(i);
 

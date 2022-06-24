@@ -19,9 +19,15 @@ Fun_max = 20;
 mu = 0.5;
 tol = .1;
 
+DER_ENERGY_CONSTRAINT = true
 w1 = 1 ; % green initial
 w2 = 0.6; %red final
-w3 = 0.01 ;
+if DER_ENERGY_CONSTRAINT
+    w3 = 0.01 ; % energy weight dE
+else
+    w3 = 0.0001 ; % energy weight E
+end
+
 N = 10 ; % energy constraints
 
 index_converged = [];
@@ -51,18 +57,20 @@ x0 = [params0, zeros(1,N)] ;
 lb = [0.0, -35*ones(1,num_params-1), zeros(1,N)];
 ub = [T_pend*5, 35*ones(1,num_params-1), 10*ones(1,N)];
 
-options = optimoptions('fmincon','Display','none','Algorithm','sqp');
+options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
 %options =
 %optimoptions('fmincon','Display','none','Algorithm','interior-point',
 %'MaxIterations', 1500); %bigger slacks and cost
 
 
-[x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l), options);
+[x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, DER_ENERGY_CONSTRAINT), options);
 slacks = sum(x(num_params+1:end));
 
 [p, E, path_length , initial_error , final_error ] = eval_solution(x, x(1),dt, l, p0, pf) ;
 
 energy = E;
+opt_Tf = x(1)
+
 
 plot_curve(l, p, p0, pf,  E.Etot, false, 'k');
 [Fun , Fut] = evaluate_initial_impulse(x, 0.0, l);
@@ -78,7 +86,7 @@ opt_Fun = nan;
 
 if  problem_solved 
     number_of_converged_solutions = 1;
-    plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'r'); % converged are red
+    plot_curve(l,  p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
     % evaluate constraints on converged solutions
     actuation_constr = Fun <=  Fun_max;
     friction_constr = abs(Fut) <=  mu*Fun_max;
@@ -99,8 +107,8 @@ end
 opt_kin_energy
 number_of_feasible_solutions
 number_of_converged_solutions
-opt_Tf = x(1)
-
-[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, tol, Fun_max, mu)
+initial_error
+final_error
+%[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT)
         
 

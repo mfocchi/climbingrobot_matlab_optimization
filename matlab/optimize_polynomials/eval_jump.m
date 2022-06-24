@@ -1,6 +1,6 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, tol, Fun_max, mu) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu) 
 
-        global g  N  num_params OLD_FORMULATION   POLY_TYPE 
+        global g   w1 w2 w3 N num_params OLD_FORMULATION   POLY_TYPE 
 
         %pendulum period
 
@@ -18,6 +18,13 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         else 
             num_params = 8; 
         end
+
+        
+        tol = .1;
+        w1 = 1 ; % green initial
+        w2 = 0.6; %red final
+        w3 = 0.01 ;%energy slacks
+        N = 10 ; % number of energy constraints
 
         
         index_converged = [];
