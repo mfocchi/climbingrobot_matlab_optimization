@@ -1,14 +1,15 @@
 function [Fun , Fut] = evaluate_initial_impulse(x, t, l)
     global  m     
-    %eval trajectory
-    a_10 = x(1);
-    a_11 = x(2);
-    a_12 = x(3);
-    a_13 = x(4);
-    a_20 = x(5);
-    a_21 = x(6);
-    a_22 = x(7);
-    a_23 = x(8);
+   %eval trajectory
+    Tf = x(1);
+    a_10 = x(2);
+    a_11 = x(3);
+    a_12 = x(4);
+    a_13 = x(5);
+    a_20 = x(6);
+    a_21 = x(7);
+    a_22 = x(8);
+    a_23 = x(9);
         
   % parametrizzation with sin theta sing phi
     arg1_0 = a_10 ; 

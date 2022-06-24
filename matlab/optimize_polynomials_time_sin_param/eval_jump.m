@@ -40,8 +40,8 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         params0 = [ T_pend, sin(theta0), 0.2, 0,0,  sin(phi0) , 0.2, 0 ,0];
         %params0 = 0.1*ones(1,num_params);
         x0 = [params0, zeros(1,N)] ;
-        lb = [0.0, -2*ones(1,num_params-1), zeros(1,N)];
-        ub = [T_pend*5, 2*ones(1,num_params-1), 10*ones(1,N)];
+        lb = [0.0, -20*ones(1,num_params-1), zeros(1,N)];
+        ub = [T_pend*5, 20*ones(1,num_params-1), 10*ones(1,N)];
 
         options = optimoptions('fmincon','Display','none','Algorithm','sqp');
         %options =
