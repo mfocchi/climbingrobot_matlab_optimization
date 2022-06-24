@@ -1,4 +1,4 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf, T_pend] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu) 
 
         global g   w1 w2 w3 N num_params OLD_FORMULATION   POLY_TYPE 
 

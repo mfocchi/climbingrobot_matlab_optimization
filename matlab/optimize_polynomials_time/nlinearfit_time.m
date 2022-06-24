@@ -3,7 +3,7 @@
 
 %
 clear all ; close all ; clc
-global m l g  w1 w2 w3  N   num_params
+global m l g  w1 w2 w3 w4 N   num_params
 m = 5;
 l = 4;
 g = 9.81;
@@ -19,7 +19,7 @@ Fun_max = 20;
 mu = 0.5;
 tol = .1;
 
-DER_ENERGY_CONSTRAINT = true
+DER_ENERGY_CONSTRAINT = true;
 w1 = 1 ; % green initial
 w2 = 0.6; %red final
 if DER_ENERGY_CONSTRAINT
@@ -27,6 +27,7 @@ if DER_ENERGY_CONSTRAINT
 else
     w3 = 0.0001 ; % energy weight E
 end
+w4 = 0.00005; % energy weight cost Ekin0
 
 N = 10 ; % energy constraints
 

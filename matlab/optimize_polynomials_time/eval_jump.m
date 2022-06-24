@@ -1,6 +1,6 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf, T_pend] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT) 
 
-        global g  w1 w2 w3 N  num_params 
+        global g  w1 w2 w3 w4 N  num_params 
         
         if ~exist('DER_ENERGY_CONSTRAINT','var')
             DER_ENERGY_CONSTRAINT = false;
@@ -14,10 +14,11 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         w1 = 1 ; % green initial
         w2 = 0.6; %red final
         if DER_ENERGY_CONSTRAINT
-            w3 = 0.01 ; % energy weight dE
+            w3 = 0.01 ; % slack energy weight dE
         else
-            w3 = 0.0001 ; % energy weight E
+            w3 = 0.0001 ; % slack energy weight E
         end
+        w4 = 0.00001; % energy weight cost Ekin0
         N = 10 ; % number of energy constraints
 
         
@@ -57,10 +58,10 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         [p, E, path_length , initial_error , final_error ] = eval_solution(x, x(1),dt, l, p0, pf) ;
 
         energy = E;
-        opt_Tf = x(1);
+  
 
         
-        plot_curve(l, p, p0, pf,  E.Etot, false, 'k');
+        %plot_curve(l, p, p0, pf,  E.Etot, false, 'k');
         [Fun , Fut] = evaluate_initial_impulse(x, 0.0, l);
         low_cost = abs(final_cost )<= tol;
         problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
@@ -71,11 +72,11 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         opt_wasted =  nan;
         opt_Fut = nan;
         opt_Fun = nan;
-
+        opt_Tf = nan;
         
         if  problem_solved 
             number_of_converged_solutions = 1;
-            plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'm'); % optimal is magenta
+            plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'r'); % optimal is magenta
             % evaluate constraints on converged solutions
             actuation_constr = Fun <=  Fun_max;
             friction_constr = abs(Fut) <=  mu*Fun_max;
@@ -85,10 +86,11 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
             opt_wasted =  energy.Ekinf;
             opt_Fut = Fut;
             opt_Fun = Fun;
+            opt_Tf = x(1);
             
             if  unilat_constr && friction_constr && unilat_constr
                 number_of_feasible_solutions = 1;
-                          
+                plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'm'); % optimal is magenta          
             end
            
         end

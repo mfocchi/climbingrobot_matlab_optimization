@@ -1,6 +1,6 @@
 function coste = cost(x, l, p0,  pf)
 
-    global    w1 w2 w3 N   num_params
+    global    m w1 w2 w3 w4 N   num_params
 
 
     Tf = x(1);
@@ -48,6 +48,12 @@ function coste = cost(x, l, p0,  pf)
     slack_cost= w3 * sum(x(num_params+1:end));
     wall_cost =  10*x_inside_wall;
 
+    theta0 = a_10;
+    thetad0 = a_11;
+    phid0 = a_21;
+    Ekin0cost= w4 * (m*l^2/2).*(thetad0^2 + sin(theta0)^2 *phid0^2);
+
+    
     coste =  p0_cost  + pf_cost +wall_cost  + slack_cost ;
 
 
