@@ -1,6 +1,7 @@
 function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf, T_pend] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT) 
 
-        global g  w1 w2 w3 w4 N  num_params 
+        global m g  w1 w2 w3 w4 N  num_params 
+        
         
         if ~exist('DER_ENERGY_CONSTRAINT','var')
             DER_ENERGY_CONSTRAINT = false;
@@ -13,12 +14,8 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         tol = .1;
         w1 = 1 ; % green initial
         w2 = 0.6; %red final
-        if DER_ENERGY_CONSTRAINT
-            w3 = 0.01 ; % slack energy weight dE
-        else
-            w3 = 0.0001 ; % slack energy weight E
-        end
-        w4 = 0.00001; % energy weight cost Ekin0
+        w3 = 0.0001 ; % energy weight E
+        w4 = 0.00005; % energy weight cost Ekin0
         N = 10 ; % number of energy constraints
 
         
@@ -39,24 +36,20 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
         pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
 
-        % more meaninguful init
-        params0 = [ T_pend, theta0, 0.5, 0,0,  phi0 , 0.5, 0 ,0];
+         % more meaninguful init
+        params0 = [ T_pend, sin(theta0), 0.2, 0,0,  sin(phi0) , 0.2, 0 ,0];
         %params0 = 0.1*ones(1,num_params);
         x0 = [params0, zeros(1,N)] ;
-        lb = [0.0, -35*ones(1,num_params-1), zeros(1,N)];
-        ub = [T_pend*5, 35*ones(1,num_params-1), 10*ones(1,N)];
+        lb = [0.0, -2*ones(1,num_params-1), zeros(1,N)];
+        ub = [T_pend*5, 2*ones(1,num_params-1), 10*ones(1,N)];
 
         options = optimoptions('fmincon','Display','none','Algorithm','sqp');
         %options =
         %optimoptions('fmincon','Display','none','Algorithm','interior-point',
         %'MaxIterations', 1500); %bigger slacks and cost
-
-
         [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, DER_ENERGY_CONSTRAINT), options);
         slacks = sum(x(num_params+1:end));
-
         [p, E, path_length , initial_error , final_error ] = eval_solution(x, x(1),dt, l, p0, pf) ;
-
         energy = E;
   
 
@@ -74,7 +67,7 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         opt_Fun = nan;
         opt_Tf = nan;
         
-        if  problem_solved  && low_cost
+        if  problem_solved && low_cost
             number_of_converged_solutions = 1;
             plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'r'); % optimal is magenta
             % evaluate constraints on converged solutions
