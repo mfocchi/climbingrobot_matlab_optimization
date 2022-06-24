@@ -25,6 +25,8 @@ w2 = 0.6; %red final
 w3 = 0.01 ;
 N = 10 ; % energy constraints
 
+dt=0.001;
+
 index_converged = [];
 index_feasible = [];
 friction_violation = [];
@@ -34,16 +36,6 @@ cost_violation = [];
 
 for i=1:length(Tf_vec)
     Tf = Tf_vec(i);
-
-    
-        %0.9872    1.0136    1.1720
-% for i=1:1
-%     Tf = 1.;
-%     
-    
-   
-    dt=0.001;
-
 
     OLD_FORMULATION = 1;
     POLY_TYPE = 0; % 0 cubic, 1 quintic
@@ -64,7 +56,7 @@ for i=1:length(Tf_vec)
     pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
     
     % more meaninguful init
-    params0 = [ theta0, 0.5, 0,0,  phi0 , 0.5, 0 ,0];
+    params0 = [ theta0, 0.5, 0, 0,  phi0 , 0.5, 0 ,0];
     %params0 = 0.1*ones(1,num_params);
     x0 = [params0, zeros(1,N)] ;
     lb = [-35*ones(1,num_params), zeros(1,N)];
@@ -223,7 +215,7 @@ index_not_feasible(index_feasible)=[];
 
 if number_of_feasible_solutions >0
     figure
-    opt_Tf = Tf_vec(index_feasible(index_min));
+    opt_Tf = Tf_vec(index_feasible(index_min))
     opt_position = squeeze(p(index_feasible(index_min),:,:));
     opt_E = energy(index_feasible(index_min));
     plot_curve(l, opt_position,p0, pf, opt_E.Etot, true, 'm') ; % optimal is magenta
@@ -243,7 +235,8 @@ if number_of_feasible_solutions >0
     
     
 end
-
+%[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, tol, Fun_max, mu)
+       
  
 
 

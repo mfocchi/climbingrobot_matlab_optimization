@@ -71,6 +71,8 @@ function coste = cost(x, l, p0,  pf,  time)
     x_inside_wall = negative_el(1);
     
 
+    % be careful there are only N values in this vector the path migh be
+    % underestimated!
        deltax = diff(p(1,:));  % diff(X);
       deltay = diff(p(2,:));   % diff(Y);
       deltaz = diff(p(3,:));    % diff(Z);    

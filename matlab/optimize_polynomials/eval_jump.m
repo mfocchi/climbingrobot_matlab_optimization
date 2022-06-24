@@ -1,12 +1,24 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut] = eval_jump(l, thetaf, theta0, dt, tol, Fun_max, mu) 
+function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l, thetaf, theta0, dt, tol, Fun_max, mu) 
 
-        global g  N  num_params 
+        global g  N  num_params OLD_FORMULATION   POLY_TYPE 
 
         %pendulum period
-        T_pend = 2*pi*sqrt(l/g)/2; % half period
+
+        T_pend = 2*pi*sqrt(l/g)/4; % half period
         N_search = 20;
         Tf_vec=linspace(0.5*T_pend, 1.5*T_pend, N_search);
+        %Tf_vec=linspace(0.1, 1, N_search);
         
+        
+        OLD_FORMULATION = 1;
+        POLY_TYPE = 0; % 0 cubic, 1 quintic
+
+        if (POLY_TYPE)
+            num_params = 12;
+        else 
+            num_params = 8; 
+        end
+
         
         index_converged = [];
         index_feasible = [];
@@ -94,7 +106,7 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
         opt_Fut = Fut_vec(index_feasible(index_min));
         opt_Fun = Fun_vec(index_feasible(index_min));
         opt_wasted = wasted_energy(index_feasible(index_min));
-        
+        opt_Tf = Tf_vec(index_feasible(index_min));
               
         %number_of_maxforce_violation = length(actuation_violation)
         %number_of_unilat_violation = length(unilater_violation)

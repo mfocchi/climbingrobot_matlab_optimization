@@ -3,9 +3,12 @@
 
 %
 clear all ; close all ; clc
-global m  g  w1 w2 w3  N  OLD_FORMULATION POLY_TYPE num_params
+global m  g  w1 w2 w3  N  
 m = 5;
 g = 9.81;
+
+%addpath('../optimize_polynomials_time');
+addpath('../optimize_polynomials');
 
 % physical limits
 Fun_max = 30 ;
@@ -18,21 +21,11 @@ w3 = 0.01 ;
 N = 10 ; % energy constraints
 
 dt=0.001;
-OLD_FORMULATION = 1;
-POLY_TYPE = 0; % 0 cubic, 1 quintic
-
-if (POLY_TYPE)
-    num_params = 12;
-else 
-    num_params = 8; 
-end
-
-
 
 l_range = [2:1:10];
 thetaf_range = [0.1:0.1:0.9];
 
-theta0 = 0.03;
+theta0 = 0.05;
 lthetaf_vector = [];
 feasible =[];
 converged = [];
@@ -42,7 +35,7 @@ final_kin_energy = [];
 for k=1:length(l_range)    
     for j=1:length(thetaf_range)        
         
-        [number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut] = eval_jump(l_range(k), thetaf_range(j), theta0, dt, tol, Fun_max, mu);
+        [number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l_range(k), thetaf_range(j), theta0, dt, tol, Fun_max, mu);
               
         lthetaf_vector = [lthetaf_vector [l_range(k) ; thetaf_range(j)]];
         feasible = [feasible number_of_feasible_solutions];    
@@ -51,8 +44,8 @@ for k=1:length(l_range)
         final_kin_energy = [final_kin_energy opt_wasted] ;
      
         
-        fprintf('l =%3.2f    thetaf =%5.2f    feas=%5d    conv=%5d    Ekin0=%5.2f   Ekinf = %5.2f    Fun=%5.2f   Fut=%5.2f \n',...
-                 l_range(k), thetaf_range(j), number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut);
+        fprintf('l =%3.2f    thetaf =%5.2f    feas=%5d    conv=%5d    Ekin0=%5.3f   Ekinf = %5.3f    Fun=%5.2f   Fut=%5.2f  Tf=%5.2f\n',...
+                 l_range(k), thetaf_range(j), number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf);
 
     end
 end
