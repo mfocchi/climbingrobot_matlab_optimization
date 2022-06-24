@@ -61,7 +61,7 @@ function coste = cost(x, l, p0,  pf)
     %Ekin0cost= w4 * (m*l^2/2).*(thetad0^2 + sin(theta0)^2 *phid0^2);
 
     
-    coste =  p0_cost  + pf_cost +wall_cost  + slack_cost ;
+    coste =  p0_cost  + pf_cost   + slack_cost ;
 
 
 end
