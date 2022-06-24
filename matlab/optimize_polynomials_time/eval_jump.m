@@ -2,7 +2,9 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
 
         global g  w1 w2 w3 N  num_params 
         
-        
+        if ~exist('DER_ENERGY_CONSTRAINT','var')
+            DER_ENERGY_CONSTRAINT = false;
+        end
         
         %pendulum period
         T_pend = 2*pi*sqrt(l/g)/4; % half period
