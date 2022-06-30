@@ -1,0 +1,156 @@
+In this section we show how energy considerations can be used to set
+up a motion planning algorithm, which can be seen as a means to find
+reasonable feasible solutions that could be used in their own right or
+as a hint to kick.start the execution of optinmal control agorithms.
+
+Our ideas relies on the simple physical principle known as
+"conservation of energy". Inosfar as the forces applied to the system
+are conservative, the total energy (i.e., the sum of the kinetic and
+of the potential energy) remains constant. In our case, the system is
+acted on by the following forces: the gravity force, the impulsive
+force $\mathbf{F}_u$ and the winding/unwinding force
+$\mathbf{F}_r$. Whilst the gravity force is obviously conservative,
+the same cannot be said in general for $\mathbf{F}_u$ and for $\mathbf{F}_r$.
+However, due to its impulsive nature, $\mathbf{F}_u$ can be accounted
+for as an instantaneous reset of the angular velocities, which can be
+computed as a function of the impulse strength using standard
+mathematical tools~\cite{dim17}. As regards, the winding/unwinding force $\mathbf{F}_r$,
+we can impose a conservative force behaviour by constraining $\mathbf{F}_r$ to be generated
+by an elastic law $F_r = k(l-l_0)$, where $k$ and $l_0$ have to be suitably identified
+in order to solve the motion task of interest.
+
+Under this choice, the total energy of the system is given by:
+\begin{equation}
+\begin{aligned}
+&T = \frac{m l^2}{2} \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 +\dot{l}^2 \right) \\
+&U = -mglc_\theta + \frac{k}{2}(l-l_0)^2 \\
+&E = U + T    .
+\label{eq:energy}
+\end{aligned}
+\end{equation}
+Energy is a function of time $E(t)$, which is constrained to remain constant for the conservative
+nature of the forces applied to the system: $\forall t_1 > 0, t_2 >0 \,\,E(t_1) = E(t_2)$.
+Ecluding the instant $t = 0$ from energy conservation allows us to discharge the effect of the non conservative term $\mathbf{F}_u$,
+whose only effect is to reset the initial velocities and hence the initial kinetic energy.
+
+With these consideration in mind, our motion planning problem can be
+approached by looking for the iso-energetic curve that joins the
+initial point $(x_0, y_0, z_0)$ with the final point $(x_f, y_f,
+z_f)$.  Clearly, by imposing the initial point, we can find an
+infinite set of iso-energetic trajectories parametrised by different
+values of the initial velocities $\dot{\theta}^2(0)$,
+$\dot{\phi}^2(0)$ (which in turn can be found as a function of
+$F_{u,t}$ and $F_{u,n}$) and of the eleastic force parameters $k$ and
+$l_0$).
+Within this set, we can identify the curves that optimise some
+functions of interest (e.g., the time to reach the destination).  
+\lui{Here we should find analytical conditions for the existence of a solution. I think
+it is possible by requiring a constant enery at the two boundaries. We get one equation and one unknowns. The problem is that
+the energy depends linearly on the kinetic terms at the boundaries (6 variables) and on $k$, while it has a non linear term $k l_0$ }.
+
+\subsection{Approximate solution}
+The method outlined above still requires the solution of a differential equation. We can look for approximate methods.
+The idea is to look for approximate polynomial functions for the solutions of the differential equation. The coefficients of these functions can be found by requiring that the
+energy evaluated at different points remains "as constant as possible".
+We found it particularly convenient to use cubic polynoimials to approximate the functions determining the evolution of the trajectories:
+\begin{equation}
+\begin{aligned}
+\cos \theta(t) &\approx p_a(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0\\
+\cos \phi(t) &\approx p_b(t) = b_3 t^3 + b_2 t^2 + b_1 t + b_0\\
+l(t) &\approx p_c(t) = c_3 t^3 + c_2 t^2 + c_1 t + c_0 .
+\end{aligned}
+\label{eq:cubic}
+\end{equation}
+
+\subsubsection{Constraints}
+
+By using this approximation we can set up the following constraints.
+
+\paragraph{Initial and final position}
+When time equals $0$, we have:
+
+\begin{equation}
+\begin{aligned}
+&l(0) = \sqrt{x_0^2 + y_0^2 + z_0^2} &\rightarrow& c_0 = \sqrt{x_0^2 + y_0^2 + z_0^2}\\
+&-l(0) \cos \theta(0) = z_0 &\rightarrow& a_0 = -\frac{z_0}{c_0}\\
+&l(0) \sin \theta(0) \cos \phi(0) = x_0 &\rightarrow& b_0 = \frac{x_0}{c_0 \sqrt{1-a_0^2}}
+\end{aligned}
+\end{equation}
+
+At final time $t_f$, which is an unknown, we will have:
+\begin{equation}
+\begin{aligned}
+&l(t_f) =  \sqrt{x_f^2 + y_f^2 + z_f^2} &\rightarrow& p_c(t_f) = \sqrt{x_f^2 + y_f^2 + z_f^2}\\
+&-l(t_f) \cos \theta(f) = z_f &\rightarrow & p_c(t_f) p_a(t_f) = z_f .
+\end{aligned}
+\end{equation}
+
+\paragraph{Energy invariance}
+Plugging Equation~\ref{eq:cubic} into Equation~\ref{eq:energy}, we obtain energy as a function of time
+parametrised by the coeeficients of the cubics $E_{a,\,b,\,c}(t)$.
+Splitting the segment $[0, t_f]$ into $N$ intervals of equal length, we can impose the relation  
+\begin{equation}
+\begin{aligned}
+ E_{a,\,b,\,c}(0) &= E_{a,\,b,\,c}(\frac{t_f}{N})\\
+ E_{a,\,b,\,c}(\frac{t_f}{N}) &= E_{a,\,b,\,c}(2\frac{t_f}{N})\\
+ \ldots\\
+ E_{a,\,b,\,c}((N-1)\frac{t_f}{N}) &= E_{a,\,b,\,c}(t_f)\\
+\end{aligned}
+\label{eq:constraintEnergy}
+\end{equation}
+
+
+\paragraph{Trigonometric consistency}
+Clearly, we will have to impose the condition:
+\begin{align}
+\forall t :  \left\| p_a(t) \right\| \leq 1\\
+\forall t :  \left\|p_b(t) \right\| \leq 1 .
+\end{align}
+
+Observing that a generic cubic equation (say $p_a(t)$)  can have zero or two maximum minimum poinnts, it is sufficient to impose these constraints at
+\begin{equation}
+t = \begin{cases}
+\left\{0, t_f\right\} & \text{if } a_2^2 - 3 a_1 a_3 < 0\\
+\left\{0, t_f, \frac{-a_2 \pm \sqrt{a_2^2 - 3 a_1 a_3}}{3 a_3} \right\} & \text{if } a_2^2 - 3 a_1 a_3 < 0\\
+\end{cases}
+\end{equation}
+
+In essence, we can solve the problem under each of the two said assumptions on the sign of $a_2^2 - 3 a_1 a_3$ and retain the best solution.
+
+\subsection{Cost function}
+The cost function can be chosen in different ways:
+\begin{enumerate}
+\item $\min t_f$ if we aim to minimise time,
+\item $\min T(t_f)$ if we aim to minime the residual kinetic energy which will hve to be dissipated when the robot lands,
+\item $\min \lambda_1 t_f + \lambda_2 T(t_f)$ where $\lambda_1, \lambda_2$ are weighting factors that allow us to seek different tradeoff solutions .
+\end{enumerate}
+
+In addition, it is possible to "soften" the constraint on energy introducing a slack variable $\Delta$. In this case the constraint ~\eqref{eq:constraintEnergy} becomes
+\begin{equation}
+\begin{aligned}
+ \left \| E_{a,\,b,\,c}(0) - E_{a,\,b,\,c}(\frac{t_f}{N}) \right \| \leq \Delta\\
+ \left \| E_{a,\,b,\,c}(\frac{t_f}{N}) - E_{a,\,b,\,c}(2\frac{t_f}{N}) \right \| \leq \Delta \\
+ \ldots\\
+  \left \| E_{a,\,b,\,c}((N-1)\frac{t_f}{N}) - E_{a,\,b,\,c}(t_f) \right \| \leq \Delta .
+\end{aligned}
+\label{eq:constraintEnergy1}
+\end{equation}
+
+The salck variable can become part of the cost function. For instance, we can set the cost function as $\min \lambda_1 t_f + \lambda_2 T(t_f) + \lambda_3 \Delta$.
+By increasing the value of $\lambda_3$, we increase the importance of respecting Energy Invariance.
+
+
+\subsection{Reconstructing impulsive forces}
+Once the optimisation problem outliend above has been solved, we find a reference trajectory (given by the cubic expressions $p_a(t)$, $p_b(t)$, $p_c(t)$).
+In particular, $\dot{p}_a(0)$ and $\dot{p}_b(0)$ give us the vlaue of the initial velocities $\dot{\theta}(0^+)$ and $\dot{\phi}(0^+)$ respectively.
+Using the technique shown in ~\cite{dim17}, it is possible to find the relation between the velocity "jumps" $\dot{\theta}(0^-) \rightarrow \dot{\theta}(0^+)$ and
+$\dot{\phi}(0^-) \rightarrow \dot{\phi}(0^+)$.
+In particular, we have:
+\begin{equation}
+\begin{aligned}
+  \dot{\theta}(0^+) = \dot{\theta}(0^-) + \frac{1}{m l(0)} F_{u,n}\\
+  \dot{\phi}(0^+) = \dot{\phi}(0^-) + \frac{1}{m l(0) \sin \theta(0)} F_{u,t} .
+  \end{aligned}
+\end{equation}
+Such equations can be used to impose additional constraint on force, e.g., the friction cone, right into the
+optimisation problem.
