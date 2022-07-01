@@ -4,7 +4,7 @@ reasonable feasible solutions that could be used in their own right or
 as a hint to kick.start the execution of optinmal control agorithms.
 
 Our ideas relies on the simple physical principle known as
-"conservation of energy". Inosfar as the forces applied to the system
+"conservation of energy". As far as the forces applied to the system
 are conservative, the total energy (i.e., the sum of the kinetic and
 of the potential energy) remains constant. In our case, the system is
 acted on by the following forces: the gravity force, the impulsive
@@ -22,7 +22,7 @@ in order to solve the motion task of interest.
 Under this choice, the total energy of the system is given by:
 \begin{equation}
 \begin{aligned}
-&T = \frac{m l^2}{2} \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 +\dot{l}^2 \right) \\
+&T = \frac{m }{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
 &U = -mglc_\theta + \frac{k}{2}(l-l_0)^2 \\
 &E = U + T    .
 \label{eq:energy}
@@ -30,7 +30,7 @@ Under this choice, the total energy of the system is given by:
 \end{equation}
 Energy is a function of time $E(t)$, which is constrained to remain constant for the conservative
 nature of the forces applied to the system: $\forall t_1 > 0, t_2 >0 \,\,E(t_1) = E(t_2)$.
-Ecluding the instant $t = 0$ from energy conservation allows us to discharge the effect of the non conservative term $\mathbf{F}_u$,
+Encluding the instant $t = 0$ from energy conservation allows us to discharge the effect of the non conservative term $\mathbf{F}_u$,
 whose only effect is to reset the initial velocities and hence the initial kinetic energy.
 
 With these consideration in mind, our motion planning problem can be
@@ -40,12 +40,12 @@ z_f)$.  Clearly, by imposing the initial point, we can find an
 infinite set of iso-energetic trajectories parametrised by different
 values of the initial velocities $\dot{\theta}^2(0)$,
 $\dot{\phi}^2(0)$ (which in turn can be found as a function of
-$F_{u,t}$ and $F_{u,n}$) and of the eleastic force parameters $k$ and
+$F_{u,t}$ and $F_{u,n}$) and of the elastic force parameters $k$ and
 $l_0$).
 Within this set, we can identify the curves that optimise some
 functions of interest (e.g., the time to reach the destination).  
 \lui{Here we should find analytical conditions for the existence of a solution. I think
-it is possible by requiring a constant enery at the two boundaries. We get one equation and one unknowns. The problem is that
+it is possible by requiring a constant energy at the two boundaries. We get one equation and one unknowns. The problem is that
 the energy depends linearly on the kinetic terms at the boundaries (6 variables) and on $k$, while it has a non linear term $k l_0$ }.
 
 \subsection{Approximate solution}
@@ -121,11 +121,13 @@ In essence, we can solve the problem under each of the two said assumptions on t
 The cost function can be chosen in different ways:
 \begin{enumerate}
 \item $\min t_f$ if we aim to minimise time,
-\item $\min T(t_f)$ if we aim to minime the residual kinetic energy which will hve to be dissipated when the robot lands,
+\item $\min T(t_f)$ if we aim to minime the residual kinetic energy which will have to be dissipated when the robot lands,
 \item $\min \lambda_1 t_f + \lambda_2 T(t_f)$ where $\lambda_1, \lambda_2$ are weighting factors that allow us to seek different tradeoff solutions .
 \end{enumerate}
 
-In addition, it is possible to "soften" the constraint on energy introducing a slack variable $\Delta$. In this case the constraint ~\eqref{eq:constraintEnergy} becomes
+
+In addition, it is possible to "soften" the constraint on energy introducing a slack variable $\Delta$.  In this case the constraint  ~\eqref{eq:constraintEnergy} becomes
+
 \begin{equation}
 \begin{aligned}
  \left \| E_{a,\,b,\,c}(0) - E_{a,\,b,\,c}(\frac{t_f}{N}) \right \| \leq \Delta\\
@@ -141,7 +143,7 @@ By increasing the value of $\lambda_3$, we increase the importance of respecting
 
 
 \subsection{Reconstructing impulsive forces}
-Once the optimisation problem outliend above has been solved, we find a reference trajectory (given by the cubic expressions $p_a(t)$, $p_b(t)$, $p_c(t)$).
+Once the optimisation problem outlined above has been solved, we find a reference trajectory (given by the cubic expressions $p_a(t)$, $p_b(t)$, $p_c(t)$).
 In particular, $\dot{p}_a(0)$ and $\dot{p}_b(0)$ give us the vlaue of the initial velocities $\dot{\theta}(0^+)$ and $\dot{\phi}(0^+)$ respectively.
 Using the technique shown in ~\cite{dim17}, it is possible to find the relation between the velocity "jumps" $\dot{\theta}(0^-) \rightarrow \dot{\theta}(0^+)$ and
 $\dot{\phi}(0^-) \rightarrow \dot{\phi}(0^+)$.
