@@ -138,7 +138,7 @@ Next, the velocity of the mass is :
 	\begin{align*}
 		T &=\frac{ m }{2} v^2 \\
 		&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) \\
-		&=  \frac{m l^2}{2} \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 +\dot{l}^2 \right) \\
+		&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
 	\end{align*}
 And the potential energy $V$ :
 		\begin{align*}
@@ -147,7 +147,7 @@ And the potential energy $V$ :
 	\end{align*}
  The Lagrangian function is given by:
 	\begin{equation}
-		L = T - V = \frac{m}{2}\dot{l}^2+\frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + mgl c_\theta
+		L = T - V = \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2 + mgl c_\theta
 	\end{equation}
 	The generalized coordinates are in this case given by $q_1 = \theta, q_2 = \phi,$ and $q_3 = l$ .
 	If we apply the d'Alembert principle, the Lagrangian Equation can be written as:
@@ -158,12 +158,12 @@ And the potential energy $V$ :
 	Observe that  $\mathbf{F}_r$ oriented along the rope and $\mathbf{F}_u$ does not have any component along the rope (otherwise
 	it will forms bends):
 	\begin{align*}
-		\mathbf{F}_r = F_r \begin{bmatrix}
+		\mathbf{F}_r  &= F_r \begin{bmatrix}
 			c_\phi s_\theta\\
 			s_\phi s_\theta\\
 			-c_\theta
-		\end{bmatrix}^T = F_r \mathbf{f}_r\\
-		\mathbf{F}_u = F_{u,t}\begin{bmatrix}
+		\end{bmatrix}^T = F_r \mathbf{f}_r \\	
+		\mathbf{F}_u &= F_{u,t}\begin{bmatrix}
 			-s_\phi\\
 			c_\phi\\
 			0
@@ -171,7 +171,7 @@ And the potential energy $V$ :
 			c_\phi c_\theta \\
 			s_\phi c_\theta\\
 			s_\theta
-		\end{bmatrix}^T = F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n},   
+		\end{bmatrix}^T &= F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n}    \\ 	 
 	\end{align*}  
 	while
 	\begin{align*}
