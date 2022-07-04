@@ -16,10 +16,10 @@ mu = 0.5;
 tol = .1;
 
 DER_ENERGY_CONSTRAINT = true;
-w1 = 1 ; % green initial
-w2 = 0.6; %red final
+w1 = 1.0 ; % green initial
+w2 = 1.0; %red final
 w3 = 0.001 ; % energy weight E
-w4 = 0.00005; % energy weight cost Ekin0
+%w4 = 0.00005; % energy weight cost Ekin0
 
 N = 10 ; % energy constraints
 
@@ -53,11 +53,11 @@ pf = [0; 5; -15];
 
 
 % more meaninguful init
-params0 = [ T_pend, sin(theta0), 0.2, 0,0,  sin(phi0) , 0.2, 0 ,0, l0, 0 ,0, 0, 10, 2];
+params0 = [ T_pend, sin(theta0), 0.2, 0,0,  sin(phi0) , 0.2, 0 ,0, l0, 0 ,0, 0, 5, l0];
 %params0 = 0.1*ones(1,num_params);
 x0 = [params0, zeros(1,N)] ;
-lb = [0.0, -10*ones(1,12),     1,   1,  zeros(1,N)];
-ub = [T_pend*5, 10*ones(1,12), 1000,4, 10*ones(1,N)];
+lb = [0.0, -10*ones(1,12),      0,   l0,  zeros(1,N)];
+ub = [T_pend*5, 10*ones(1,12), 100, l0, 10*ones(1,N)];
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
 %options =
