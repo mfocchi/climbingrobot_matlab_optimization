@@ -53,19 +53,20 @@ for i=1:N-1
     if (i>=2)
         ineq = [ineq (abs(E(i) - E(i-1)) - sigma(i))];
     end
-
+    
 end
 
+eps= 0.001; % the eps is needed to have strict inequalities and avoid the arg1 arg2 to go to -1 and nullify the denominator of thetad2 phid
 % %impose in range -1,1 only extremes of the range
-ineq = [ineq (s_theta(1)-1)];
-ineq = [ineq (-s_theta(1)-1)];
-ineq = [ineq (s_phi(1)-1)];
-ineq = [ineq (-s_phi(1)-1)];
+ineq = [ineq (s_theta(1)-1)+ eps];
+ineq = [ineq (-s_theta(1)-1)+ eps];
+ineq = [ineq (s_phi(1)-1)+ eps];
+ineq = [ineq (-s_phi(1)-1)+ eps];
 
-ineq = [ineq (s_theta(end)-1)];
-ineq = [ineq (-s_theta(end)-1)];
-ineq = [ineq (s_phi(end)-1)];
-ineq = [ineq (-s_phi(end)-1)];
+ineq = [ineq (s_theta(end)-1)+ eps];
+ineq = [ineq (-s_theta(end)-1)+ eps];
+ineq = [ineq (s_phi(end)-1) + eps];
+ineq = [ineq (-s_phi(end)-1) + eps];
 
 %discriminant of derivative
 delta1 = 4*a_12^2 -12*a_13*a_11;
@@ -73,61 +74,65 @@ delta2 = 4*a_22^2 -12*a_23*a_21;
 
 % discriminant position I have two more point to ensure they are in the
 % range otherwise sin is regular
-% 
-% int_solution_exist1 =  (delta1>0 ) && (abs(a_23)>0.000001);
-% %find  the time instants where this happens
-% t1a =  ( -2*a_12 +sqrt(delta1)) /(6*a_13);
-% t1b =  ( -2*a_12 -sqrt(delta1)) /(6*a_13);
-% if int_solution_exist1 && (t1a>0)         
-%     arg_t1a = a_10 + a_11*t1a + a_12*t1a^2 +  a_13*t1a^3;
-%     ineq = [ineq (arg_t1a-1)];
-%     ineq = [ineq (-arg_t1a-1)];
-% else
-%      ineq = [ineq 0];
-%      ineq = [ineq 0];
-% end
-% 
-% if int_solution_exist1 && (t1b>0)         
-%     arg_t1b = a_10 + a_11*t1b + a_12*t1b.^2 +  a_13*t1b.^3;
-%     ineq = [ineq (arg_t1b-1)];
-%     ineq = [ineq (-arg_t1b-1)];
-% else
-%     ineq = [ineq 0];
-%     ineq = [ineq 0];
-% end   
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% int_solution_exist2 = (delta2 >0) && (abs(a_23)>0.000001);
-% %find  the time instants where this happens
-% t2a =  ( -2*a_22 +sqrt(delta2)) /(6*a_23);
-% t2b =  ( -2*a_22 -sqrt(delta2)) /(6*a_23);
-% if int_solution_exist2 && (t2a>0)         
-%     arg_t2a = a_20 + a_21*t2a + a_22*t2a.^2 +  a_23*t2a.^3;
-%     ineq = [ineq (arg_t2a-1)];
-%     ineq = [ineq (-arg_t2a-1)];
-% else
-%      ineq = [ineq 0];
-%      ineq = [ineq 0];
-% end   
-% 
-% if int_solution_exist2 && (t2b>0)
-%     arg_t2b =  a_20 + a_21*t2b + a_22*t2b.^2 +  a_23*t2b.^3;
-%     ineq = [ineq (arg_t2b-1)];
-%     ineq = [ineq (-arg_t2b-1)];
-% else
-%     ineq = [ineq 0];
-%     ineq = [ineq 0];
-% end   
+
+int_solution_exist1 =  (delta1>0 ) && (abs(a_23)>0.000001);
+%find  the time instants where this happens
+t1a =  ( -2*a_12 +sqrt(delta1)) /(6*a_13);
+t1b =  ( -2*a_12 -sqrt(delta1)) /(6*a_13);
+if int_solution_exist1 && (t1a>0)         
+    arg_t1a = a_10 + a_11*t1a + a_12*t1a^2 +  a_13*t1a^3;
+    ineq = [ineq (arg_t1a-1)];
+    ineq = [ineq (-arg_t1a-1)];
+else
+     ineq = [ineq 0];
+     ineq = [ineq 0];
+end
+
+if int_solution_exist1 && (t1b>0)         
+    arg_t1b = a_10 + a_11*t1b + a_12*t1b.^2 +  a_13*t1b.^3;
+    ineq = [ineq (arg_t1b-1)];
+    ineq = [ineq (-arg_t1b-1)];
+else
+    ineq = [ineq 0];
+    ineq = [ineq 0];
+end   
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+int_solution_exist2 = (delta2 >0) && (abs(a_23)>0.000001);
+%find  the time instants where this happens
+t2a =  ( -2*a_22 +sqrt(delta2)) /(6*a_23);
+t2b =  ( -2*a_22 -sqrt(delta2)) /(6*a_23);
+if int_solution_exist2 && (t2a>0)         
+    arg_t2a = a_20 + a_21*t2a + a_22*t2a.^2 +  a_23*t2a.^3;
+    ineq = [ineq (arg_t2a-1)];
+    ineq = [ineq (-arg_t2a-1)];
+else
+     ineq = [ineq 0];
+     ineq = [ineq 0];
+end   
+
+if int_solution_exist2 && (t2b>0)
+    arg_t2b =  a_20 + a_21*t2b + a_22*t2b.^2 +  a_23*t2b.^3;
+    ineq = [ineq (arg_t2b-1)];
+    ineq = [ineq (-arg_t2b-1)];
+else
+    ineq = [ineq 0];
+    ineq = [ineq 0];
+end   
 
 [Fun , Fut] = evaluate_initial_impulse(x);
 ineq = [ineq  (Fun -Fun_max)]   ;
 ineq = [ineq  (abs(Fut) - mu*Fun_max)];
 ineq = [ineq  (-Fun)]  ;
 
-% ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
-% ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
+ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
+ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
+ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
+
 eq = [];
 
-
+if any(isinf(ineq))
+    ineq
+end
 
 end

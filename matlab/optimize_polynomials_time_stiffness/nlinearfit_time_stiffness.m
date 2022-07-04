@@ -11,10 +11,10 @@ Fun_max =20;
 mu = 0.5;
 
 DER_ENERGY_CONSTRAINT = true;
-w1 = 1 ; % green initial cost (not used)
-w2 = 2; %red final cost (not used)
-w3 = 0.001 ; % energy weight E
-w4 = 1.0; % slacks initial / final 
+w1 = 1 ; % green initial cost
+w2 = 1; %red final cost
+w3 = 0.0005 ; % energy weight E
+w4 = 1.0; % slacks initial / final (not used)
 
 N = 10 ; % energy constraints
 
@@ -29,27 +29,23 @@ l_uncompressed = l_0;
 % l_uncompressed = l_0*cos(theta0);
 thetaf= 0.4 ;
 phif = 1.5468 ;
-lf = 8;
 
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
-%pf = [lf*sin(thetaf)*cos(phif); lf*sin(thetaf)*sin(phif); -lf*cos(thetaf)];
-
-
-pf = [0.001; 5; -10];
+pf = [0.001; 5; -13];
 
 
 
 % more meaninguful init
-params0 = [ T_pend, sin(theta0), 0.03, 0, 0,  ...
-                    sin(phi0) , 0.03, 0 ,0, ...
+params0 = [ T_pend, theta0, 0.1, 0, 0,  ...
+                    phi0 , 0.1, 0 ,0, ...
                     l_0, 0 ,0, 0, ...
                     6 ];
 %params0 = 0.1*ones(1,num_params);
 x0 = [params0, zeros(1,N), 0,0,0] ;
-lb = [0.0,     -30*ones(1,12),   1,  zeros(1,N),    0 , 0, 0];
-ub = [T_pend*5, 30*ones(1,12), 20,  10*ones(1,N), 100 , 100, 100 ]; %%IMPORTANT THE BOUNDS SGOULD BE ADJUSTED FOR BIG LENGTHS!
+lb = [0.01,     -10*ones(1,8), -30*ones(1,4), 0.1,  zeros(1,N),    0 , 0, 0];
+ub = [T_pend*5, 10*ones(1,8),  30*ones(1,4), 20,  10*ones(1,N), 10 , 10, 10 ];
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
 %options =
