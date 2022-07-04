@@ -40,15 +40,14 @@ ld =  a_31 + 2*a_32*time  + 3*a_33*time.^2;
 ldd =   2*a_32 + 6*a_33*time;
 
 
-
-
+ineq = [];
     
 for i=1:N-1     
     
     E(i) = m*l(i)^2/2*(thetad2(i)+s_theta(i)^2*phid2(i) ) + m*ld(i)^2/2 - m*g*l(i)*c_theta(i) + K*(l(i)-l_uncompressed).^2;
     sigma(i) = x(num_params+i);        
     if (i>=2)
-        ineq(i) = abs(E(i) - E(i-1)) - sigma(i);
+        ineq = [ineq (abs(E(i) - E(i-1)) - sigma(i))];
     end
 
 end
@@ -64,57 +63,57 @@ ineq = [ineq (-s_theta(end)-1)];
 ineq = [ineq (s_phi(end)-1)];
 ineq = [ineq (-s_phi(end)-1)];
 
-% %discriminant of derivative
-% delta1 = 4*a_12^2 -12*a_13*a_11;
-% delta2 = 4*a_22^2 -12*a_23*a_21;
-% 
-% % discriminant position I have two more point to ensure they are in the
-% % range otherwise sin is regular
-% 
-% int_solution_exist1 =  (delta1>0 ) && (abs(a_23)>0.000001);
-% %find  the time instants where this happens
-% t1a =  ( -4*a_12^2 +sqrt(delta1)) /(6*a_13);
-% t1b =  ( -4*a_12^2 -sqrt(delta1)) /(6*a_13);
-% if int_solution_exist1 && (t1a>0)         
-%     arg_t1a = a_10 + a_11*t1a + a_12*t1a^2 +  a_13*t1a^3
-%     ineq = [ineq (arg_t1a-1)];
-%     ineq = [ineq (-arg_t1a-1)];
-% else
-%      ineq = [ineq 0];
-%      ineq = [ineq 0];
-% end
-% 
-% if int_solution_exist1 && (t1b>0)         
-%     arg_t1b = a_10 + a_11*t1b + a_12*t1b.^2 +  a_13*t1b.^3
-%     ineq = [ineq (arg_t1b-1)];
-%     ineq = [ineq (-arg_t1b-1)];
-% else
-%     ineq = [ineq 0];
-%     ineq = [ineq 0];
-% end   
-% 
-% 
-% int_solution_exist2 = (delta2 >0) && (abs(a_23)>0.000001);
-% %find  the time instants where this happens
-% t2a =  ( -4*a_22^2 +sqrt(delta2)) /(6*a_23);
-% t2b =  ( -4*a_22^2 -sqrt(delta2)) /(6*a_23);
-% if int_solution_exist2 && (t2a>0)         
-%     arg_t2a = a_10 + a_11*t2a + a_12*t2a.^2 +  a_13*t2a.^3;
-%     ineq = [ineq (arg_t2a-1)];
-%     ineq = [ineq (-arg_t2a-1)];
-% else
-%      ineq = [ineq 0];
-%      ineq = [ineq 0];
-% end   
-% 
-% if int_solution_exist2 && (t2b>0)
-%     arg_t2b = a_10 + a_11*t2b + a_12*t2b.^2 +  a_13*t2b.^3;
-%     ineq = [ineq (arg_t2b-1)];
-%     ineq = [ineq (-arg_t2b-1)];
-% else
-%     ineq = [ineq 0];
-%     ineq = [ineq 0];
-% end   
+%discriminant of derivative
+delta1 = 4*a_12^2 -12*a_13*a_11;
+delta2 = 4*a_22^2 -12*a_23*a_21;
+
+% discriminant position I have two more point to ensure they are in the
+% range otherwise sin is regular
+
+int_solution_exist1 =  (delta1>0 ) && (abs(a_23)>0.000001);
+%find  the time instants where this happens
+t1a =  ( -2*a_12 +sqrt(delta1)) /(6*a_13);
+t1b =  ( -2*a_12 -sqrt(delta1)) /(6*a_13);
+if int_solution_exist1 && (t1a>0)         
+    arg_t1a = a_10 + a_11*t1a + a_12*t1a^2 +  a_13*t1a^3;
+    ineq = [ineq (arg_t1a-1)];
+    ineq = [ineq (-arg_t1a-1)];
+else
+     ineq = [ineq 0];
+     ineq = [ineq 0];
+end
+
+if int_solution_exist1 && (t1b>0)         
+    arg_t1b = a_10 + a_11*t1b + a_12*t1b.^2 +  a_13*t1b.^3;
+    ineq = [ineq (arg_t1b-1)];
+    ineq = [ineq (-arg_t1b-1)];
+else
+    ineq = [ineq 0];
+    ineq = [ineq 0];
+end   
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+int_solution_exist2 = (delta2 >0) && (abs(a_23)>0.000001);
+%find  the time instants where this happens
+t2a =  ( -2*a_22 +sqrt(delta2)) /(6*a_23);
+t2b =  ( -2*a_22 -sqrt(delta2)) /(6*a_23);
+if int_solution_exist2 && (t2a>0)         
+    arg_t2a = a_20 + a_21*t2a + a_22*t2a.^2 +  a_23*t2a.^3;
+    ineq = [ineq (arg_t2a-1)];
+    ineq = [ineq (-arg_t2a-1)];
+else
+     ineq = [ineq 0];
+     ineq = [ineq 0];
+end   
+
+if int_solution_exist2 && (t2b>0)
+    arg_t2b =  a_20 + a_21*t2b + a_22*t2b.^2 +  a_23*t2b.^3;
+    ineq = [ineq (arg_t2b-1)];
+    ineq = [ineq (-arg_t2b-1)];
+else
+    ineq = [ineq 0];
+    ineq = [ineq 0];
+end   
 
 [Fun , Fut] = evaluate_initial_impulse(x);
 ineq = [ineq  (Fun -Fun_max)]   ;
