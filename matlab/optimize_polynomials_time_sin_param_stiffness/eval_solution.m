@@ -32,8 +32,8 @@ arg2 = a_20 + a_21*t + a_22*t.^2 + a_23*t.^3;
 arg2d =  a_21 + 2*a_22*t  + 3*a_23*t.^2;
 s_phi = arg2;
 c_phi = sqrt(1 -  s_phi.^2);
-thetad = 1./sqrt(1-arg1).*arg1d;
-phid = 1./sqrt(1-arg2).*arg2d;
+thetad = 1./sqrt(1-arg1.^2).*arg1d;
+phid = 1./sqrt(1-arg2.^2).*arg2d;
 
 l = a_30 + a_31*t + a_32*t.^2 + a_33*t.^3;
 ld =  a_31 + 2*a_32*t  + 3*a_33*t.^2; 

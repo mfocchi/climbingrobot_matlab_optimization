@@ -32,7 +32,7 @@ function [Fun , Fut] = evaluate_initial_impulse(x)
     s_theta0 = arg1_0;
     
     theta0 = asin(s_theta0);
-    phid0 = 1/sqrt(1-arg2_0)*arg2d_0;
+    phid0 = 1/sqrt(1-arg2_0^2)*arg2d_0;
         
     thetad0 = a_11;
     phid0 = a_21;    
