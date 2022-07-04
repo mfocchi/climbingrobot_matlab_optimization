@@ -77,7 +77,7 @@
 	\section{Model}
 	The spherical pendulum model is shown in figure \ref{fig:sp} . where $\theta$ is the polar angle [rad] and $\phi$ is the Azimuth angle [rad] . \\ 
 	\begin{figure}
-		\includegraphics[width=\columnwidth]{figs/spherical_pendulum.png}
+		\includegraphics[width=\columnwidth]{figs/spherical_pendulum}
 		\caption{Spherical pendulum}
 		\label{fig:sp}
 	\end{figure}
@@ -341,7 +341,7 @@ And the potential energy $V$ :
 The control input should be a smooth and differentiable function of time. To fulfill these requirements we propose two solutions: 1) a curve that has the shape of a Gaussian 2) built with Bezier curves, 3) built with piece-wise quintic polynomials. We assume the jump duration is $T_f=2s$ and the mass of the robot $m=5 kg$ and the duration of the thrusting phase as $T_{th} = 0.2 s$. For plotting purposes the max force is set to $ 3mg $ but it will be a free variable in the optimization. In the case of Gaussian we get (see Fig. \ref{fig:gaussian}):
 
 \begin{figure}
-	\includegraphics[width=\columnwidth]{figs/gaussian.png}
+	\includegraphics[width=\columnwidth]{figs/gaussian}
 	\caption{Gaussian, plot limited to $T_{th}+0.1$}
 	\label{fig:gaussian}
 \end{figure}
@@ -375,7 +375,7 @@ B_r(n, t) = \frac{ \sum_{i=0}^n \binom{n}{k} (1-t)^{n-i} t^i w_i r_i  } {  \sum_
 where se set the relative influence $r$ of the control points as $r= [1,0.5, 0.5, 1]$.
 The resulting curve is plot in Fig. \ref{fig:bezier}):
 \begin{figure}
-	\includegraphics[width=\columnwidth]{figs/bezier.png}
+	\includegraphics[width=\columnwidth]{figs/bezier}
 	\caption{Bezier, plot limited to $T_{th}+0.1$}
 	\label{fig:bezier}
 \end{figure}
@@ -416,7 +416,7 @@ a_5
 the differentiability at $t = T_{th}$is ensured   because we set the second derivative to be zero. A plot of the curve is in Fig. \ref{fig:polynomial}:
 
 \begin{figure}
-	\includegraphics[width=\columnwidth]{figs/polynomial.png}
+	\includegraphics[width=\columnwidth]{figs/polynomial}
 	\caption{Polynomial curve, plot limited to $T_{th}+0.1$}
 	\label{fig:polynomial}
 \end{figure}
