@@ -1,6 +1,6 @@
-function [p, E,  path_length, initial_error, final_error] = eval_solution(x, Tf,  dt, p0, pf)
+function [p, E,  path_length, initial_error, final_error] = eval_solution(x,  dt, p0, pf)
 
-global m g
+global m g l_uncompressed
 %eval trajectory
 
 Tf = x(1);
@@ -18,10 +18,6 @@ a_31 = x(11);
 a_32 = x(12);
 a_33 = x(13);
 K = x(14);
-l_uncompressed = x(15);
-
-
-
 
 % parametrizzation with sin theta sing phi
 arg1 = a_10 + a_11*t + a_12*t.^2 +  a_13*t.^3;
@@ -61,7 +57,7 @@ E = struct;
 
 
 % Calculating and ploting the total Energy from the new fit: theta, thetad and phid
-E.Etot = m*l.^2/2.*(thetad.^2 + s_theta.^2 .*phid.^2) + m*ld.^2/2 - m*g*l.*c_theta + K*(l-l_uncompressed).^2;
+E.Etot = m*l.^2/2.*(thetad.^2 + s_theta.^2 .*phid.^2) + m*ld.^2/2 - m*g*l.*c_theta + K*(l-l_uncompressed).^2/2;
 
 % kinetic energy at the beginning
 E.Ekin0x = m/2*pd(1,1)'*pd(1,1);
@@ -72,13 +68,13 @@ E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
 %compare for sanity check should be equal to  E.Ekin0
 %E.Ekin0angles=  (m*l^2/2).*(thetad(1)^2 + sin(theta(1))^2 *phid(1)^2);
 
-E.U0 = K*(l(1)-l_uncompressed).^2 -m*g*l*c_theta(1);
+E.U0 =  -m*g*l*c_theta(1) + K*(l(1)-l_uncompressed).^2/2;
 
 E.Ekinfx = m/2*pd(1,end)'*pd(1,end);
 E.Ekinfy = m/2*pd(2,end)'*pd(2,end);
 E.Ekinfz = m/2*pd(3,end)'*pd(3,end);
 E.Ekinf = m/2*pd(:,end)'*pd(:,end);
-E.Uf = -m*g*l*c_theta(end) +K*(l(end)-l_uncompressed).^2;
+E.Uf = -m*g*l*c_theta(end) +K*(l(end)-l_uncompressed).^2/2;
 
 initial_error = norm(p(:,1) -p0);
 final_error = norm(p(:,end) -pf);

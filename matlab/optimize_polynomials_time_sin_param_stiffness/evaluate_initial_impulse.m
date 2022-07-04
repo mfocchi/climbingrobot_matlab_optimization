@@ -16,11 +16,6 @@ function [Fun , Fut] = evaluate_initial_impulse(x)
     a_32 = x(12);
     a_33 = x(13);
     K = x(14);
-    l_uncompressed = x(15);
-    
-    
-    
-    
     
     
         
