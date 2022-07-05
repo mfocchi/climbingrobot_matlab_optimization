@@ -279,9 +279,10 @@ And the potential energy $V$ :
 	Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$, where x is the state and u is the control input. 
 	For the spherical pendulum system, the state is defined as : 
 	
-	\begin{equation*}
+	\begin{equation}
+          \label{eq:State}
 		x^T= [\theta \quad \dot{\theta} \quad  \phi \quad \dot{\phi}\quad   l   \quad  \dot{l}] 
-	\end{equation*}
+	\end{equation}
 	
 	%%
 	\begin{equation}
@@ -478,7 +479,7 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 	\label{fig:muti_jumps}
 \end{figure}
 
-\input{ContLyap}
+\input{include/ContLyap}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
