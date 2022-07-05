@@ -73,3 +73,5 @@ Lie_f5_g_r = simplify(jacobian(Lie_f4_g_r, q)*f - jacobian(f, q)*Lie_f4_g_r);
 Delta5 = [Delta4, Lie_f5_g_r]
 
 rank(Delta5)
+
+
