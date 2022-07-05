@@ -1,6 +1,6 @@
 function coste = cost(x, p0,  pf)
 
-    global w1 w2 w3 w4 N   num_params
+    global m w1 w2 w3 w4 w5 N   num_params
 
 
     Tf = x(1);
@@ -24,9 +24,10 @@ function coste = cost(x, p0,  pf)
     theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
     phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
     l = a_30 + a_31*time + a_32*time.^2 + a_33*time.^3;
+    thetad =  a_11 + 2*a_12*time + 3*a_13*time.^2;
+    phid =  a_21 + 2*a_22*time  + 3*a_23*time.^2;
+    ld =  a_31 + 2*a_32*time  + 3*a_33*time.^2; 
     
-    
-     
     p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)];
     p_0 = p(:,1);
     p_f = p(:,end);
@@ -48,15 +49,12 @@ function coste = cost(x, p0,  pf)
     lf_cost = w2*abs(norm(pf) - l_f);
     slack_cost= w3 * sum(x(num_params+1:num_params+N));
     sigma_final_initial = w4 *sum (x(num_params+N+1:end));
-    wall_cost =  1000*x_inside_wall;
-
-%     theta0 = a_10;
-%     thetad0 = a_11;
-%     phid0 = a_21;
-    %Ekin0cost= w4 * (m*l^2/2).*(thetad0^2 + sin(theta0)^2 *phid0^2);
+   
+    Ekin0cost= w5 * (    (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 )  + (m*ld(1)^2/2)   );
     
-
-       coste =  p0_cost  + pf_cost  + lf_cost + slack_cost ;
+    fprintf('cost comparison p0: %5.2f  pf: %5.2f  lf: %5.2f  slack_cost: %5.2f  Ekin0_cost: %5.2f \n' , norm(p_0 - p0), norm(p_f - pf),  abs(norm(pf) - l_f), sum(x(num_params+1:num_params+N)), (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 ));
+  
+    coste =  Ekin0cost + slack_cost +sigma_final_initial ;
 %      coste =    sigma_final_initial  + slack_cost ;
    
 

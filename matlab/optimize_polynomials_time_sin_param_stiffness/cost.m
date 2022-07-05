@@ -1,6 +1,6 @@
 function coste = cost(x, p0,  pf)
 
-    global w1 w2 w3 w4 N   num_params
+    global m w1 w2 w3 w4 w5 N   num_params
 
 
     Tf = x(1);
@@ -21,17 +21,26 @@ function coste = cost(x, p0,  pf)
    
 
     % parametrizzation with sin(theta) sin(phi)
-    s_theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
+  
+    arg1 = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
+    arg1d = a_11 + 2*a_12*time + 3*a_13*time.^2;
+    s_theta = arg1;
     c_theta = sqrt(1 -  s_theta.^2);
-    s_phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
+    arg2 = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
+    arg2d =  a_21 + 2*a_22*time  + 3*a_23*time.^2;
+    s_phi = arg2;
     c_phi = sqrt(1 -  s_phi.^2);
+    thetad2 = 1./(1-arg1.^2).*arg1d.^2;
+    phid2 = 1./(1-arg2.^2).*arg2d.^2;
     l = a_30 + a_31*time + a_32*time.^2 + a_33*time.^3;
-    
+    ld =  a_31 + 2*a_32*time  + 3*a_33*time.^2; 
     
      
     p = [l.*s_theta.*c_phi; l.*s_theta.*s_phi; -l.*c_theta];
     p_0 = p(:,1);
     p_f = p(:,end);
+    l_f = l(end);
+    
     
     %count row wise how many elemnts are lower than zero
     negative_el = sum(p<0, 2);
@@ -46,18 +55,21 @@ function coste = cost(x, p0,  pf)
 
     p0_cost = w1 * norm(p_0 - p0);
     pf_cost = w2 * norm(p_f -pf);
+
+    
     slack_cost= w3 * sum(x(num_params+1:num_params+N));
     sigma_final_initial = w4 *sum (x(num_params+N+1:end));
-    wall_cost =  1000*x_inside_wall;
-
-%     theta0 = a_10;
-%     thetad0 = a_11;
-%     phid0 = a_21;
-    %Ekin0cost= w4 * (m*l^2/2).*(thetad0^2 + sin(theta0)^2 *phid0^2);
+   
+    Ekin0 = (    (m*l(1)^2/2).*( thetad2(1) + s_theta(1)^2 *phid2(1))  + (m*ld(1)^2/2)   );
     
+    Ekin0cost= w5 *Ekin0;
+    
+    fprintf('cost comparison p0: %5.2f  pf: %5.2f  lf: %5.2f  slack_energy_cost: %5.2f  Ekin0_cost: %5.2f \n' , norm(p_0 - p0), norm(p_f - pf),  abs(norm(pf) - l_f), sum(x(num_params+1:num_params+N)), Ekin0);
+  
+    coste =  Ekin0cost + slack_cost +sigma_final_initial ;
+        
 
 %       coste =  p0_cost  + pf_cost   + slack_cost ;
-      coste =    sigma_final_initial  + slack_cost ;
-   
+      
 
 end

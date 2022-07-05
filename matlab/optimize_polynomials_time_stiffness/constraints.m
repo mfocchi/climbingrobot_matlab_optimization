@@ -1,4 +1,4 @@
-function [ineq, eq] = constraints(x,   p0,  pf, DER_ENERGY_CONSTRAINT)
+function [ineq, eq, energy_constraints,wall_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf, DER_ENERGY_CONSTRAINT)
 
 global  g N   m num_params Fun_max mu l_uncompressed
 
@@ -42,33 +42,53 @@ l_f = l(end);
 
 ineq = [];
     
-for i=1:N-1     
+for i=1:N    % these are 8 constraints 
     
     E(i) = m*l(i)^2/2*(thetad(i)^2+sin(theta(i))^2*phid(i)^2 ) + m*ld(i)^2/2 - m*g*l(i)*cos(theta(i)) + K*(l(i)-l_uncompressed).^2/2;
     sigma(i) = x(num_params+i);        
     if (i>=2)
         ineq = [ineq (abs(E(i) - E(i-1)) - sigma(i))];
     end
-    
-    ineq = [ineq -p(1,i)];
+
 end
 
-eps= 0.001; % the eps is needed to have strict inequalities and avoid the arg1 arg2 to go to -1 and nullify the denominator of thetad2 phid
+energy_constraints = N-1;
+
+% constraint to do not enter the wall
+for i=1:N 
+
+    ineq = [ineq -p(1,i) ];
+end 
+
+wall_constraints = N; 
 
 
 [Fun , Fut] = evaluate_initial_impulse(x);
+
+
 ineq = [ineq  (Fun -Fun_max)]   ;
 ineq = [ineq  (abs(Fut) - mu*Fun_max)];
 ineq = [ineq  (-Fun)]  ;
 
-% ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
-% ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
-% ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
+force_constraints  = 3;
+
+% initial final point
+ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
+ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
+ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
+
+initial_final_constraints = 3;
 
 eq = [];
+
+% not ok this is too restrictive
+% eq= [eq norm(p_0 - p0)  ];
+% eq= [eq norm(p_f - pf) ];
+% eq= [eq abs(norm(pf) - l_f)  ];
 
 if any(isinf(ineq))
     ineq
 end
+
 
 end
