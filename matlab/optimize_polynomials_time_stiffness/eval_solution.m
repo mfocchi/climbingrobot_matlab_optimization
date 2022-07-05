@@ -20,28 +20,26 @@ a_33 = x(13);
 K = x(14);
 
 % parametrizzation with sin theta sing phi
-arg1 = a_10 + a_11*t + a_12*t.^2 +  a_13*t.^3;
-arg1d = a_11 + 2*a_12*t + 3*a_13*t.^2;
-s_theta = arg1;
-c_theta = sqrt(1 -  s_theta.^2);
-arg2 = a_20 + a_21*t + a_22*t.^2 + a_23*t.^3;
-arg2d =  a_21 + 2*a_22*t  + 3*a_23*t.^2;
-s_phi = arg2;
-c_phi = sqrt(1 -  s_phi.^2);
-thetad = 1./sqrt(1-arg1.^2).*arg1d;
-phid = 1./sqrt(1-arg2.^2).*arg2d;
+theta = a_10 + a_11*t + a_12*t.^2 +  a_13*t.^3;
+thetad =  a_11 + 2*a_12*t + 3*a_13*t.^2;
+thetadd = 2*a_12 + 6*a_13*t;
+
+phi = a_20 + a_21*t + a_22*t.^2 + a_23*t.^3;
+phid =  a_21 + 2*a_22*t  + 3*a_23*t.^2;
+phidd =   2*a_22 + 6*a_23*t;
 
 l = a_30 + a_31*t + a_32*t.^2 + a_33*t.^3;
 ld =  a_31 + 2*a_32*t  + 3*a_33*t.^2; 
 
-p = [l.*s_theta.*c_phi; l.*s_theta.*s_phi; -l.*c_theta];
+p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
+
 %disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) );
 
 
 % velocity
-pd = [c_theta.*c_phi.*thetad.*l - s_phi.*s_theta.*phid.*l;
-    c_theta.*s_phi.*thetad .*l + c_phi.*s_theta.*phid.*l;
-    s_theta.*thetad.*l];
+pd = [cos(theta).*cos(phi).*thetad.*l - sin(phi).*sin(theta).*phid.*l;
+    cos(theta).*sin(phi).*thetad .*l + cos(phi).*sin(theta).*phid.*l;
+    sin(theta).*thetad.*l];
 
 deltax = diff(p(1,:));  % diff(X);
 deltay = diff(p(2,:));   % diff(Y);
@@ -57,7 +55,9 @@ E = struct;
 
 
 % Calculating and ploting the total Energy from the new fit: theta, thetad and phid
-E.Etot = m*l.^2/2.*(thetad.^2 + s_theta.^2 .*phid.^2) + m*ld.^2/2 - m*g*l.*c_theta + K*(l-l_uncompressed).^2/2;
+E.Etot =  ((m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) +m.*ld.^2/2 - m*g*l.*cos(theta) + K*(l-l_uncompressed).^2/2;
+
+
 
 % kinetic energy at the beginning
 E.Ekin0x = m/2*pd(1,1)'*pd(1,1);
@@ -68,13 +68,13 @@ E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
 %compare for sanity check should be equal to  E.Ekin0
 %E.Ekin0angles=  (m*l^2/2).*(thetad(1)^2 + sin(theta(1))^2 *phid(1)^2);
 
-E.U0 =  -m*g*l*c_theta(1) + K*(l(1)-l_uncompressed).^2/2;
+E.U0 =  -m*g*l*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
 
 E.Ekinfx = m/2*pd(1,end)'*pd(1,end);
 E.Ekinfy = m/2*pd(2,end)'*pd(2,end);
 E.Ekinfz = m/2*pd(3,end)'*pd(3,end);
 E.Ekinf = m/2*pd(:,end)'*pd(:,end);
-E.Uf = -m*g*l*c_theta(end) +K*(l(end)-l_uncompressed).^2/2;
+E.Uf = -m*g*l*cos(theta(end)) +K*(l(end)-l_uncompressed).^2/2;
 
 initial_error = norm(p(:,1) -p0);
 final_error = norm(p(:,end) -pf);

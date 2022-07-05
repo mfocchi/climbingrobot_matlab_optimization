@@ -21,17 +21,16 @@ function coste = cost(x, p0,  pf)
    
 
     % parametrizzation with sin(theta) sin(phi)
-    s_theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
-    c_theta = sqrt(1 -  s_theta.^2);
-    s_phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
-    c_phi = sqrt(1 -  s_phi.^2);
+    theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
+    phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
     l = a_30 + a_31*time + a_32*time.^2 + a_33*time.^3;
     
     
      
-    p = [l.*s_theta.*c_phi; l.*s_theta.*s_phi; -l.*c_theta];
+    p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)];
     p_0 = p(:,1);
     p_f = p(:,end);
+    l_f = l(end);
     
     %count row wise how many elemnts are lower than zero
     negative_el = sum(p<0, 2);
@@ -46,6 +45,7 @@ function coste = cost(x, p0,  pf)
 
     p0_cost = w1 * norm(p_0 - p0);
     pf_cost = w2 * norm(p_f -pf);
+    lf_cost = w2*abs(norm(pf) - l_f);
     slack_cost= w3 * sum(x(num_params+1:num_params+N));
     sigma_final_initial = w4 *sum (x(num_params+N+1:end));
     wall_cost =  1000*x_inside_wall;
@@ -56,8 +56,8 @@ function coste = cost(x, p0,  pf)
     %Ekin0cost= w4 * (m*l^2/2).*(thetad0^2 + sin(theta0)^2 *phid0^2);
     
 
-%       coste =  p0_cost  + pf_cost   + slack_cost ;
-      coste =    sigma_final_initial  + slack_cost ;
+       coste =  p0_cost  + pf_cost  + lf_cost + slack_cost ;
+%      coste =    sigma_final_initial  + slack_cost ;
    
 
 end

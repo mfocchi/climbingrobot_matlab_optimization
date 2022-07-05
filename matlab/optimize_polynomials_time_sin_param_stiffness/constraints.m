@@ -1,6 +1,6 @@
-function [ineq, eq] = constraints(x,  DER_ENERGY_CONSTRAINT)
+function [ineq, eq] = constraints(x,   p0,  pf, DER_ENERGY_CONSTRAINT)
 
-global  g N   m num_params Fun_max mu
+global  g N   m num_params Fun_max mu l_uncompressed
 
 % ineq are <= 0
 Tf = x(1);
@@ -18,7 +18,6 @@ a_31 = x(11);
 a_32 = x(12);
 a_33 = x(13);
 K = x(14);
-l_uncompressed = x(15);
 
 
 % parametrizzation with sin theta sing phi
@@ -39,29 +38,35 @@ l = a_30 + a_31*time + a_32*time.^2 + a_33*time.^3;
 ld =  a_31 + 2*a_32*time  + 3*a_33*time.^2;
 ldd =   2*a_32 + 6*a_33*time;
 
+p = [l.*s_theta.*c_phi; l.*s_theta.*s_phi; -l.*c_theta];
+p_0 = p(:,1);
+p_f = p(:,end);
+l_f = l(end);
+
 
 ineq = [];
     
 for i=1:N-1     
     
-    E(i) = m*l(i)^2/2*(thetad2(i)+s_theta(i)^2*phid2(i) ) + m*ld(i)^2/2 - m*g*l(i)*c_theta(i) + K*(l(i)-l_uncompressed).^2;
+    E(i) = m*l(i)^2/2*(thetad2(i)+s_theta(i)^2*phid2(i) ) + m*ld(i)^2/2 - m*g*l(i)*c_theta(i) + K*(l(i)-l_uncompressed).^2/2;
     sigma(i) = x(num_params+i);        
     if (i>=2)
         ineq = [ineq (abs(E(i) - E(i-1)) - sigma(i))];
     end
-
+    
 end
 
+eps= 0.001; % the eps is needed to have strict inequalities and avoid the arg1 arg2 to go to -1 and nullify the denominator of thetad2 phid
 % %impose in range -1,1 only extremes of the range
-ineq = [ineq (s_theta(1)-1)];
-ineq = [ineq (-s_theta(1)-1)];
-ineq = [ineq (s_phi(1)-1)];
-ineq = [ineq (-s_phi(1)-1)];
+ineq = [ineq (s_theta(1)-1)+ eps];
+ineq = [ineq (-s_theta(1)-1)+ eps];
+ineq = [ineq (s_phi(1)-1)+ eps];
+ineq = [ineq (-s_phi(1)-1)+ eps];
 
-ineq = [ineq (s_theta(end)-1)];
-ineq = [ineq (-s_theta(end)-1)];
-ineq = [ineq (s_phi(end)-1)];
-ineq = [ineq (-s_phi(end)-1)];
+ineq = [ineq (s_theta(end)-1)+ eps];
+ineq = [ineq (-s_theta(end)-1)+ eps];
+ineq = [ineq (s_phi(end)-1) + eps];
+ineq = [ineq (-s_phi(end)-1) + eps];
 
 %discriminant of derivative
 delta1 = 4*a_12^2 -12*a_13*a_11;
@@ -120,6 +125,14 @@ ineq = [ineq  (Fun -Fun_max)]   ;
 ineq = [ineq  (abs(Fut) - mu*Fun_max)];
 ineq = [ineq  (-Fun)]  ;
 
+ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
+ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
+ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
 
 eq = [];
+
+if any(isinf(ineq))
+    ineq
+end
+
 end

@@ -20,17 +20,10 @@ function [Fun , Fut] = evaluate_initial_impulse(x)
     
         
   % parametrizzation with sin theta sing phi
-    arg1_0 = a_10 ; 
-    arg1d_0 = a_11 ;
-    arg2_0 = a_20; 
-    arg2d_0 =  a_21 ;
-    s_theta0 = arg1_0;
     
-    theta0 = asin(s_theta0);
-    phid0 = 1/sqrt(1-arg2_0^2)*arg2d_0;
-        
+    theta0 = a_10;
     thetad0 = a_11;
-    phid0 = a_21;    
+    phid0 = a_21;
     l0 = a_30;
     
     %evaluate inpulse ( the integral of the gaussian is 1) 
