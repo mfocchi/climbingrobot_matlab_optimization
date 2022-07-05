@@ -284,14 +284,19 @@ And the potential energy $V$ :
 	\end{equation*}
 	
 	%%
-	\begin{EQ}[rcl]
-		\dot{\theta} &=& \omega,\\
-		\dot{\phi}   &=&\psi,\\
-		\dot{l}      &=&r,\\
-		\dot{\omega} &=& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
-		\dot{\psi} &=& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
-		\dot{r} &=& l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta +\frac{F_{r}}{m}.
-	\end{EQ}
+	\begin{equation}
+          \begin{aligned}
+		\dot{\theta} =& \omega,\\
+		\dot{\phi}   =&\psi,\\
+		\dot{l}      =&r,\\
+		\dot{\omega} =& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
+		\dot{\psi} =& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
+		\dot{r} =&
+                l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta
+                +\frac{F_{r}}{m}.
+              \end{aligned}
+                \label{eq:CanonicalForm}
+	\end{equation}
 	%%%
 	The boundary conditions for a movement starting and ending at rest ($v=0$) are
 	%%%
