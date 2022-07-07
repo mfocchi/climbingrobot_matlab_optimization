@@ -1,0 +1,148 @@
+\section{Reachability and Lyapunov}
+
+Let us consider the system canonical form~\eqref{eq:CanonicalForm},
+and let us consider that the inputs $F_{u,n}$, $F_{u,t}$ and $F_{r}$
+are all fully available to control the system. By computing the
+involutive distribution $\Delta_n$, if it is nonsingular the system is
+locally reachable~\cite{isidori1985nonlinear}. As such, consider the
+system state $x$ in~\eqref{eq:State}, we can rewrite the
+dynamics~\eqref{eq:CanonicalForm} as
+\begin{equation}
+  \label{eq:VecFields}
+  \dot x = f(x) + g_{u,n}(x) F_{u,n} + g_{u,t}(x) F_{u,t} + g_r(x)
+  F_{r} ,
+\end{equation}
+and, hence the initial distribution whose columns are
+\[
+  \Delta_0 = \{g_{u,n}, g_{u,t}, g_r\} .
+\]
+It is then possible to derive
+\[
+  \Delta_1 = \{\Delta_0, [f,g_{u,n}], [f,g_{u,t}], [f,g_r]\} ,
+\]
+where $[\cdot,\cdot]$ are the usual Lie bracket
+operators~\cite{isidori1985nonlinear}, i.e.
+\[
+  [f,g] = \frac{\partial g}{\partial x}f - \frac{\partial f}{\partial
+    x}g .
+\]
+It turns then out that $\mbox{span}\Delta_1 = 6$, i.e., the
+distribution is nonsingular and, hence, the system is locally
+reachable. As a consequence, we can design a very simple
+Lyapunov-based controller using
+backstepping~\cite{krstic1995nonlinear}. Let us define the following
+Lyapunov function candidate on the subsystem of interest
+\[
+  V_1(\theta, \phi, l) = \frac{1}{2} [(\theta - \overline\theta)^2 +
+  (\phi - \overline\phi)^2 + (l - \overline l)^2] ,
+\]
+where the quantities $\overline \cdot$ are the desired, final values
+and whose time derivative is simply given by
+\[
+  \dot V_1(\theta, \phi, l) = (\theta - \overline\theta) \omega +
+  (\phi - \overline\phi) \psi + (l - \overline l) r . 
+\]
+Hence, assuming the proportional control laws (with
+$k_\theta, k_\phi, k_l > 0$)
+\begin{equation}
+  \label{eq:LyapBack}
+  \begin{aligned}
+    \omega & = - k_\theta  (\theta - \overline\theta) , \\
+    \psi & = - k_\phi  (\phi - \overline\phi) , \\
+    r & = - k_l  (l - \overline l) , 
+  \end{aligned}
+\end{equation}
+we have immediately that
+$[\overline\theta, \overline\phi, \overline l]^T$ is an asymptotically
+stable equilibrium point for the subsystem. When the entire state $x$
+is considered, it is possible to consider the quantities
+in~\eqref{eq:LyapBack} as desired quantities and define the following
+Lyapunov function candidate
+\[
+  V(x) = V_1(\theta, \phi, l) + \frac{1}{2} [(\omega -
+  \overline\omega)^2 + (\psi + \overline\psi)^2 + (r + \overline r)^2] .
+\]
+The time derivative becomes
+\[
+  \begin{aligned}
+    \dot V(x) = & \dot V_1(\theta, \phi, l) + (\omega -
+    \overline\omega)
+    (f_4(x) + \frac{F_{u,n}}{ml} - \dot{\overline\omega}) + \\
+    & + (\psi - \overline\psi) (f_5(x) + \frac{F_{u,t}}{ml s_\theta} -
+    \dot{\overline\psi}) + \\
+    & + (r - \overline r) (f_6(x) + \frac{F_{r}}{m} - \dot{\overline
+      r}) ,
+  \end{aligned}
+\]
+where $f_i(x)$ is the $i$-th vector of the vector field $f(x)$
+in~\eqref{eq:VecFields} and where we have from~\eqref{eq:LyapBack}
+\[
+  \begin{aligned}
+    \dot{\overline\omega} & = - k_\theta  \omega , \\
+    \dot{\overline\psi} & = - k_\phi \psi , \\
+    \dot{\overline r} & = - k_l r . 
+  \end{aligned}
+\]
+It is therefore immediate to notice that the Lyapunov candidate time
+derivative $\dot V(x)$ is negative definite with the following control
+laws (with $k_\omega, k_\psi, k_r > 0$)
+\[
+  \begin{aligned}
+    F_{u,n} & = -ml (f_4(x) + k_\omega (\omega - \overline\omega) + k_\theta  \omega) , \\
+    F_{u,t} & = -ml s_\theta (f_5(x) + k_\psi (\psi - \overline\psi) + k_\psi  \psi) , \\
+    F_{r} & = -m (f_6(x) + k_r (r - \overline r) + k_l r) , \\
+  \end{aligned}
+\]
+thus proving the asymptotic stability of the equilibrium
+$[\overline\theta, \overline\phi, \overline l, 0, 0, 0]^T$ for the
+system~\eqref{eq:CanonicalForm}.
+
+In a more realistic case, we can assume that $F_{u,n} = F_{u,t} = 0$
+right after the application of the impulsive inputs, thus we will
+study how a stabilising Lyapunov-based control law can be designed
+using only the input $F_r$. To this end, we first prove that the
+system remains locally reachable. To this end, we define the reduced
+version of~\eqref{eq:VecFields} as
+\[
+  \dot x = f(x) + g_r(x) F_{r} ,
+\]
+where the effect of the impulsive forces is supposed to be stored in
+the state $x$ right after their applications. Hence, the initial
+distribution is
+\[
+  \Delta_0 = \{g_r\} .
+\]
+It is then possible to derive in a recursive way
+\[
+  \Delta_{n+1} = \{\Delta_n, [f,\Delta_n]\} .
+\]
+It turns then out that $\mbox{span}\Delta_5 = 6$, i.e., the
+distribution is nonsingular and, hence, the system is locally
+reachable.
+
+In this case, we assume that a reference trajectory for the angles
+$\theta$ and $\phi$ is given, for example given by the first two
+of~\eqref{eq:LyapBack}, for which both the first and second derivative
+can be computed. We can then consider the following Lyapunov candidate
+\[
+  V(x) = \frac{1}{2} [(\theta - \overline\theta)^2 + (\phi -
+  \overline\phi)^2 + (l - \overline l)^2 + (\omega -
+  \overline\omega)^2 + (\psi + \overline\psi)^2 + r^2] ,
+\]
+whose time derivative is given by
+\[
+  \dot V(x) = (\theta - \overline\theta) \omega + (\phi -
+  \overline\phi) \psi + (l - \overline l) r + h_1(\omega) + h_2(\psi)
+  + r (f_6(x) + \frac{F_{r}}{m}),
+\]
+where
+\[
+  \begin{aligned}
+    h_1(\omega) = & (\omega - \overline\omega) (f_4(x) -
+    \dot{\overline\omega}) , \\
+    h_2(\psi) = & (\psi - \overline\psi) (f_5(x) -
+    \dot{\overline\psi}) . \\    
+  \end{aligned}
+\]
+We can then build a Lyapunov control law that locally controls the
+system dynamics.

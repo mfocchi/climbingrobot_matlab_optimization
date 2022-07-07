@@ -279,19 +279,25 @@ And the potential energy $V$ :
 	Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$, where x is the state and u is the control input. 
 	For the spherical pendulum system, the state is defined as : 
 	
-	\begin{equation*}
+	\begin{equation}
+          \label{eq:State}
 		x^T= [\theta \quad \dot{\theta} \quad  \phi \quad \dot{\phi}\quad   l   \quad  \dot{l}] 
-	\end{equation*}
+	\end{equation}
 	
 	%%
-	\begin{EQ}[rcl]
-		\dot{\theta} &=& \omega,\\
-		\dot{\phi}   &=&\psi,\\
-		\dot{l}      &=&r,\\
-		\dot{\omega} &=& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
-		\dot{\psi} &=& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
-		\dot{r} &=& l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta +\frac{F_{r}}{m}.
-	\end{EQ}
+	\begin{equation}
+          \begin{aligned}
+		\dot{\theta} =& \omega,\\
+		\dot{\phi}   =&\psi,\\
+		\dot{l}      =&r,\\
+		\dot{\omega} =& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
+		\dot{\psi} =& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
+		\dot{r} =&
+                l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta
+                +\frac{F_{r}}{m}.
+              \end{aligned}
+                \label{eq:CanonicalForm}
+	\end{equation}
 	%%%
 	The boundary conditions for a movement starting and ending at rest ($v=0$) are
 	%%%
@@ -473,7 +479,7 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 	\label{fig:muti_jumps}
 \end{figure}
 
-
+\input{include/ContLyap}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
