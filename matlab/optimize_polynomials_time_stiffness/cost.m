@@ -50,11 +50,12 @@ function coste = cost(x, p0,  pf)
     slack_cost= w3 * sum(x(num_params+1:num_params+N));
     sigma_final_initial = w4 *sum (x(num_params+N+1:end));
    
-    Ekin0cost= w5 * (    (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 )  + (m*ld(1)^2/2)   );
-    
-    fprintf('cost comparison p0: %5.2f  pf: %5.2f  lf: %5.2f  slack_cost: %5.2f  Ekin0_cost: %5.2f \n' , norm(p_0 - p0), norm(p_f - pf),  abs(norm(pf) - l_f), sum(x(num_params+1:num_params+N)), (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 ));
+    %Ekin0cost= w5 * (    (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 )  + (m*ld(1)^2/2)   );
+    Ekinfcost= w5 * (    (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
+   
+    %fprintf('cost comparison p0: %5.2f  pf: %5.2f  lf: %5.2f  slack_cost: %5.2f  Ekin0_cost: %5.2f \n' , norm(p_0 - p0), norm(p_f - pf),  abs(norm(pf) - l_f), sum(x(num_params+1:num_params+N)), (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 ));
   
-    coste =  Ekin0cost + slack_cost +sigma_final_initial ;
+    coste =  Tf  + Ekinfcost + slack_cost + sigma_final_initial ;
 %      coste =    sigma_final_initial  + slack_cost ;
    
 
