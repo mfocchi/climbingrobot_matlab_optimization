@@ -79,8 +79,9 @@ retraction_force_constraints = 2*N;
 
 
 ineq = [ineq  (Fun -Fun_max)]   ;
-ineq = [ineq  (abs(Fut) - mu*Fun_max)];
 ineq = [ineq  (-Fun)]  ;
+ineq = [ineq  (abs(Fut) -mu*Fun)];
+
 
 force_constraints  = 3;
 
