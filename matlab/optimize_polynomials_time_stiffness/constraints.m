@@ -1,6 +1,6 @@
-function [ineq, eq, energy_constraints,wall_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf, DER_ENERGY_CONSTRAINT)
+function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf)
 
-global  g N   m num_params Fun_max mu l_uncompressed
+global  g N   m num_params Fun_max Fr_max mu l_uncompressed
 
 % ineq are <= 0
 Tf = x(1);
@@ -54,13 +54,25 @@ end
 
 energy_constraints = N-1;
 
-% constraint to do not enter the wall
+% constraint to do not enter the wall, p_x >=0
 for i=1:N 
 
     ineq = [ineq -p(1,i) ];
 end 
+wall_constraints = N;
 
-wall_constraints = N; 
+% constraints on retraction force   -Fr_max < Fr = -K*(l-luncompr) < 0 
+for i=1:N 
+    Fr(i) = -K*(l(i) - l_uncompressed);
+    ineq = [ineq  Fr(i) ]; % Fr <0
+    
+end 
+for i=1:N
+    ineq = [ineq -Fr_max - Fr(i)];    % -Fr_max -Fr <0
+end
+retraction_force_constraints = 2*N;
+
+ 
 
 
 [Fun , Fut] = evaluate_initial_impulse(x);
@@ -72,12 +84,16 @@ ineq = [ineq  (-Fun)]  ;
 
 force_constraints  = 3;
 
+
 % initial final point
 ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
 ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
 ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
 
 initial_final_constraints = 3;
+
+
+
 
 eq = [];
 

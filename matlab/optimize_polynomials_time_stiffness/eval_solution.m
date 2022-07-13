@@ -1,4 +1,4 @@
-function [p, E,  path_length, initial_error, final_error] = eval_solution(x,  dt, p0, pf)
+function [p, theta, phi, l, E,  path_length, initial_error, final_error] = eval_solution(x,  dt, p0, pf)
 
 global m g l_uncompressed
 %eval trajectory

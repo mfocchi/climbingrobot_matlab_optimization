@@ -1,16 +1,16 @@
 %
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 N   num_params Fun_max mu l_uncompressed 
+global m  g w1 w2 w3 w4 w5 N   num_params Fun_max  Fr_max mu l_uncompressed 
 
 m = 5;
 g = 9.81;
 
 
 % physical limits
-Fun_max =20;
-mu = 0.5;
+Fun_max =15;
+Fr_max =80; % Fr in negative
+mu = 0.8;
 
-DER_ENERGY_CONSTRAINT = true;
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % energy weight E
@@ -23,20 +23,28 @@ dt=0.001;
 num_params = 1+12+1;
 
 
-theta0 = 0.05; %theta0 = 0.523
+theta0 = 0.05; 
 phi0 = 0 ;
 l_0 = 3;
+
+
 l_uncompressed = l_0;
-% l_uncompressed = l_0*cos(theta0);
-thetaf= 0.4 ;
 phif = 1.5468 ;
 
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+
+
+%custom
 pf = [0.001; 5; -8];
 
 
+% compute final points for Marco
+lf= sqrt(pf(1)^2+ pf(2)^2+pf(3)^2);
+phif = atan2(pf(2), pf(1));
+thetaf = acos(-pf(3) /lf);
+thetaf = atan2(sqrt(pf(1)^2+ pf(2)^2), -pf(3));
 
 % more meaninguful init
 params0 = [ T_pend, theta0, 0.01, 0, 0,  ...
@@ -48,7 +56,7 @@ x0 = [params0, zeros(1,N), 0,0,0] ;
 lb = [0.01,     -10*ones(1,8), -30*ones(1,4), 0.1,  zeros(1,N),    0 , 0, 0];
 ub = [T_pend*2, 10*ones(1,8),  30*ones(1,4), 20,  100*ones(1,N), 100 , 100, 100 ];
 
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
                         'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
 
 % You misunderstand the documentation: the 'sqp' and 'interior-point' algorithms satisfy BOUNDS at all iterations, not nonlinear constraints.
@@ -61,7 +69,10 @@ options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does
 %optimset fmincon  or 
 % optimoptions('fmincon','Algorithm', 'sqp') or
 %https://it.mathworks.com/help/optim/ug/output-function.html
-[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, DER_ENERGY_CONSTRAINT), options);
+
+tic
+[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf), options);
+toc
 
 slacks_energy = x(num_params+1:num_params+N);
 slacks_energy_cost = sum(slacks_energy);
@@ -69,12 +80,12 @@ slacks_initial_final = x(num_params+N+1:end);
 slacks_initial_final_cost = sum(slacks_initial_final);
 
 % evaluate constraint violation 
-[c ceq, energy_constraints,wall_constraints,  force_constraints, initial_final_constraints] = constraints(x, p0,  pf, DER_ENERGY_CONSTRAINT);
+[c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x, p0,  pf);
 
 %output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
 %output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
 
-[p, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+[p, thet, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
 opt_Tf = x(1)
@@ -86,22 +97,20 @@ problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
 
 
 number_of_converged_solutions = nan;
-opt_kin_energy = nan;
+initial_kin_energy = nan;
 if  problem_solved 
-    number_of_converged_solutions = 1;    
-   
-    opt_kin_energy = energy.Ekin0;% 
-    opt_wasted =  energy.Ekinf;
+    number_of_converged_solutions = 1;       
+    initial_kin_energy = energy.Ekin0;% 
+    final_kin_energy =  energy.Ekinf;
     opt_Fut = Fut;
     opt_Fun = Fun;
     plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
 
 end
 
-
     
 number_of_converged_solutions
-opt_kin_energy
+initial_kin_energy
 Fun
 Fut 
 initial_error
@@ -115,9 +124,12 @@ disp('2- wall constraints')
 wall_constraints_idx = energy_constraints;
 c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)
 
+disp('3- retraction force constraints')
+retraction_force_constraints_idx = wall_constraints_idx+wall_constraints;
+c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+retraction_force_constraints)
 
 disp('4 -force constraints')
-force_constraints_idx = wall_constraints_idx+wall_constraints;
+force_constraints_idx = retraction_force_constraints_idx+retraction_force_constraints;
 c(force_constraints_idx+1: force_constraints_idx+force_constraints)
 
 disp('5 - initial final  constraints')
@@ -128,4 +140,8 @@ slacks_energy
 slacks_initial_final 
 
 %[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT)
-        
+
+figure
+plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
+plot(0*ones(size(l)),'r');
+plot(-Fr_max*ones(size(l)),'r');
