@@ -1,92 +1,69 @@
-function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_energy, opt_wasted, opt_Fun, opt_Fut, opt_Tf, T_pend] = eval_jump(l, thetaf, theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT) 
+function [number_of_converged_solutions, initial_kin_energy, final_kin_energy, opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(pf, Fun_max, Fr_max, mu) 
 
-        global m g  w1 w2 w3 w4 N  num_params 
-        
-        
-        if ~exist('DER_ENERGY_CONSTRAINT','var')
-            DER_ENERGY_CONSTRAINT = false;
-        end
-        
-        %pendulum period
-        T_pend = 2*pi*sqrt(l/g)/4; % half period
-       
-        
-        tol = .1;
-        w1 = 1 ; % green initial
-        w2 = 0.6; %red final
-        w3 = 0.0001 ; % energy weight E
-        w4 = 0.00005; % energy weight cost Ekin0
-        N = 10 ; % number of energy constraints
+        global m  g w1 w2 w3 w4 w5 N   num_params l_uncompressed 
 
-        
-        index_converged = [];
-        index_feasible = [];
+        m = 5;
+        g = 9.81;
 
-        friction_violation = [];
-        actuation_violation = [];
-        unilater_violation = [];
-        cost_violation = [];
-       
-        
-        num_params = 8+1;
-       
+        w1 = 1 ; % green initial cost (not used)
+        w2 = 1; %red final cost (not used)
+        w3 = 1 ; % energy weight E
+        w4 = 10.0; % slacks initial / final 
+        w5 = 0.01; %ekin0
+
+        N = 10 ; % energy constraints
+
+        dt=0.001;
+        num_params = 1+12+1; % time + poly + K 
+
+       % initial state
+        theta0 = 0.05; 
         phi0 = 0 ;
-        phif = 1.5468 ;
+        l_0 = 3;
+        l_uncompressed = l_0;
+        %pendulum period
+        T_pend = 2*pi*sqrt(l_0/g)/4; % half period
+        p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
-        p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
-        pf = [l*sin(thetaf)*cos(phif); l*sin(thetaf)*sin(phif); -l*cos(thetaf)];
+        % more meaninguful init
+        params0 = [ T_pend, theta0, 0.01, 0, 0,  ...
+                            phi0 , 0.01, 0 ,0, ...
+                            l_0, 0.01 ,0, 0, ...
+                            6 ];
 
-         % more meaninguful init
-        params0 = [ T_pend, sin(theta0), 0.2, 0,0,  sin(phi0) , 0.2, 0 ,0];
-        %params0 = 0.1*ones(1,num_params);
-        x0 = [params0, zeros(1,N)] ;
-        lb = [0.0, -2*ones(1,num_params-1), zeros(1,N)];
-        ub = [T_pend*5, 2*ones(1,num_params-1), 10*ones(1,N)];
+                        
+        x0 = [params0, zeros(1,N), 0,0,0] ;
+        lb = [0.01,     -10*ones(1,8), -30*ones(1,4), 0.1,  zeros(1,N),    0 , 0, 0];
+        ub = [T_pend*2, 10*ones(1,8),  30*ones(1,4), 20,  100*ones(1,N), 100 , 100, 100 ];
 
-        options = optimoptions('fmincon','Display','none','Algorithm','sqp');
-        %options =
-        %optimoptions('fmincon','Display','none','Algorithm','interior-point',
-        %'MaxIterations', 1500); %bigger slacks and cost
-        [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, DER_ENERGY_CONSTRAINT), options);
-        slacks = sum(x(num_params+1:end));
-        [p, E, path_length , initial_error , final_error ] = eval_solution(x, x(1),dt, l, p0, pf) ;
+        options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+                               'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
+        tic
+        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
+        solving_time = toc;
+     
+        [p, thet, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+
         energy = E;
-  
+        opt_Tf = x(1);
+        opt_K = x(14);
 
-        
-        %plot_curve(l, p, p0, pf,  E.Etot, false, 'k');
-        [Fun , Fut] = evaluate_initial_impulse(x, 0.0, l);
-        low_cost = abs(final_cost )<= tol;
+        [Fun , Fut] = evaluate_initial_impulse(x);
         problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
 
-        number_of_feasible_solutions = nan;
         number_of_converged_solutions = nan;
-        opt_kin_energy = nan;% 
-        opt_wasted =  nan;
+        initial_kin_energy = nan;
+        final_kin_energy = nan;
         opt_Fut = nan;
         opt_Fun = nan;
-        opt_Tf = nan;
-        
-        if  problem_solved && low_cost
-            number_of_converged_solutions = 1;
-            plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'r'); % optimal is magenta
-            % evaluate constraints on converged solutions
-            actuation_constr = Fun <=  Fun_max;
-            friction_constr = abs(Fut) <=  mu*Fun_max;
-            unilat_constr = Fun >=0;
-            
-            opt_kin_energy = energy.Ekin0;% 
-            opt_wasted =  energy.Ekinf;
+        if  problem_solved 
+            number_of_converged_solutions = 1;       
+            initial_kin_energy = energy.Ekin0;% 
+            final_kin_energy =  energy.Ekinf;
             opt_Fut = Fut;
             opt_Fun = Fun;
-            opt_Tf = x(1);
-            
-            if  unilat_constr && friction_constr && unilat_constr
-                number_of_feasible_solutions = 1;
-                plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'm'); % optimal is magenta          
-            end
-           
+            %plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
         end
-        
+
         
 end

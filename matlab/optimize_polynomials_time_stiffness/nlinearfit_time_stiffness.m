@@ -1,6 +1,6 @@
 %
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 N   num_params Fun_max  Fr_max mu l_uncompressed 
+global m  g w1 w2 w3 w4 w5 N   num_params  l_uncompressed 
 
 m = 5;
 g = 9.81;
@@ -8,7 +8,7 @@ g = 9.81;
 
 % physical limits
 Fun_max =15;
-Fr_max =80; % Fr in negative
+Fr_max =180; % Fr in negative
 mu = 0.8;
 
 w1 = 1 ; % green initial cost (not used)
@@ -20,17 +20,13 @@ w5 = 0.01; %ekin0
 N = 10 ; % energy constraints
 
 dt=0.001;
-num_params = 1+12+1;
+num_params = 1+12+1; % time + poly + K 
 
-
+% initial state
 theta0 = 0.05; 
 phi0 = 0 ;
 l_0 = 3;
-
-
 l_uncompressed = l_0;
-phif = 1.5468 ;
-
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
@@ -41,10 +37,10 @@ pf = [0.001; 5; -8];
 
 
 % compute final points for Marco
-lf= sqrt(pf(1)^2+ pf(2)^2+pf(3)^2);
-phif = atan2(pf(2), pf(1));
-thetaf = acos(-pf(3) /lf);
-thetaf = atan2(sqrt(pf(1)^2+ pf(2)^2), -pf(3));
+% lf= sqrt(pf(1)^2+ pf(2)^2+pf(3)^2);
+% phif = atan2(pf(2), pf(1));
+% thetaf = acos(-pf(3) /lf);
+% thetaf = atan2(sqrt(pf(1)^2+ pf(2)^2), -pf(3));
 
 % more meaninguful init
 params0 = [ T_pend, theta0, 0.01, 0, 0,  ...
@@ -71,7 +67,7 @@ options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does
 %https://it.mathworks.com/help/optim/ug/output-function.html
 
 tic
-[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf), options);
+[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
 toc
 
 slacks_energy = x(num_params+1:num_params+N);
@@ -80,7 +76,7 @@ slacks_initial_final = x(num_params+N+1:end);
 slacks_initial_final_cost = sum(slacks_initial_final);
 
 % evaluate constraint violation 
-[c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x, p0,  pf);
+[c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
 
 %output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
 %output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
@@ -89,7 +85,7 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 
 energy = E;
 opt_Tf = x(1)
-
+opt_K = x(14)
 
 plot_curve( p, p0, pf,  E.Etot, false, 'k');
 [Fun , Fut] = evaluate_initial_impulse(x);
@@ -115,7 +111,7 @@ Fun
 Fut 
 initial_error
 final_error
-opt_K = x(14)
+
 
 disp('1- energy constraints')
 c(1:energy_constraints)
@@ -139,9 +135,12 @@ c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constra
 slacks_energy 
 slacks_initial_final 
 
-%[number_of_feasible_solutions,number_of_converged_solutions,  opt_kin_energy,  opt_wasted, opt_Fun, opt_Fut, opt_Tf] = eval_jump(l , thetaf , theta0, dt, Fun_max, mu, DER_ENERGY_CONSTRAINT)
-
 figure
 plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
 plot(0*ones(size(l)),'r');
 plot(-Fr_max*ones(size(l)),'r');
+
+%y =   0.00  | z = -14.00 |  conv=      1 |   Ekin0=    2.19 |  Ekinf =     0.49  |  Fun= 3.79  | Fut= 2.75 K= 2.04 | Tf= 1.18 | Tf_pend= 0.87 | comp_time= 0.83
+
+[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
+         

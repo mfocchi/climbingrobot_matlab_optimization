@@ -1,6 +1,6 @@
-function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf)
+function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu)
 
-global  g N   m num_params Fun_max Fr_max mu l_uncompressed
+global  g N   m num_params l_uncompressed
 
 % ineq are <= 0
 Tf = x(1);
