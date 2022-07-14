@@ -43,7 +43,11 @@ function coste = cost(x, p0,  pf)
     deltay = diff(p(2,:));   % diff(Y);
     deltaz = diff(p(3,:));    % diff(Z);
     path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2));
-
+    p_0 = p_0(:);
+    p0 = p0(:);
+    p_f= p_f(:);
+    pf = pf(:);
+    
     p0_cost = w1 * norm(p_0 - p0);
     pf_cost = w2 * norm(p_f -pf);
     lf_cost = w2*abs(norm(pf) - l_f);
