@@ -81,7 +81,7 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 %output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
 %output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
 
-[p, thet, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+[p, theta, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
 opt_Tf = x(1)
@@ -140,7 +140,5 @@ plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
 plot(0*ones(size(l)),'r');
 plot(-Fr_max*ones(size(l)),'r');
 
-%y =   0.00  | z = -14.00 |  conv=      1 |   Ekin0=    2.19 |  Ekinf =     0.49  |  Fun= 3.79  | Fut= 2.75 K= 2.04 | Tf= 1.18 | Tf_pend= 0.87 | comp_time= 0.83
-
-[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
-         
+%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
+ 

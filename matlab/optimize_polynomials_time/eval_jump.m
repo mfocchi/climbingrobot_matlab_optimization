@@ -79,7 +79,7 @@ function [number_of_feasible_solutions, number_of_converged_solutions, opt_kin_e
             plot_curve(l,  p ,  p0, pf,    E.Etot, false, 'r'); % optimal is magenta
             % evaluate constraints on converged solutions
             actuation_constr = Fun <=  Fun_max;
-            friction_constr = abs(Fut) <=  mu*Fun_max;
+            friction_constr = abs(Fut) <=  mu*Fun;
             unilat_constr = Fun >=0;
             
             opt_kin_energy = energy.Ekin0;% 

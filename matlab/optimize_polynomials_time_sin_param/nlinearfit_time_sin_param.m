@@ -83,7 +83,7 @@ if  problem_solved
     plot_curve(l,  p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
     % evaluate constraints on converged solutions
     actuation_constr = Fun <=  Fun_max;
-    friction_constr = abs(Fut) <=  mu*Fun_max;
+    friction_constr = abs(Fut) <=  mu*Fun;
     unilat_constr = Fun >=0;
 
     opt_kin_energy = energy.Ekin0;% 

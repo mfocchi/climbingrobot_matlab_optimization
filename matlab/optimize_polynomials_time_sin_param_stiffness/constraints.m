@@ -138,7 +138,7 @@ sine_constraints = 8+8;
 
 [Fun , Fut] = evaluate_initial_impulse(x);
 ineq = [ineq  (Fun -Fun_max)]   ;
-ineq = [ineq  (abs(Fut) - mu*Fun_max)];
+ineq = [ineq  (abs(Fut) - mu*Fun)];
 ineq = [ineq  (-Fun)]  ;
 
 force_constraints = 3;
