@@ -65,6 +65,11 @@ E.Ekin0y = m/2*pd(2,1)'*pd(2,1);
 E.Ekin0z = m/2*pd(3,1)'*pd(3,1);
 E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
 
+E.intEkin = 0;
+for i =1:length(t)
+    E.intEkin = E.intEkin +  m/2*pd(:,i)'*pd(:,i)*dt;
+end
+    
 %compare for sanity check should be equal to  E.Ekin0
 %E.Ekin0angles=  (m*l^2/2).*(thetad(1)^2 + sin(theta(1))^2 *phid(1)^2);
 

@@ -1,4 +1,4 @@
-function [number_of_converged_solutions, initial_kin_energy, final_kin_energy, opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(pf, Fun_max, Fr_max, mu) 
+function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(pf, Fun_max, Fr_max, mu) 
 
         global m  g w1 w2 w3 w4 w5 N   num_params l_uncompressed 
 
@@ -54,12 +54,14 @@ function [number_of_converged_solutions, initial_kin_energy, final_kin_energy, o
         number_of_converged_solutions = nan;
         initial_kin_energy = nan;
         final_kin_energy = nan;
+        intEkin = nan;
         opt_Fut = nan;
         opt_Fun = nan;
         if  problem_solved 
             number_of_converged_solutions = 1;       
             initial_kin_energy = energy.Ekin0;% 
             final_kin_energy =  energy.Ekinf;
+            intEkin =   energy.intEkin;
             opt_Fut = Fut;
             opt_Fun = Fun;
             %plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
