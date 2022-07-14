@@ -49,7 +49,7 @@ for i=1:length(Tf_vec)
     time = linspace(0, Tf, N) ;
     theta0 = 0.05; %theta0 = 0.523
     phi0 = 0 ;
-    thetaf= 0.1 ;
+    thetaf= 0.4 ;
     phif = 1.5468 ;
 
     p0 = [l*sin(theta0)*cos(phi0); l*sin(theta0)*sin(phi0); -l*cos(theta0)];
@@ -62,10 +62,8 @@ for i=1:length(Tf_vec)
     lb = [-35*ones(1,num_params), zeros(1,N)];
     ub = [35*ones(1,num_params), 10*ones(1,N)];
 
-    options = optimoptions('fmincon','Display','none','Algorithm','sqp');
-    %options =
-    %optimoptions('fmincon','Display','none','Algorithm','interior-point',
-    %'MaxIterations', 1500); %bigger slacks and cost
+    options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
    
     
     [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf,  time),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, time), options);

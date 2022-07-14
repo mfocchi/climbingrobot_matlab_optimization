@@ -58,10 +58,8 @@ x0 = [params0, zeros(1,N)] ;
 lb = [0.0, -35*ones(1,num_params-1), zeros(1,N)];
 ub = [T_pend*5, 35*ones(1,num_params-1), 10*ones(1,N)];
 
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp');
-%options =
-%optimoptions('fmincon','Display','none','Algorithm','interior-point',
-%'MaxIterations', 1500); %bigger slacks and cost
+options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
 
 
 [x, final_cost, EXITFLAG] = fmincon(@(x) cost(x, l, p0,  pf),x0,[],[],[],[],lb,ub,@(x) constraints(x, l, DER_ENERGY_CONSTRAINT), options);
