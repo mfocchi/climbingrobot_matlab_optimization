@@ -12,27 +12,91 @@ anchor_pos =[ 0.149937507812035;
      -2.9962507811849];
 jump_lenght_z = -17;
 jump_lenght_y = 10;
-
+N = 4; % grid  discretization
   
-y_range = linspace(anchor_pos(2), anchor_pos(2)+jump_lenght_y, 5);
-z_range = linspace(anchor_pos(3), anchor_pos(3)+jump_lenght_z, 5);
+y_range = linspace(anchor_pos(2), anchor_pos(2)+jump_lenght_y, N);
+z_range = linspace(anchor_pos(3), anchor_pos(3)+jump_lenght_z, N);
+%fixed target
+pf = [0.001; y_range(end); z_range(end)];
 
-V(
+max_n_jumps = 4;
+n_states = N^2; % combinations
 
+value_function = zeros(max_n_jumps, n_states);
+value_function_N = [];
+x = [];
+
+% the initial cost fot the target is zero, and the value function is not
+% infinite because I can get to the target from all the states, so we skip
+% the initial step
+
+% compute state space and compute value function at final state (t = njumps) 
+% we suppose we will arrive at the target at that stage
 for i = 1:length(y_range)    
     for j = 1:length(z_range)  
         %cycle on inital point
-        p0 = [anchor_pos(1); y_range(i); z_range(j)]
-        pf = [0.001; y_range(end); z_range(end)]
-        
+        p0 = [anchor_pos(1); y_range(i); z_range(j)];
+
+        x = [x, p0];
         [number_of_converged_solutions,  initial_kin_energy,  final_kin_energy, intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu);
-        
         total_cost = eval_jump_cost([1,1,10,10], intEkin, final_kin_energy, Fun_max, opt_Fun, Fr_max, Fr, number_of_converged_solutions);
     
         fprintf('total_cost=%7.2f | y =%7.2f  | z =%7.2f |  conv=%4d |   Ekin0=%7.2f |  Ekinf = %7.2f  | intEkin = %7.2f |  Fun=%5.2f  | Fut=%5.2f | Fr=%7.2f | K=%5.2f | Tf=%5.2f | comp_time=%5.2f \n',...
                  [total_cost; y_range(i); z_range(j); number_of_converged_solutions; initial_kin_energy;  final_kin_energy ;intEkin; opt_Fun; opt_Fut;  Fr; opt_K;  opt_Tf; solve_time]);
 
         
+        value_function_N = [value_function_N   total_cost];   
     end   
-    
 end
+
+value_function(max_n_jumps, :) = value_function_N;
+
+% iterate for all the other 
+for k = max_n_jumps-1:-1:1
+    % for each state compute the value functions 
+    for i=1:n_states        
+        for j=1:n_states
+            p0 = x(:,i);
+            pf = x(:,j);
+            [number_of_converged_solutions,  initial_kin_energy,  final_kin_energy, intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu);
+            cost = eval_jump_cost([1,1,10,10], intEkin, final_kin_energy, Fun_max, opt_Fun, Fr_max, Fr, number_of_converged_solutions);
+            q_cost(j) = cost + value_function(k+1, j);
+        end
+        value_function(k, i) = min(q_cost);
+        
+    end
+end
+
+%save('value_function.mat','value_function','x','max_n_jumps','Fun_max','Fr_max','mu','n_states')
+
+clear all
+
+load('value_function.mat')
+
+%to get the optimal set of jumps we minimize from the initial state and the
+%initial time_step the sequence action transition is given by the min value
+%function 
+index(1) = 1;
+for k = 1:max_n_jumps-1
+       
+       q_cost = [];
+        for j=1:n_states
+            
+            p0 = x(:,index(k))
+            pf = x(:,j);
+            [number_of_converged_solutions,  initial_kin_energy,  final_kin_energy, intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu);
+            cost = eval_jump_cost([1,1,10,10], intEkin, final_kin_energy, Fun_max, opt_Fun, Fr_max, Fr, number_of_converged_solutions);
+            q_cost(j) = cost + value_function(k+1, j);
+            
+        end
+        [m,index(k+1)] = min(q_cost);
+        
+end    
+    
+x(:,index)    
+    
+    
+    
+    
+    
+ 
