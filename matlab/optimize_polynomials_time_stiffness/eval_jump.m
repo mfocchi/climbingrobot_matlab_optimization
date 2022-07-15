@@ -1,4 +1,4 @@
-function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(pf, Fun_max, Fr_max, mu) 
+function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu) 
 
         global m  g w1 w2 w3 w4 w5 N   num_params l_uncompressed 
 
@@ -16,14 +16,18 @@ function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  
         dt=0.001;
         num_params = 1+12+1; % time + poly + K 
 
-       % initial state
-        theta0 = 0.05; 
-        phi0 = 0 ;
-        l_0 = 3;
-        l_uncompressed = l_0;
+     % initial state (old)   
+%         theta0 = 0.05; 
+%         phi0 = 0 ;
+%         l_0 = 3;
+%         p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+%
+        [theta0, phi0, l_0] = computePolarVariables(p0);
+        
+        l_uncompressed = l_0;      
         %pendulum period
         T_pend = 2*pi*sqrt(l_0/g)/4; % half period
-        p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+   
 
         % more meaninguful init
         params0 = [ T_pend, theta0, 0.01, 0, 0,  ...

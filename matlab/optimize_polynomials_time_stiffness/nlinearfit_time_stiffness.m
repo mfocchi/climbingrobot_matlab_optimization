@@ -23,24 +23,25 @@ dt=0.001;
 num_params = 1+12+1; % time + poly + K 
 
 % initial state
-theta0 = 0.05; 
-phi0 = 0 ;
-l_0 = 3;
+% theta0 = 0.05; 
+% phi0 = 0 ;
+% l_0 = 3;
+% p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+
+p0 =[        0.149937507812035;
+                         0;
+          -2.9962507811849];
+  [theta0, phi0, l_0] = computePolarVariables(p0);
+ 
+%custom target
+pf = [0.001; 5; -8];
+
+% compute final points for Marco
+%[thetaf, phif, lf] = computePolarVariables(pf)
+
 l_uncompressed = l_0;
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period
-p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
-
-
-%custom
-pf = [0.001; 5; -8];
-
-
-% compute final points for Marco
-% lf= sqrt(pf(1)^2+ pf(2)^2+pf(3)^2);
-% phif = atan2(pf(2), pf(1));
-% thetaf = acos(-pf(3) /lf);
-% thetaf = atan2(sqrt(pf(1)^2+ pf(2)^2), -pf(3));
 
 % more meaninguful init
 params0 = [ T_pend, theta0, 0.01, 0, 0,  ...
