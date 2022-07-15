@@ -30,11 +30,12 @@ num_params = 1+12+1; % time + poly + K
 
 p0 =[        0.149937507812035;
                          0;
-          -2.9962507811849];
+          -7.24];
   [theta0, phi0, l_0] = computePolarVariables(p0);
  
 %custom target
-pf = [0.001; 5; -8];
+%pf = [0.001; 5; -8];
+pf = [0.001; 10; -19.9962507811849];
 
 % compute final points for Marco
 %[thetaf, phif, lf] = computePolarVariables(pf)
@@ -95,6 +96,7 @@ problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
 
 number_of_converged_solutions = nan;
 initial_kin_energy = nan;
+final_kin_energy = nan;
 if  problem_solved 
     number_of_converged_solutions = 1;       
     initial_kin_energy = energy.Ekin0;% 

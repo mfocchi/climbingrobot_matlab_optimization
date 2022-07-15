@@ -11,8 +11,8 @@ function  plot_curve(p, p0,pf,  E, plot_energy, color_input)
           
          
         xlim([-2, 5])    
-        ylim([-8 , 8])    
-        zlim([-abs(pf(3)), abs(pf(3))])
+        ylim([-pf(2) , pf(2)])    
+        zlim([-1.3*abs(pf(3)), 3])
 
         xlabel('X');
         ylabel('Y');
