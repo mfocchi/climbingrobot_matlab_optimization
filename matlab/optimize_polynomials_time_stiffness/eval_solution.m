@@ -65,9 +65,12 @@ E.Ekin0y = m/2*pd(2,1)'*pd(2,1);
 E.Ekin0z = m/2*pd(3,1)'*pd(3,1);
 E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
 
+
 E.intEkin = 0;
 for i =1:length(t)
-    E.intEkin = E.intEkin +  m/2*pd(:,i)'*pd(:,i)*dt;
+    E.Ekin(i) = m/2*pd(:,i)'*pd(:,i);
+
+    E.intEkin = E.intEkin +  E.Ekin(i)*dt;
 end
     
 %compare for sanity check should be equal to  E.Ekin0

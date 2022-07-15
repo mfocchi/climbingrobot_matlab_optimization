@@ -107,6 +107,7 @@ end
     
 number_of_converged_solutions
 initial_kin_energy
+final_kin_energy
 Fun
 Fut 
 initial_error
@@ -139,6 +140,11 @@ figure
 plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
 plot(0*ones(size(l)),'r');
 plot(-Fr_max*ones(size(l)),'r');
+
+
+figure
+plot(energy.Ekin); hold on; grid on;
+ylabel('Ekin')
 
 %[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
  
