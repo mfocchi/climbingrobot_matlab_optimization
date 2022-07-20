@@ -21,6 +21,7 @@ global Fut0;
 % this sets the tangential force always at the boundary of the cone (TODO
 % set separate impulses connected with a friction cone constraint if you
 % want to be more robust (i.e. stay more in the middle of the cone)
+
 Fut0 = friction_coefficient*Fun0
 
 m = 10;   % Mass [kg]
@@ -33,7 +34,7 @@ global l;
 l = 10;
 g = 9.8;
 %Initial Conditions
-x0 = [0.1; 0.1; 0.3; 0.05]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
+x0 = [0.1; 0.1; 0.3; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
 theta0 = x0(1);
 dtheta0 = x0(2);
 phi0 = x0(3);
@@ -268,6 +269,11 @@ fprintf('Flying\n');
 
 ddtheta =  [cos(2*theta0)*(dphi0^2)-(g/l)*cos(theta0), 0, 0, sin(2*theta0)*dphi0]*[theta; dtheta; phi; dphi];
 ddphi = [(2/(sin(theta0)^2))*dtheta0*dphi0, -2*(cos(theta0)/sin(theta0))*dphi0, 0, -2*(cos(theta0)/sin(theta0))*dtheta0]*[theta; dtheta; phi; dphi];
+
+%Another linearised equations : theta0 and l has to be different than zero! ( put dphi0 = 0 ) 
+        ddtheta =  -(g/l)*theta;
+        ddphi = 0;
+
 
 %end
 dxdt = [dtheta; ddtheta; dphi; ddphi];
