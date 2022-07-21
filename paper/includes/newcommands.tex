@@ -1,0 +1,73 @@
+\newcommand{\sref}[1]{Section~\ref{#1}}
+%\newcommand{\eref}[1]{Eq.~(\ref{#1})}
+\newcommand{\eref}[1]{(\ref{#1})}
+\newcommand{\fref}[1]{Fig.~\ref{#1}}
+\newcommand{\tref}[1]{Table~\ref{#1}}
+
+
+
+%\newtheorem{Assumption}{Assumption}[section]
+\newtheorem{assump}{Assumption}
+\newtheorem{assumpB}{Assumption}
+\renewcommand\theassump{1}
+\renewcommand\theassumpB{2}
+\newcommand{\assref}[1]{Assumption~\ref{#1}}
+
+
+
+\newcommand{\AR}[1]{\textcolor{blue}{\textbf{aradulescu}: #1}}
+\newcommand{\MF}[1]{\textcolor{red}{\textbf{mfocchi}: #1}}
+\newcommand{\CS}[1]{\textcolor{violet}{\textbf{csemini}: #1}}
+\newcommand{\SF}[1]{\textcolor{teal}{\textbf{sfahmi}: #1}}
+
+
+
+\newcommand\BibTeX{{\rmfamily B\kern-.05em \textsc{i\kern-.025em b}\kern-.08em
+T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+
+\newcommand{\ie}{{i.e.},\ }
+\newcommand{\eg}{{e.g.},\ }
+\newcommand{\etal}{{\textit{et~al.}}\ }
+
+
+\captionsetup[table]{labelsep=newline}
+\captionsetup[table]{justification=centering}
+
+
+
+\makeatletter
+\newcounter{definition*}
+\newenvironment{definition*}[1][htb]
+{\renewcommand{\ALG@name}{Definition}% Update algorithm name
+	\let\c@algocf\c@megaalgorithm% Update algorithm counter
+	\begin{algorithm*}[#1]%
+	}{\end{algorithm*}}
+\makeatother
+
+\makeatletter
+\newcounter{definition}
+\newenvironment{definition}[1][t]
+{\renewcommand{\ALG@name}{Proposition}% Update algorithm name
+	\let\c@algocf\c@megaalgorithm% Update algorithm counter
+	\begin{algorithm}[#1]%
+	}{\end{algorithm}}
+\makeatother
+
+\newcommand{\defref}[1]{Proposition~\ref{#1}}
+
+
+
+
+%\usepackage[table]{xcolor}
+\definecolor{sfahmi_blue}{RGB}{0.19,0.51,0.74}
+%\definecolor{DarkGray}{RGB}{0.25,0.25,0.25}
+%\definecolor{Gray}{RGB}{0.5,0.5,0.5}
+%\definecolor{Red}{RGB}{1,0,0}
+\definecolor{LightBlue}{RGB}{0.4,0.4,1}
+\newcommand{\thickhline}{\noalign{\hrule height 0.8pt}}
+
+\newcommand{\bmcolor}[1]{\textcolor{RoyalBlue}{\bm{#1}}}
+
+\newcommand{\governor}{{governor} }
+\newcommand{\Governor}{{Governor} }
