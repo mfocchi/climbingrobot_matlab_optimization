@@ -1,4 +1,4 @@
-function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu) 
+function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time, efficiency] = eval_jump(p0, pf, Fun_max, Fr_max, mu) 
 
         global m  g w1 w2 w3 w4 w5 N   num_params l_uncompressed 
 

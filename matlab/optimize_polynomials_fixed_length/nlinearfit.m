@@ -94,7 +94,7 @@ for i=1:length(Tf_vec)
          index_converged = [index_converged i];
          
           % evaluate constraints on converged solutions
-         actuation_constr = Fun <=  Fun_max;
+         actuation_constr = sqrt(Fun^2 + Fut^2) <=  Fun_max;
          friction_constr = abs(Fut) <=  mu*Fun  ;
          unilat_constr = Fun >=0 ;
 

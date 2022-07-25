@@ -78,7 +78,7 @@ retraction_force_constraints = 2*N;
 [Fun , Fut] = evaluate_initial_impulse(x);
 
 
-ineq = [ineq  (Fun -Fun_max)]   ;
+ineq = [ineq  (sqrt(Fun^2 + Fut^2) -Fun_max)]   ;
 ineq = [ineq  (-Fun)]  ;
 ineq = [ineq  (abs(Fut) -mu*Fun)];
 

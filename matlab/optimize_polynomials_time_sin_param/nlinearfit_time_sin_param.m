@@ -82,7 +82,7 @@ if  problem_solved
     number_of_converged_solutions = 1;
     plot_curve(l,  p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
     % evaluate constraints on converged solutions
-    actuation_constr = Fun <=  Fun_max;
+    actuation_constr = sqrt(Fun^2 + Fut^2) <=  Fun_max;
     friction_constr = abs(Fut) <=  mu*Fun;
     unilat_constr = Fun >=0;
 

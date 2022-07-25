@@ -8,7 +8,7 @@ g = 9.81;
 
 % physical limits
 Fun_max =15;
-Fr_max =180; % Fr in negative
+Fr_max =80; % Fr in negative
 mu = 0.8;
 
 w1 = 1 ; % green initial cost (not used)
@@ -22,20 +22,23 @@ N = 10 ; % energy constraints
 dt=0.001;
 num_params = 1+12+1; % time + poly + K 
 
-% initial state
-% theta0 = 0.05; 
-% phi0 = 0 ;
-% l_0 = 3;
-% p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+% Marco Frego test: initial state
+theta0 = 0.05; 
+phi0 = 0 ;
+l_0 = 3;
+p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+% Marco Frego test: final state
+pf = [0.001; 5; -8];
 
-p0 =[        0.149937507812035;
-                         0;
-          -7.24];
-  [theta0, phi0, l_0] = computePolarVariables(p0);
- 
+
+% p0 =[        0.149937507812035;
+%                          0;
+%           -7.24];
+   [theta0, phi0, l_0] = computePolarVariables(p0);
+%  
 %custom target
-%pf = [0.001; 5; -8];
-pf = [0.001; 10; -19.9962507811849];
+
+%pf = [0.001; 10; -19.9962507811849];
 
 % compute final points for Marco
 %[thetaf, phif, lf] = computePolarVariables(pf)
@@ -111,8 +114,10 @@ end
 number_of_converged_solutions
 initial_kin_energy
 final_kin_energy
+energy.intEkin
 Fun
 Fut 
+path_length
 initial_error
 final_error
 
