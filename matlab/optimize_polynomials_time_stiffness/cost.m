@@ -51,7 +51,7 @@ function coste = cost(x, p0,  pf)
     p0_cost = w1 * norm(p_0 - p0);
     pf_cost = w2 * norm(p_f -pf);
     lf_cost = w2*abs(norm(pf) - l_f);
-    slack_cost= w3 * sum(x(num_params+1:num_params+N));
+    slack_energy= w3 * sum(x(num_params+1:num_params+N));
     sigma_final_initial = w4 *sum (x(num_params+N+1:end));
    
     %Ekin0cost= w5 * (    (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 )  + (m*ld(1)^2/2)   );
@@ -59,7 +59,7 @@ function coste = cost(x, p0,  pf)
    
     %fprintf('cost comparison p0: %5.2f  pf: %5.2f  lf: %5.2f  slack_cost: %5.2f  Ekin0_cost: %5.2f \n' , norm(p_0 - p0), norm(p_f - pf),  abs(norm(pf) - l_f), sum(x(num_params+1:num_params+N)), (m*l(1)^2/2).*( thetad(1)^2 + sin(theta(1))^2 *phid(1)^2 ));
   
-    coste =  Tf  + Ekinfcost + slack_cost + sigma_final_initial ;
+    coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
 %      coste =    sigma_final_initial  + slack_cost ;
    
 

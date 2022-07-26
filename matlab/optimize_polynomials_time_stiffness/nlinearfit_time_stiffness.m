@@ -15,7 +15,7 @@ w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % energy weight E
 w4 = 10.0; % slacks initial / final 
-w5 = 0.01; %ekin0
+w5 = 0.01; %ekinf
 
 N = 10 ; % energy constraints
 
@@ -86,7 +86,7 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 %output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
 %output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
 
-[p, theta, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+[p, theta, phi, l, ld,  E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
 opt_Tf = x(1)
@@ -106,10 +106,11 @@ if  problem_solved
     final_kin_energy =  energy.Ekinf;
     opt_Fut = Fut;
     opt_Fun = Fun;
-    plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
+    
 
 end
 
+plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
     
 number_of_converged_solutions
 initial_kin_energy
@@ -144,15 +145,24 @@ c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constra
 slacks_energy 
 slacks_initial_final 
 
-figure
-plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
-plot(0*ones(size(l)),'r');
-plot(-Fr_max*ones(size(l)),'r');
+% figure
+% plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
+% plot(0*ones(size(l)),'r');
+% plot(-Fr_max*ones(size(l)),'r');
 
 
 figure
 plot(energy.Ekin); hold on; grid on;
 ylabel('Ekin')
+
+figure
+subplot(2,1,1)
+plot(p(1,:))
+ylabel('X')
+
+subplot(2,1,2)
+plot(ld)
+ylabel('ld')
 
 %[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
  
