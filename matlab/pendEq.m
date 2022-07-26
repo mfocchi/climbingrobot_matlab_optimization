@@ -1,9 +1,10 @@
 clear all
 clc
 close all
+warning off
 
 global dmin; %Minimum distance from the mointain wall
-dmin = 0.5;
+dmin = 0.2;
 
 global dtol; %Tolerance for binding reaction of the wall
 dtol = 1e-05;
@@ -23,7 +24,10 @@ global Fut0;
 % want to be more robust (i.e. stay more in the middle of the cone)
 Fut0 = friction_coefficient*Fun0
 
+global l                             
+l = 3;    % Length                [m]
 m = 10;   % Mass [kg]
+
 
 global Tsim;
 Tsim = 10;    % Simulation Time
@@ -32,7 +36,7 @@ tspan = [0:0.01: Tsim];
 
 
 %Initial Conditions
-x0 = [asin(dmin/5); 0; 0; 0; 5; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
+x0 = [asin(dmin/5); 0; 0; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi)] 
 
 %%Simulation:
 
@@ -40,26 +44,24 @@ x0 = [asin(dmin/5); 0; 0; 0; 5; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/d
 [t,x] = ode23(@(t,x) diffEq(t,x,m,@Fr,@Fun, @Fut), tspan, x0); 
 
 
-
-
 %Coordinates
-X = x(:,5).*cos(x(:,3)).*sin(x(:,1));
-Y = x(:,5).*sin(x(:,3)).*sin(x(:,1));
-Z = -x(:,5).*cos(x(:,1));
+X = l*cos(x(:,3)).*sin(x(:,1));
+Y = l*sin(x(:,3)).*sin(x(:,1));
+Z = -l*cos(x(:,1));
 % figure(1)
 %plot3(X,Y,Z)
 % comet3(X,Y,Z)      % Plot 3D slow motion curve using Comet3
 % 
-% % 3D plot Animation
-% 
+% 3D plot Animation
+
 % Min-max axis
-% min_x = min(X)-3 ; 
-% max_x = max(X)+3 ;
-% min_y = min(Y)-3 ;
-% max_y = max(Y)+3 ;
-% min_z = min(Z)-2;
-% max_z = 0;
-% 
+min_x = min(X)-3 ; 
+max_x = max(X)+3 ;
+min_y = min(Y)-3 ;
+max_y = max(Y)+3 ;
+min_z = min(Z)-2;
+max_z = 2;
+
 % figure(2)
 % set(gcf,'Position',[50 50 1280 720]) % YouTube: 720p
 % set(gcf,'Position',[50 50 854 480]) % YouTube: 480p
@@ -70,37 +72,48 @@ Z = -x(:,5).*cos(x(:,1));
 % v.Quality = 100;
 % open(v);
 %     
-% hold on ; grid on ; axis equal
-% set(gca,'CameraPosition',[42.0101   30.8293   16.2256])
+hold on ; grid on ; axis equal
+set(gca,'CameraPosition',[10   35   10])
 % set(gca,'XLim',[min_x max_x])
 % set(gca,'YLim',[min_y max_y])
 % set(gca,'ZLim',[min_z max_z])
 % set(gca,'XTickLabel',[],'YTickLabel',[],'ZTickLabel',[])
-% 
+
 % Loop for animation
-% for i = 1:length(X)
-%     
-%     cla
+for i = 1:length(X)
+    
+    cla
 %     Vertical line
-%     plot3([0 0],[0 0],[0 -x0(5)],'k--')
+    plot3([0 0],[0 0],[0 -l],'k--')
 %     Point fix
-%     p = plot3(0,0,0,'Marker','*','Color','k','MarkerSize',10);
+    p = plot3(0,0,0,'Marker','*','Color','k','MarkerSize',10);
+    
+  %Drawing a wall at X = 0       
+    p1 = [0 min_y min_z];
+    p2 = [0 max_y min_z];
+    p3 = [0 max_y max_z];
+    p4 = [0 min_y max_z]; 
+
+    Xw = [p1(1) p2(1) p3(1) p4(1)];
+    Yw = [p1(2) p2(2) p3(2) p4(2)];
+    Zw = [p1(3) p2(3) p3(3) p4(3)];
+    
+    %Colors for wall        :'r','g','b','c','m','y','w','k', or an RGB row vector triple, [r g b]
+    fill3(Xw, Yw, Zw, 'g');
+    
 %     Pendulum trajectory
-%     plot3(X(1:i),Y(1:i),Z(1:i),'b')
+    plot3(X(1:i),Y(1:i),Z(1:i),'b')
+    title('3D Plot Animation')
+    xlabel('X ') ; ylabel('Y ') ; zlabel('Z ')
 %     Pendulum rod
-%     plot3([0 X(i)],[0 Y(i)],[0 Z(i)],'r')
+    plot3([0 X(i)],[0 Y(i)],[0 Z(i)],'r')
 %     Pendulum sphere
-%     plot3(X(i),Y(i),Z(i),'Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
-%     Projections
-%     plot3(min_x*ones(1,i),Y(1:i),Z(1:i),'g')
-%     plot3(X(1:i),min_y*ones(1,i),Z(1:i),'g')
-%     plot3(X(1:i),Y(1:i),min_z*ones(1,i),'g')
-%     
-%     frame = getframe(gcf);
-%   writeVideo(v,frame);
-%     
-% end
-% 
+    plot3(X(i),Y(i),Z(i),'Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
+    
+    frame = getframe(gcf);
+     
+end
+
 % close(v);
 
 %%Functions used in the main program
@@ -126,28 +139,35 @@ end
 function [fun] = Fun(t)
     global delta_duration;
     global Fun0;
+    
+    fun = Fun0*myGaussian(t,delta_duration/6, delta_duration/2);
+    
 %     if (t <= delta_duration)
 %         fu = Fu0* 1/delta_duration;
 %     else
 %         fu = 0;
 %     end
-fun = Fun0*myGaussian(t,delta_duration/6, delta_duration/2);
+
 end
 
 function [fut] = Fut(t)
      global delta_duration;
      global Fut0;
+    
+     fut = Fut0*myGaussian(t,delta_duration/6, delta_duration/2);
+     
 %     if (t <= delta_duration)
 %         ft = Ft0* 1/delta_duration;
 %     else
 %         ft = 0;
 %     end
-fut = Fut0*myGaussian(t,delta_duration/6, delta_duration/2);
+
 end
 
 function [dxdt] = diffEq(t,x, m, Fr, Fun ,Fut)
 global dmin;
 global dtol;
+global l  
 
 %x = [theta, dottheta, phi, dotphi, l, dotl]
 
@@ -158,49 +178,36 @@ theta = x(1);
 dtheta = x(2);
 phi = x(3);
 dphi = x(4);
-l = x(5);
-dl = x(6);
+
 X = l*cos(phi)*sin(theta);
 %thmin = asin(dmin/l);
 %thtol = asin(dtol/l);
-FR = Fr(t);
-if (X < dmin )
-        fprintf('Parking\n');
-        ddtheta = 0;
-        dtheta = 0;
-        ddphi = 0;
-        dphi = 0;
-        ddl = 0;
-        dl = 0;
-else
+
+
+% if (X <= 0 )
+%         fprintf('Parking\n');
+%         ddtheta = 0;
+%         dtheta = 0;
+%         ddphi = 0;
+%         dphi = 0;
+%         ddl = 0;
+%         dl = 0;
+% else
 %     
 %     fprintf('Flying\n');
 %     %Flight dynamics
 %     ddtheta = -2*dtheta*dl/l + cos(theta)*sin(theta)*(dphi^2)- (g/l)*sin(theta);
 %     ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl;
 %     ddl = l*(dphi^2)+l*(sin(theta)^2)*dphi+g*cos(theta)+(1/m)*FR(2);
-% else
-% %     Fun(t)
-% %     if (abs(Fun(t)) > 1e-6)
-%         fprintf('Taking off\n');
-%         %Take off dynamicx
+
 fprintf('Flying\n');
-        ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
-        ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
-        ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*FR(2);
-end
-%Brake on?
-if FR(1) > 0.99,
-    ddl = 0;
-    dl =0;
- %   fprintf('Brakes on\n');
-else
-  %  fprintf('Brakes off\n');
-end
-dxdt = [dtheta; ddtheta; dphi; ddphi; dl; ddl];
-if(FR(1)<0.99)
-display(dxdt)
-end
+        ddtheta = cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
+        ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta + Fut(t)/(m*l*sin(theta));
+    
+% end
+
+dxdt = [dtheta; ddtheta; dphi; ddphi];
+
 
 end
 
