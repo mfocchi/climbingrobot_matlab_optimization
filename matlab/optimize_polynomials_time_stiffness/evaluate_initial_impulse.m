@@ -1,5 +1,5 @@
 function [Fun , Fut] = evaluate_initial_impulse(x)
-    global  m     
+    global  m  T_th   
    %eval trajectory
     Tf = x(1);
     a_10 = x(2);
@@ -27,7 +27,7 @@ function [Fun , Fut] = evaluate_initial_impulse(x)
     l0 = a_30;
     
     %evaluate inpulse ( the integral of the gaussian is 1) 
-    Fun = m*l0*thetad0;
-    Fut = m*l0*sin(theta0)*phid0;
+    Fun = m*l0*thetad0/T_th;
+    Fut = m*l0*sin(theta0)*phid0/T_th;
       
 end

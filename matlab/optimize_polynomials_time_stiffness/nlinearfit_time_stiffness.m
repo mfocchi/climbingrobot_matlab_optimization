@@ -1,15 +1,17 @@
 %
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 N   num_params  l_uncompressed 
+global m  g w1 w2 w3 w4 w5 N   num_params  l_uncompressed T_th
 
 m = 5;
 g = 9.81;
 
 
 % physical limits
-Fun_max =15;
+Fun_max =150;
 Fr_max =80; % Fr in negative
 mu = 0.8;
+
+T_th = 0.05;
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
