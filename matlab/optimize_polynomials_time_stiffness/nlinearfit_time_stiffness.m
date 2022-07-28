@@ -25,9 +25,11 @@ dt=0.001;
 num_params = 1+12+1; % time + poly + K 
 
 % Marco Frego test: initial state
-theta0 = 0.05; 
-phi0 = 0 ;
 l_0 = 3;
+theta0 =atan2(0.38, l_0);
+%theta0 = 0.05; 
+phi0 = 0 ;
+
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 % Marco Frego test: final state
 pf = [0.001; 5; -8];
@@ -36,10 +38,9 @@ pf = [0.001; 5; -8];
 % p0 =[        0.149937507812035;
 %                          0;
 %           -7.24];
-   [theta0, phi0, l_0] = computePolarVariables(p0);
+%   [theta0, phi0, l_0] = computePolarVariables(p0);
 %  
 %custom target
-
 %pf = [0.001; 10; -19.9962507811849];
 
 % compute final points for Marco
@@ -91,8 +92,8 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 [p, theta, phi, l, ld,  E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
-opt_Tf = x(1)
-opt_K = x(14)
+opt_Tf = x(1);
+opt_K = x(14);
 
 plot_curve( p, p0, pf,  E.Etot, false, 'k');
 [Fun , Fut] = evaluate_initial_impulse(x);
@@ -107,64 +108,74 @@ if  problem_solved
     initial_kin_energy = energy.Ekin0;% 
     final_kin_energy =  energy.Ekinf;
     opt_Fut = Fut;
-    opt_Fun = Fun;
-    
-
+    opt_Fun = Fun;    
+    plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
 end
 
-plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
     
-number_of_converged_solutions
-initial_kin_energy
-final_kin_energy
-energy.intEkin
-Fun
+% number_of_converged_solutions
+% initial_kin_energy
+% final_kin_energy
+% energy.intEkin
+% Fun
+% Fut 
+% path_length
+% initial_error
+% final_error
+% 
+DEBUG = false;
+
+if (DEBUG)
+    disp('1- energy constraints')
+    c(1:energy_constraints)
+
+    disp('2- wall constraints')
+    wall_constraints_idx = energy_constraints;
+    c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)
+
+    disp('3- retraction force constraints')
+    retraction_force_constraints_idx = wall_constraints_idx+wall_constraints;
+    c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+retraction_force_constraints)
+
+    disp('4 -force constraints')
+    force_constraints_idx = retraction_force_constraints_idx+retraction_force_constraints;
+    c(force_constraints_idx+1: force_constraints_idx+force_constraints)
+
+    disp('5 - initial final  constraints')
+    init_final_constraints_idx = force_constraints_idx+force_constraints;
+    c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constraints)
+
+    slacks_energy 
+    slacks_initial_final 
+
+
+    figure
+    plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
+    plot(0*ones(size(l)),'r');
+    plot(-Fr_max*ones(size(l)),'r');
+
+
+    figure
+    subplot(2,1,1)
+    plot(p(1,:))
+    ylabel('X')
+
+    subplot(2,1,2)
+    plot(ld)
+    ylabel('ld')
+    
+    figure
+    plot(energy.Ekin); hold on; grid on;
+    ylabel('Ekin')
+end
+
+disp('inputs')
+p0
 Fut 
-path_length
-initial_error
-final_error
-
-
-disp('1- energy constraints')
-c(1:energy_constraints)
-
-disp('2- wall constraints')
-wall_constraints_idx = energy_constraints;
-c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)
-
-disp('3- retraction force constraints')
-retraction_force_constraints_idx = wall_constraints_idx+wall_constraints;
-c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+retraction_force_constraints)
-
-disp('4 -force constraints')
-force_constraints_idx = retraction_force_constraints_idx+retraction_force_constraints;
-c(force_constraints_idx+1: force_constraints_idx+force_constraints)
-
-disp('5 - initial final  constraints')
-init_final_constraints_idx = force_constraints_idx+force_constraints;
-c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constraints)
-
-slacks_energy 
-slacks_initial_final 
-
-% figure
-% plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
-% plot(0*ones(size(l)),'r');
-% plot(-Fr_max*ones(size(l)),'r');
-
-
-figure
-plot(energy.Ekin); hold on; grid on;
-ylabel('Ekin')
-
-figure
-subplot(2,1,1)
-plot(p(1,:))
-ylabel('X')
-
-subplot(2,1,2)
-plot(ld)
-ylabel('ld')
-
+Fun
+opt_K
+disp('check')
+opt_Tf
+pf
 %[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
  

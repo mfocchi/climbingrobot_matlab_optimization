@@ -4,41 +4,48 @@ close all
 warning off
 
 global dmin; %Minimum distance from the mointain wall
-dmin = 0.2;
+dmin = 0.3770;
 
 global dtol; %Tolerance for binding reaction of the wall
 dtol = 1e-05;
 
 global delta_duration;
-delta_duration = 2e-1;
+delta_duration =  0.05;
 
 global friction_coefficient
 friction_coefficient = 0.8;
 
 global Fun0;       
-Fun0 = 80;
+Fun0 = 117.1303;
 
 global Fut0;
 % this sets the tangential force always at the boundary of the cone (TODO
 % set separate impulses connected with a friction cone constraint if you
 % want to be more robust (i.e. stay more in the middle of the cone)
-Fut0 = friction_coefficient*Fun0
+%Fut0 = friction_coefficient*Fun0
+Fut0 = 93.7; 
 
-m = 10;   % Mass [kg]
+global optK 
+optK = 12.3110;
+
+global l_0
+l_0 = 3;
+
+m = 5;   % Mass [kg]
 
 global Tsim;
-Tsim = 10;    % Simulation Time
+Tsim = 3;    % Simulation Time
 tspan = [0:0.01: Tsim];
 
 
-
 %Initial Conditions
-x0 = [asin(dmin/5); 0; 0; 0; 5; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
+x0 = [0.1260; 0; 0; 0; l_0; 0]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
 
 %%Simulation:
 
+Opt    = odeset('Events', @stopFun);
 %Solve differential equations
-[t,x] = ode23(@(t,x) diffEq(t,x,m,@Fr,@Fun, @Fut), tspan, x0); 
+[t,x] = ode23(@(t,x) diffEq(t,x,m,@Fr,@Fun, @Fut), tspan, x0,Opt); 
 
 
 
@@ -122,16 +129,18 @@ end
 %%Functions used in the main program
 
 %Frist component brake. Second component force.
-function [fr] = Fr(t)
-global Tsim;
-if ((logical(t >= 0.10*Tsim)& logical(t <= 0.20*Tsim))),
-  %  fprintf('t = %f. Brakes off\n',t);
-    fr=[0,0];
-else
-   % fprintf('t = %f. Brakes on\n',t);
-    fr = [1,0];
-end
+function [fr] = Fr(t, x)
+global Tsim optK l_0
+%     if ((logical(t >= 0.10*Tsim)& logical(t <= 0.20*Tsim))),
+%       %  fprintf('t = %f. Brakes off\n',t);
+%         fr=[0,0];
+%     else
+%        % fprintf('t = %f. Brakes on\n',t);
+%         fr = [1,0];
+%     end
 %fr = [1, 0];
+
+    fr = - optK*(x(5)-l_0);
 end
 
 function [f] = myGaussian(t, sigma, m)
@@ -161,6 +170,35 @@ function [fut] = Fut(t)
 fut = Fut0*myGaussian(t,delta_duration/6, delta_duration/2);
 end
 
+
+
+function [value, isterminal, direction] = stopFun(t, x)
+
+        theta = x(1);
+        dtheta = x(2);
+        phi = x(3);
+        dphi = x(4);
+        l = x(5);
+        dl = x(6);
+        
+        
+        X = l*cos(phi)*sin(theta);    
+        Y = l*sin(phi)*sin(theta);
+        Z = -l*cos(theta);
+        
+        value =  (X <= 0.001 );
+        
+        if (value)
+            fprintf('Stopping\n');
+
+            fprintf('final target: \n ');
+            [X Y Z];
+        end
+        
+                    isterminal = 1;   % Stop the integration
+            direction  = 0;
+end
+
 function [dxdt] = diffEq(t,x, m, Fr, Fun ,Fut)
 global dmin;
 global dtol;
@@ -176,20 +214,12 @@ phi = x(3);
 dphi = x(4);
 l = x(5);
 dl = x(6);
-X = l*cos(phi)*sin(theta);
+
 %thmin = asin(dmin/l);
 %thtol = asin(dtol/l);
-FR = Fr(t);
-if (X < dmin )
-% if (X <= 0 )
-        fprintf('Parking\n');
-        ddtheta = 0;
-        dtheta = 0;
-        ddphi = 0;
-        dphi = 0;
-        ddl = 0;
-        dl = 0;
-else
+
+
+
 %     
 %     fprintf('Flying\n');
 %     %Flight dynamics
@@ -204,20 +234,10 @@ else
 fprintf('Flying\n');
         ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
         ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
-        ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*FR(2);
-end
-%Brake on?
-if FR(1) > 0.99,
-    ddl = 0;
-    dl =0;
- %   fprintf('Brakes on\n');
-else
-  %  fprintf('Brakes off\n');
-end
+        ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t, x);
+
+
 dxdt = [dtheta; ddtheta; dphi; ddphi; dl; ddl];
-if(FR(1)<0.99)
-display(dxdt)
-end
 
 end
 
