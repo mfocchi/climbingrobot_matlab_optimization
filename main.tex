@@ -279,26 +279,66 @@ And the potential energy $V$ :
 	Reorder the system in canonical form $\dot{\bm{x}}(t)=f(\bm{x}(t),\bm{u}(t))$, where x is the state and u is the control input. 
 	For the spherical pendulum system, the state is defined as : 
 	
-	\begin{equation}
+	\begin{align}
           \label{eq:State}
-		x^T= [\theta \quad \dot{\theta} \quad  \phi \quad \dot{\phi}\quad   l   \quad  \dot{l}] 
-	\end{equation}
+		x^T= [\theta \quad   \phi \quad   l \quad \dot{\theta} \quad   \dot{\phi}\quad   \dot{l}] \\
+		u^T = \mat{ F_{u,t} & F_{u,n} &  F_{r}}
+	\end{align}
+	
+	
+	\begin{align} % TODO check Fun cause is an inpulse not a force
+	\label{eq:optim_ctrl_problem}
+		\argmin_u &= w_T T_f + w_{K}K_f \\
+		&\st
+		& \dot{x} = f(x,u,t; T_f) 
+		& \quad l s_\theta c_\phi > 0 \\
+		        &-F_{r,max} \leq F_r \leq 0 \\ %rope can only pull
+			    & 0 \leq F_{u,n}  \\ %unilateral
+			    &  F_{u,t}^2 + F_{u,n}^2 \leq F_{u,max}^2 \\ % actuation 
+			    &  \vert F_{u,t} \vert   \leq \mu_f  F_{u,n} \\ % friction		
+			    & p(0) = p_0 \\ % initial pos
+			    & \omega_{0} = 0 \quad  \psi_{0} = 0  \quad r = 0 \\
+			    & p(T_f) = p_f % final pos	      			     
+	\end{align}
+	
+	
+	where $K_f$ is K computed at $t = T_f$: %TODO rename T in K
+	\begin{align}
+	 K_f =& \frac{m}{2} l(T_f)^2 \left[ \omega(T_f)^2 + s_\theta(T_f)^2 \right. \\ 
+			 & \left. +\psi(T_f)^2\right] + \frac{m}{2}r(T_f)^2 + mgl(T_f) c_\theta (T_f)
+ 	\end{align}
+	
+	and $ f(x,u,t) $ is equal to:
+	
 	
 	%%
 	\begin{equation}
-          \begin{aligned}
+    \begin{aligned}
 		\dot{\theta} =& \omega,\\
 		\dot{\phi}   =&\psi,\\
 		\dot{l}      =&r,\\
-		\dot{\omega} =& -\frac{2}{l} \omega r +\psi^2\sin\theta\cos\theta -\frac{g}{l} \sin\theta+\frac{F_{u,n}}{ml},\\
-		\dot{\psi} =& \frac{-2\psi\left(r\sin^2\theta+l\omega\sin\theta\cos\theta\right)+\frac{F_{u,t}(t)\sin\theta}{m}}{l\sin^2\theta},\\
-		\dot{r} =&
-                l\left(\omega^2+\psi^2\sin^2\theta\right)+g\cos\theta
-                +\frac{F_{r}}{m}.
-              \end{aligned}
-                \label{eq:CanonicalForm}
+	    \dot{\omega} =& - \frac{2}{l}\omega r +  \psi^2 c_{\theta} s_{\theta} -\frac{g}{l} s_{\theta} + \frac{1}{ml} F_{u,n} f(t)\\
+	    \dot{\psi} =&  -2 \frac{c_{\theta}}{s_{\theta}} \omega \psi - \frac{2}{l}\psi r + \frac{1}{ml s_{\theta} } F_{u,t} f(t)\\
+	    \dot{r} =& l \omega^2 + ls_{\theta}^2 \psi^2 + g c_{\theta} + \frac{1}{m} F_r
+        \end{aligned}
+        \label{eq:CanonicalForm}
 	\end{equation}
 	%%%
+	where: 
+	
+	\begin{align*}
+	\centering
+	&\mu = T_{th}/2\\
+	&3 \sigma = T_{th}/2\\
+	&f(t) = \frac{1}{\sqrt{ 2  \pi \sigma^2}} e^{\left( \frac{-(t - \mu)^2}{2\sigma^2} \right)}
+	\end{align*}
+	
+	input parameters are: 
+	
+	$T_{th}= 0.05$, 	$\mu_f = 0.8$,	$F_{u,max}  =150 N$,	$F_{r,max} =80 N$; % Fr in negative
+
+	
+	
 	The boundary conditions for a movement starting and ending at rest ($v=0$) are
 	%%%
 	\begin{EQ}[rclcl]
@@ -344,7 +384,7 @@ And the potential energy $V$ :
 
 \section{Input parametrization}
 
-The control input should be a smooth and differentiable function of time. To fulfill these requirements we propose two solutions: 1) a curve that has the shape of a Gaussian 2) built with Bezier curves, 3) built with piece-wise quintic polynomials. We assume the jump duration is $T_f=2s$ and the mass of the robot $m=5 kg$ and the duration of the thrusting phase as $T_{th} = 0.2 s$. For plotting purposes the max force is set to $ 3mg $ but it will be a free variable in the optimization. In the case of Gaussian we get (see Fig. \ref{fig:gaussian}):
+The control input should be a smooth and differentiable function of time. To fulfill these requirements we propose two solutions: 1) a curve that has the shape of a Gaussian 2) built with Bezier curves, 3) built with piece-wise quintic polynomials. We assume the jump duration is $T_f=2s$ and the mass of the robot $m=5 kg$ and the duration of the thrusting phase as $T_{th} = 0.05 s$. For plotting purposes the max force is set to $ 3mg $ but it will be a free variable in the optimization. In the case of Gaussian we get (see Fig. \ref{fig:gaussian}):
 
 \begin{figure}
 	\includegraphics[width=\columnwidth]{figs/gaussian}
@@ -357,8 +397,7 @@ The control input should be a smooth and differentiable function of time. To ful
 \centering
 &\mu = T_{th}/2\\
 &3 \sigma = T_{th}/2\\
-&f_{max} = 3mg \\
-&f(t) = f_{max} e^{\left( \frac{-(t - \mu)^2}{2\sigma^2} \right)}
+&f(t) = e^{\left( \frac{-(t - \mu)^2}{2\sigma^2} \right)}
 \end{align*}
 
 In the case of the Bezier curve we chose the Bezier curves that are binomial polynomial with this expression:

@@ -74,7 +74,7 @@ for i =1:length(t)
 end
     
 %compare for sanity check should be equal to  E.Ekin0
-%E.Ekin0angles=  (m*l^2/2).*(thetad(1)^2 + sin(theta(1))^2 *phid(1)^2);
+E.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2);
 
 E.U0 =  -m*g*l*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
 
