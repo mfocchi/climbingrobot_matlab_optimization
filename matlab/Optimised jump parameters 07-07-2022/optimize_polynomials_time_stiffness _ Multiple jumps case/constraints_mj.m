@@ -1,0 +1,95 @@
+function [ineq, eq, energy_constraints,wall_constraints, force_constraints, initial_final_constraints] = constraints_mj(x,   p0,  pf, DER_ENERGY_CONSTRAINT)
+
+global  g N  m num_params Fun_max mu l_uncompressed 
+
+% ineq are <= 0
+Tf = x(1);
+time =  linspace(0, Tf, N) ;
+a_10 = x(2);
+a_11 = x(3);
+a_12 = x(4);
+a_13 = x(5);
+a_20 = x(6);
+a_21 = x(7);
+a_22 = x(8);
+a_23 = x(9);
+a_30 = x(10);
+a_31 = x(11);
+a_32 = x(12);
+a_33 = x(13);
+K = x(14);
+
+% 
+
+% parametrizzation with sin theta sing phi
+theta = a_10 + a_11*time + a_12*time.^2 +  a_13*time.^3;
+thetad =  a_11 + 2*a_12*time + 3*a_13*time.^2;
+thetadd = 2*a_12 + 6*a_13*time;
+
+phi = a_20 + a_21*time + a_22*time.^2 + a_23*time.^3;
+phid =  a_21 + 2*a_22*time  + 3*a_23*time.^2;
+phidd =   2*a_22 + 6*a_23*time;
+
+    
+l = a_30 + a_31*time + a_32*time.^2 + a_33*time.^3;
+ld =  a_31 + 2*a_32*time  + 3*a_33*time.^2;
+ldd =   2*a_32 + 6*a_33*time;
+
+p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)];
+p_0 = p(:,1);
+p_f = p(:,end);
+l_f = l(end);
+
+
+ineq = [];
+    
+for i=1:N    % these are 8 constraints 
+    
+    E(i) = m*l(i)^2/2*(thetad(i)^2+sin(theta(i))^2*phid(i)^2 ) + m*ld(i)^2/2 - m*g*l(i)*cos(theta(i)) + K*(l(i)-l_uncompressed).^2/2;
+    sigma(i) = x(num_params+i);        
+    if (i>=2)
+        ineq = [ineq (abs(E(i) - E(i-1)) - sigma(i))];
+    end
+
+end
+
+energy_constraints = N-1;
+
+% constraint to do not enter the wall
+for i=1:N 
+
+    ineq = [ineq -p(1,i) ];
+end 
+
+wall_constraints = N; 
+
+
+[Fun , Fut] = evaluate_initial_impulse_mj(x);
+
+
+ineq = [ineq  (Fun -Fun_max)]   ;
+ineq = [ineq  (abs(Fut) - mu*Fun_max)];
+ineq = [ineq  (-Fun)]  ;
+
+force_constraints  = 3;
+
+% initial final point
+ineq= [ineq norm(p_0 - p0) - x(num_params+N+1)];
+ineq= [ineq norm(p_f - pf) - x(num_params+N+2)];
+ineq= [ineq abs(norm(pf) - l_f) - x(num_params+N+3)];
+
+initial_final_constraints = 3;
+
+eq = [];
+
+% not ok this is too restrictive
+% eq= [eq norm(p_0 - p0)  ];
+% eq= [eq norm(p_f - pf) ];
+% eq= [eq abs(norm(pf) - l_f)  ];
+
+if any(isinf(ineq))
+    ineq
+end
+
+
+end
