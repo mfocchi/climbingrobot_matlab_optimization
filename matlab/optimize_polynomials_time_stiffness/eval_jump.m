@@ -1,4 +1,4 @@
-function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time, efficiency] = eval_jump(p0, pf, Fun_max, Fr_max, mu) 
+function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  intEkin, opt_Fun, opt_Fut, Fr, opt_K, opt_Tf, T_pend, solving_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu) 
 
         global m  g w1 w2 w3 w4 w5 N   num_params l_uncompressed 
 
@@ -46,7 +46,8 @@ function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  
         [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
         solving_time = toc;
      
-        [p, thet, phi, l, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+       
+        [p, thet, phi, l,ld, E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
 
         energy = E;
         opt_Tf = x(1);
@@ -64,7 +65,7 @@ function [number_of_converged_solutions, initial_kin_energy, final_kin_energy,  
         Fr = nan;
         if  problem_solved 
             number_of_converged_solutions = 1;       
-            initial_kin_energy = energy.Ekin0;% 
+            initial_kin_energy = 0;%energy.Ekin0;
             final_kin_energy =  energy.Ekinf;
             intEkin =   energy.intEkin;
             opt_Fut = Fut;

@@ -1,4 +1,4 @@
-function [p, theta, phi, l, ld, E,  path_length, initial_error, final_error] = eval_solution(x,  dt, p0, pf)
+function [p, theta, phi, l,  E,  path_length, initial_error, final_error, thetad, phid,ld, t] = eval_solution(x,  dt, p0, pf)
 
 global m g l_uncompressed
 %eval trajectory
@@ -18,6 +18,10 @@ a_31 = x(11);
 a_32 = x(12);
 a_33 = x(13);
 K = x(14);
+
+% check they are column vectors
+pf = pf(:);
+p0 = p0(:);
 
 % parametrizzation with sin theta sing phi
 theta = a_10 + a_11*t + a_12*t.^2 +  a_13*t.^3;
@@ -52,11 +56,23 @@ path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2));
 
 
 E = struct;
-
+% init struct foc C++ code generation
+E.Etot = 0;
+E.Ekin = zeros(1, length(t));
+E.Ekin0x = 0;
+E.Ekin0y = 0;
+E.Ekin0z = 0;
+E.Ekin0 = 0;
+E.intEkin = 0;
+E.U0 = 0;
+E.Ekinfx = 0;
+E.Ekinfy = 0;
+E.Ekinfz = 0;
+E.Ekinf = 0;
+E.Uf = 0;
 
 % Calculating and ploting the total Energy from the new fit: theta, thetad and phid
 E.Etot =  ((m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) +m.*ld.^2/2 - m*g*l.*cos(theta) + K*(l-l_uncompressed).^2/2;
-
 
 
 % kinetic energy at the beginning
@@ -66,23 +82,20 @@ E.Ekin0z = m/2*pd(3,1)'*pd(3,1);
 E.Ekin0 = m/2*pd(:,1)'*pd(:,1);
 
 
-E.intEkin = 0;
 for i =1:length(t)
     E.Ekin(i) = m/2*pd(:,i)'*pd(:,i);
-
     E.intEkin = E.intEkin +  E.Ekin(i)*dt;
 end
     
 %compare for sanity check should be equal to  E.Ekin0
-E.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2);
+%E.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2);
 
-E.U0 =  -m*g*l*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
-
+E.U0 =  -m*g*l(1)*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
 E.Ekinfx = m/2*pd(1,end)'*pd(1,end);
 E.Ekinfy = m/2*pd(2,end)'*pd(2,end);
 E.Ekinfz = m/2*pd(3,end)'*pd(3,end);
 E.Ekinf = m/2*pd(:,end)'*pd(:,end);
-E.Uf = -m*g*l*cos(theta(end)) +K*(l(end)-l_uncompressed).^2/2;
+E.Uf = -m*g*l(end)*cos(theta(end)) +K*(l(end)-l_uncompressed).^2/2;
 
 initial_error = norm(p(:,1) -p0);
 final_error = norm(p(:,end) -pf);

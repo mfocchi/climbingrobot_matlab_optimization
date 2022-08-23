@@ -1,4 +1,5 @@
-%
+
+
 clear all ; close all ; clc
 global m  g w1 w2 w3 w4 w5 N   num_params  l_uncompressed T_th
 
@@ -17,7 +18,7 @@ w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % energy weight E
 w4 = 10.0; % slacks initial / final 
-w5 = 0.01; %ekinf
+w5 = 0.01; %ekinf (important! energy has much higher values!)
 
 N = 10 ; % energy constraints
 
@@ -89,7 +90,7 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 %output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
 %output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
 
-[p, theta, phi, l, ld,  E, path_length , initial_error , final_error ] = eval_solution(x, dt,  p0, pf) ;
+[p, theta, phi, l,  E, path_length , initial_error , final_error, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
 opt_Tf = x(1);
@@ -113,16 +114,19 @@ if  problem_solved
 end
 
     
-% number_of_converged_solutions
-% initial_kin_energy
-% final_kin_energy
-% energy.intEkin
-% Fun
-% Fut 
-% path_length
-% initial_error
-% final_error
-% 
+number_of_converged_solutions
+initial_kin_energy
+final_kin_energy
+Fun
+Fut 
+initial_error
+final_error
+
+%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu)
+
+%for Daniele
+%save('log_daniele.mat','theta', 'phi', 'l','thetad','phid','ld','time')
+
 DEBUG = false;
 
 if (DEBUG)
@@ -150,6 +154,7 @@ if (DEBUG)
 
 
     figure
+    ylabel('Fr')
     plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
     plot(0*ones(size(l)),'r');
     plot(-Fr_max*ones(size(l)),'r');
@@ -167,6 +172,30 @@ if (DEBUG)
     figure
     plot(energy.Ekin); hold on; grid on;
     ylabel('Ekin')
+    
+    figure
+    plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
+    plot(0*ones(size(l)),'r');
+    plot(-Fr_max*ones(size(l)),'r');
+
+% 
+%     figure
+%     subplot(3,1,1)
+%     plot(time, thetad);hold on; grid on;
+%     ylabel('thetad')
+% 
+%     subplot(3,1,2)
+%     plot(time, phid);hold on; grid on;
+%     ylabel('phid')
+%     
+%         subplot(3,1,3)
+%     plot(time, ld); hold on; grid on;
+%     ylabel('ld')
+%     
+    
+    
+    
+    
 end
 
 disp('inputs')
@@ -177,5 +206,5 @@ opt_K
 disp('check')
 opt_Tf
 pf
-%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(pf, Fun_max, Fr_max, mu)
- 
+
+
