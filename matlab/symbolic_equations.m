@@ -1,6 +1,6 @@
 
 %l const
-syms l theta(t) phi(t) t g f1 f2 g1 g2 g3
+syms l(t) theta(t) phi(t) t g f1 f2 g1 g2 g3
 
 
 % compute jacobian symblically
@@ -8,9 +8,9 @@ p = [l* sin(theta)*cos(phi);
     l* sin(theta)*sin(phi); 
     - l*cos(theta)]
 pd = diff(p, t);
-pd =subs( pd,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('thetad'),str2sym('phid')});
-pd =subs( pd, {str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('theta'),str2sym('phi')});
-
+pd =subs( pd,  {str2sym( 'diff(l(t), t)') , str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('ld') , str2sym('thetad'),str2sym('phid')});
+pd =subs( pd, {str2sym('l(t)') , str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('l'), str2sym('theta'),str2sym('phi')});
+pd
 
 theta = theta(t)
 phi = phi(t)
