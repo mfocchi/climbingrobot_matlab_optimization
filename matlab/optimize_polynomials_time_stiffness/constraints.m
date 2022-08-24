@@ -107,6 +107,8 @@ eq = [];
 % eq= [eq norm(p_f - pf) ];
 % eq= [eq abs(norm(pf) - l_f)  ];
 
+eq = [eq ld(1)]; % set initial vel =0 
+
 if any(isinf(ineq))
     ineq
 end
