@@ -4,7 +4,7 @@ global m g l_uncompressed
 %eval trajectory
 
 Tf = x(1);
-t = linspace(0, Tf, 1/dt);
+t = [0:dt:Tf];
 a_10 = x(2);
 a_11 = x(3);
 a_12 = x(4);
