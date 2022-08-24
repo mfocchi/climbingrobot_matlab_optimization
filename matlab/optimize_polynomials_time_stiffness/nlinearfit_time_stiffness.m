@@ -124,10 +124,14 @@ final_error
 
 %[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu)
 
-%for Daniele
-%save('log_daniele.mat','theta', 'phi', 'l','thetad','phid','ld','time')
 
-DEBUG = false;
+%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf ] = optimize_cpp(l_0, theta0, phi0,  pf, Fun_max, Fr_max, mu) 
+
+%for Daniele
+Fr_vec = -opt_K*(l-l_uncompressed);
+save('test.mat','energy','Fr_vec','theta', 'phi', 'l','thetad','phid','ld','time')
+
+DEBUG = true;
 
 if (DEBUG)
     disp('1- energy constraints')
@@ -155,7 +159,7 @@ if (DEBUG)
 
     figure
     ylabel('Fr')
-    plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
+    plot(Fr_vec); hold on; grid on;
     plot(0*ones(size(l)),'r');
     plot(-Fr_max*ones(size(l)),'r');
 
@@ -170,13 +174,10 @@ if (DEBUG)
     ylabel('ld')
     
     figure
-    plot(energy.Ekin); hold on; grid on;
+    plot(time, energy.Ekin); hold on; grid on;
     ylabel('Ekin')
     
-    figure
-    plot(-opt_K*(l-l_uncompressed)); hold on; grid on;
-    plot(0*ones(size(l)),'r');
-    plot(-Fr_max*ones(size(l)),'r');
+
 
 % 
 %     figure
