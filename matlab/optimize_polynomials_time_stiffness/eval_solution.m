@@ -40,10 +40,15 @@ p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
 %disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) );
 
 
-% velocity
-pd = [cos(theta).*cos(phi).*thetad.*l - sin(phi).*sin(theta).*phid.*l;
-    cos(theta).*sin(phi).*thetad .*l + cos(phi).*sin(theta).*phid.*l;
-    sin(theta).*thetad.*l];
+% velocity (constant length)
+% pd = [cos(theta).*cos(phi).*thetad.*l - sin(phi).*sin(theta).*phid.*l;
+%     cos(theta).*sin(phi).*thetad .*l + cos(phi).*sin(theta).*phid.*l;
+%     sin(theta).*thetad.*l];
+
+% velocity (variable length)
+pd = [ld.*cos(phi).*sin(theta) - l.*phid.*sin(phi).*sin(theta) + l.*thetad.*cos(phi).*cos(theta);
+ld.*sin(phi).*sin(theta) + l.*phid.*cos(phi).*sin(theta) + l.*thetad.*cos(theta).*sin(phi);
+                                               l.*thetad.*sin(theta) - ld.*cos(theta)];
 
 deltax = diff(p(1,:));  % diff(X);
 deltay = diff(p(2,:));   % diff(Y);
@@ -72,7 +77,7 @@ E.Ekinf = 0;
 E.Uf = 0;
 
 % Calculating and ploting the total Energy from the new fit: theta, thetad and phid
-E.Etot =  ((m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2)) +m.*ld.^2/2 - m*g*l.*cos(theta) + K*(l-l_uncompressed).^2/2;
+E.Etot =  (m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2) +m.*ld.^2/2 - m*g*l.*cos(theta) + K*(l-l_uncompressed).^2/2;
 
 
 % kinetic energy at the beginning
@@ -88,7 +93,7 @@ for i =1:length(t)
 end
     
 %compare for sanity check should be equal to  E.Ekin0
-%E.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2);
+E.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2) + m*ld(end)^2/2;
 
 E.U0 =  -m*g*l(1)*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
 E.Ekinfx = m/2*pd(1,end)'*pd(1,end);
