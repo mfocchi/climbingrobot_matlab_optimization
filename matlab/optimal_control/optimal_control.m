@@ -1,7 +1,7 @@
 
 
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 N   num_params  l_uncompressed T_th
+global m  g w1 w2 w3 w4 w5 N num_params  l_uncompressed T_th N_dyn dt_dyn
 
 m = 5;
 g = 9.81;
@@ -11,7 +11,6 @@ g = 9.81;
 Fun_max =150;
 Fr_max =80; % Fr in negative
 mu = 0.8;
-
 T_th = 0.05;
 
 w1 = 1 ; % green initial cost (not used)
@@ -23,7 +22,8 @@ w5 = 0.01; %ekinf (important! energy has much higher values!)
 N = 10 ; % energy constraints
 
 dt=0.001;
-num_params = 1+12+1; % time + poly + K 
+dt_dyn = 0.02;
+
 
 % Marco Frego test: initial state
 l_0 = 3;
@@ -35,46 +35,23 @@ p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 % Marco Frego test: final state
 pf = [0.001; 5; -8];
 
-
-% p0 =[        0.149937507812035;
-%                          0;
-%           -7.24];
-%   [theta0, phi0, l_0] = computePolarVariables(p0);
-%  
-%custom target
-%pf = [0.001; 10; -19.9962507811849];
-
-% compute final points for Marco
-%[thetaf, phif, lf] = computePolarVariables(pf)
-
 l_uncompressed = l_0;
 %pendulum period
-T_pend = 2*pi*sqrt(l_0/g)/4; % half period
+T_pend = 2*pi*sqrt(l_0/g)/2; % half period TODO replace with linearized
+N_dyn = floor(T_pend/dt_dyn);
 
-% more meaninguful init
-params0 = [ T_pend, theta0, 0.01, 0, 0,  ...
-                    phi0 , 0.01, 0 ,0, ...
-                    l_0, 0.01 ,0, 0, ...
-                    6 ];
-%params0 = 0.1*ones(1,num_params);
-% time, polyparams, K, slacks_energy, slacks_initial_final
-x0 = [params0, zeros(1,N), 0,0,0] ;
-lb = [0.01,     -10*ones(1,8), -30*ones(1,4), 0.1,  zeros(1,N),    0 , 0, 0];
-ub = [T_pend*2, 10*ones(1,8),  30*ones(1,4), 20,  100*ones(1,N), 100 , 100, 100 ];
+num_params = 3;
+%opt vars=   thetad0, phid0, K, slacks_dyn, slacks_energy,   sigma =
+%norm(p_f - pf)  /time
+x0 = [   0,    0,    1,    zeros(1,N),    0];%, T_pend ];
+lb = [0.01,    0,  -10,    zeros(1,N)     0];% ,0.01];
+ub = [  10,   10,   20, 100*ones(1,N),  100];%, T_pend*2, ];
 
-options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
-                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
+%test
+[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
 
-% You misunderstand the documentation: the 'sqp' and 'interior-point' algorithms satisfy BOUNDS at all iterations, not nonlinear constraints.
-% For your problem, it is clear that the merit function that the solvers use internally is not working well. 
-% This merit function balances the two goals of lowering infeasibility and lowering the objective function. 
-% Therefore, I suggest that you artificially make your constraint function much larger, to have fmincon pay more attention to it. 
-% Multiply mycon by 1e4 or so (that is, have mycon return a value that is a large factor multiplied by the true constraint value)and see whether that helps.
-
-% options check available options in:
-%optimset fmincon  or 
-% optimoptions('fmincon','Algorithm', 'sqp') or
-%https://it.mathworks.com/help/optim/ug/output-function.html
+options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-2);
 
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
@@ -88,17 +65,14 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 % evaluate constraint violation 
 [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
 
-%output.constrviolation % your solution is infeasible! (should converge to zero; e.g. 1e-8)
-%output.firstorderopt % the first-order optimality measure is the infinity norm (meaning maximum absolute value) of the gradient and Should converge to zero too (e.g. 1e-8)! Not achieved in your example!
-
 [p, theta, phi, l,  E, path_length , initial_error , final_error, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
 opt_Tf = x(1);
-opt_K = x(14);
+opt_K = x(4);
 
 plot_curve( p, p0, pf,  E.Etot, false, 'k');
-[Fun , Fut] = evaluate_initial_impulse(x);
+%[Fun , Fut] = evaluate_initial_impulse(x);
 problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
 
 
@@ -109,10 +83,15 @@ if  problem_solved
     number_of_converged_solutions = 1;       
     initial_kin_energy = energy.Ekin0;% 
     final_kin_energy =  energy.Ekinf;
-    opt_Fut = Fut;
-    opt_Fun = Fun;    
+
     plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
 end
+
+
+
+
+
+
 
     
 number_of_converged_solutions
@@ -122,11 +101,6 @@ Fun
 Fut 
 initial_error
 final_error
-
-%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf, T_pend,  solve_time] = eval_jump(p0, pf, Fun_max, Fr_max, mu)
-
-
-%[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf ] = optimize_cpp(l_0, theta0, phi0,  pf, Fun_max, Fr_max, mu) 
 
 %for Daniele
 Fr_vec = -opt_K*(l-l_uncompressed);
@@ -165,36 +139,32 @@ if (DEBUG)
     plot(-Fr_max*ones(size(l)),'r');
 
 
-    figure
-    subplot(2,1,1)
-    plot(p(1,:))
-    ylabel('X')
-
-    subplot(2,1,2)
-    plot(ld)
-    ylabel('ld')
-    
-    figure
-    plot(time, energy.Ekin); hold on; grid on;
-    ylabel('Ekin')
-    
-
-
-% 
 %     figure
-%     subplot(3,1,1)
-%     plot(time, thetad);hold on; grid on;
-%     ylabel('thetad')
+%     subplot(2,1,1)
+%     plot(p(1,:))
+%     ylabel('X')
 % 
-%     subplot(3,1,2)
-%     plot(time, phid);hold on; grid on;
-%     ylabel('phid')
-%     
-%         subplot(3,1,3)
-%     plot(time, ld); hold on; grid on;
+%     subplot(2,1,2)
+%     plot(ld)
 %     ylabel('ld')
 %     
+%     figure
+%     plot(time, energy.Ekin); hold on; grid on;
+%     ylabel('Ekin')
+%     
+   
+    figure
+    subplot(3,1,1)
+    plot(time, theta);hold on; grid on;
+    ylabel('theta')
+
+    subplot(3,1,2)
+    plot(time, phi);hold on; grid on;
+    ylabel('phi')
     
+        subplot(3,1,3)
+    plot(time, l); hold on; grid on;
+    ylabel('l')
     
     
     
