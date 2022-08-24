@@ -22,7 +22,7 @@ w5 = 0.01; %ekinf (important! energy has much higher values!)
 N = 10 ; % energy constraints
 
 dt=0.001;
-dt_dyn = 0.02;
+dt_dyn = 0.04;
 
 
 % Marco Frego test: initial state
@@ -43,12 +43,12 @@ N_dyn = floor(T_pend/dt_dyn);
 num_params = 3;
 %opt vars=   thetad0, phid0, K, slacks_dyn, slacks_energy,   sigma =
 %norm(p_f - pf)  /time
-x0 = [   0,    0,    1,    zeros(1,N),    0];%, T_pend ];
-lb = [0.01,    0,  -10,    zeros(1,N)     0];% ,0.01];
-ub = [  10,   10,   20, 100*ones(1,N),  100];%, T_pend*2, ];
+x0 = [  0.1, 0.1,    6,    zeros(1,N), zeros(1,N_dyn),   0];%, T_pend ];
+lb = [ 0.0,  -20,    0,    zeros(1,N)  zeros(1,N_dyn),   0];% ,0.01];
+ub = [  10,   20,   20, 100*ones(1,N), 100*zeros(1,N_dyn), 100];%, T_pend*2, ];
 
 %test
-[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
+%[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
                         'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-2);
@@ -59,7 +59,8 @@ toc
 
 slacks_energy = x(num_params+1:num_params+N);
 slacks_energy_cost = sum(slacks_energy);
-slacks_initial_final = x(num_params+N+1:end);
+slacks_dyn = x(num_params+N+1:num_params+N+N_dyn);
+slacks_initial_final = x(num_params+N+N_dyn+1:end);
 slacks_initial_final_cost = sum(slacks_initial_final);
 
 % evaluate constraint violation 
@@ -68,8 +69,12 @@ slacks_initial_final_cost = sum(slacks_initial_final);
 [p, theta, phi, l,  E, path_length , initial_error , final_error, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
 
 energy = E;
-opt_Tf = x(1);
-opt_K = x(4);
+
+opt_K = x(3);
+%evaluate inpulse ( the integral of the gaussian is 1) 
+Fun = m*l_0*thetad(1)/T_th;
+Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
+
 
 plot_curve( p, p0, pf,  E.Etot, false, 'k');
 %[Fun , Fut] = evaluate_initial_impulse(x);
@@ -86,11 +91,6 @@ if  problem_solved
 
     plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
 end
-
-
-
-
-
 
 
     
@@ -162,7 +162,7 @@ if (DEBUG)
     plot(time, phi);hold on; grid on;
     ylabel('phi')
     
-        subplot(3,1,3)
+    subplot(3,1,3)
     plot(time, l); hold on; grid on;
     ylabel('l')
     

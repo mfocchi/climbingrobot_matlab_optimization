@@ -89,6 +89,16 @@ ineq= [ineq norm(p_f - pf) - x(num_params+N+1)];
 
 
 eq = [];
+% sigma_dyn = [];
+% for i=1:N_dyn   
+%     sigma_dyn(i) = x(num_params + N +i);        
+%     if (i>=2)
+%         xk = states(:,i);
+%         xk1 =states(:,i-1);
+%         eq = [eq (abs((xk - xk1) -  dt_dyn* dynamics_autonomous(xk1, K) ) - sigma_dyn(i))];
+%     end
+% 
+% end
 
 
 if any(isinf(ineq))
