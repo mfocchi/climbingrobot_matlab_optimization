@@ -6,7 +6,7 @@ function [x_vec,  t_vec] = dynamics_autonomous(x0, dt,n_steps, K)
     x_vec = x0;
     t_vec = 0;
     
-    for i=1:n_steps
+    for i=1:n_steps-1
         x_ = x_ + dt* dynamics_autonomous(x_, K);
         t_ = t_ + dt;
         x_vec = [x_vec x_];
