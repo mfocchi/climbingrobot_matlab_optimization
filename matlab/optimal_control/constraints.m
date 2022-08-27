@@ -37,11 +37,15 @@ solution_constr.p = p;
 solution_constr.theta = theta;
 solution_constr.phi = phi;
 solution_constr.l = l;
+solution_constr.thetad = thetad;
+solution_constr.phid = phid;
+solution_constr.ld = ld;
+
 solution_constr.time = t;
 
 % number of constraints
 energy_constraints = N-1;
-wall_constraints = N;
+wall_constraints = N_dyn;
 retraction_force_constraints = 2*N_dyn;
 force_constraints  = 2;
 dynamic_constraints = N_dyn-1;
@@ -60,7 +64,7 @@ for i=1:N
     sigma_energy(i) = x(num_params+i);        
     if (i>=2)
         ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy(i))];
-        
+        %ineq = [ineq 0];
     end
 
 end
@@ -68,12 +72,11 @@ end
 
 
 % constraint to do not enter the wall, p_x >=0
-for i=1:N 
-    idx = fine_index(i);
-    ineq = [ineq -p(1,idx) ];
+for i=1:N_dyn 
+
+    ineq = [ineq -p(1,i) ];
     
 end 
-
 
 
 % constraints on retraction force   -Fr_max < Fr = -K*(l-luncompr) < 0 
@@ -121,8 +124,15 @@ ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+2)];
 
 
 eq = [];
-eq= [eq norm(p_f - pf) ];
-
+% eq= [eq norm(p_f - pf) ];
+% for i=1:N    
+%     idx = fine_index(i);
+%     if (i>=2)
+%         eq = [eq abs(E(i) - E(i-1))];
+%         
+%     end
+% 
+% end
 
 if any(isinf(ineq))
     ineq
