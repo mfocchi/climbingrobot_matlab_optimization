@@ -1,25 +1,25 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn 
+global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE
 
 m = 5;
 g = 9.81;
 
 % physical limits
-Fun_max =550;
+Fun_max =200;
 Fr_max =130; % Fr in negative
-mu = 0.8;
+mu = 2.0;
 T_th = 0.05;
-
+FRICTION_CONE=1;
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
-w3 = 0.01 ; % energy weight E
+w3 = 0.01 ; % slacks energy weight E
 w4 = 100.0; % slacks  final (used)
 w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
 
 N = 10 ; % energy constraints
-N_dyn = 80; %dynamic constraints (discretization)
+N_dyn = 40; %dynamic constraints (discretization)
 
 dt=0.001; % to evaluate solution
 
@@ -32,11 +32,11 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [0.5; 5; -8];
+pf = [0.5; 1.0; -8];
 
 l_uncompressed = l_0;
 %pendulum period
-T_pend = 2*pi*sqrt(l_0/g)/2; % half period TODO replace with linearized
+T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 
 
 num_params = 4;
@@ -46,8 +46,9 @@ x0 = [  1, 0.1,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),        0,
 
 % with thetad0 = 1 it detaches from the wall but does not reach the
 % target
-lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-ub = [  50,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
+%lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
+lb = [ 0,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
+ub = [  30,   30,    40,   T_pend*1.5,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
 constr_tolerance = 1e-4;
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
@@ -185,39 +186,39 @@ if (DEBUG)
 %     ylabel('Ekin')
 %     
    
-    figure
-    subplot(3,1,1)
-    plot(time, theta,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.theta,'-ob');
-    ylabel('theta')
-
-    subplot(3,1,2)
-    plot(time, phi,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.phi,'-ob');
-    ylabel('phi')
-    
-    subplot(3,1,3)
-    plot(time, l,'r'); hold on; grid on;
-    plot(solution_constr.time, solution_constr.l,'-ob');
-    ylabel('l')
-    
-    figure
-    subplot(3,1,1)
-    plot(time, thetad,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.thetad,'-ob');
-    ylabel('thetad')
-
-    subplot(3,1,2)
-    plot(time, phid,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.phid,'-ob');
-    ylabel('phid')
-    
-    subplot(3,1,3)
-    plot(time, ld,'r'); hold on; grid on;
-    plot(solution_constr.time, solution_constr.ld,'-ob');
-    ylabel('ld')
-    
-    
+%     figure
+%     subplot(3,1,1)
+%     plot(time, theta,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.theta,'-ob');
+%     ylabel('theta')
+% 
+%     subplot(3,1,2)
+%     plot(time, phi,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.phi,'-ob');
+%     ylabel('phi')
+%     
+%     subplot(3,1,3)
+%     plot(time, l,'r'); hold on; grid on;
+%     plot(solution_constr.time, solution_constr.l,'-ob');
+%     ylabel('l')
+%     
+%     figure
+%     subplot(3,1,1)
+%     plot(time, thetad,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.thetad,'-ob');
+%     ylabel('thetad')
+% 
+%     subplot(3,1,2)
+%     plot(time, phid,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.phid,'-ob');
+%     ylabel('phid')
+%     
+%     subplot(3,1,3)
+%     plot(time, ld,'r'); hold on; grid on;
+%     plot(solution_constr.time, solution_constr.ld,'-ob');
+%     ylabel('ld')
+%     
+%     
     
     figure
     subplot(3,1,1)
@@ -249,5 +250,5 @@ opt_K
 disp('check')
 opt_Tf
 pf
-
+solution_constr.p(:,end)
 

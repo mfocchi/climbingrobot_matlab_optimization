@@ -42,17 +42,19 @@ function coste = cost(x, p0,  pf)
 
     slack_energy=  sum(x(num_params+1:num_params+N)); % if in eq constrraints max(abs(x(num_params+1:num_params+N)));
     slack_dyn = max(x(num_params+N+1:num_params+N+N_dyn));
-    slack_final  = sum (x(num_params+N+N_dyn + 1:end));
+    slack_final  = max (x(num_params+N+N_dyn + 1:end));
 
     Ekinfcost=  ( (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
     Fut = m*l_0*sin(theta0)*phid0/T_th;
     
-    final = w4 * slack_final
-    energy = w3 * slack_energy
-    ekinf= w5* Ekinfcost
+    %final = w4 * slack_final
+    %energy = w3 * slack_energy
+    %ekinf= w5* Ekinfcost
     
-    fut = abs(Fut)
+    % fut = abs(Fut)  % minimizing this and increasing the weight it turns
+    % the trajectory vertical 
+
     %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste =   Tf  + w5* Ekinfcost + w3 * slack_energy + w4 * slack_final +w6*slack_dyn;
+    coste =     w3 * slack_energy + w4 * slack_final  ;
 
 end

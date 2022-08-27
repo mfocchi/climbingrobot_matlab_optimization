@@ -1,6 +1,6 @@
 function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu)
 
-global  g N   m num_params l_uncompressed T_th N_dyn 
+global  g N   m num_params l_uncompressed T_th N_dyn FRICTION_CONE
 
 % ineq are <= 0
 
@@ -47,10 +47,15 @@ solution_constr.time = t;
 energy_constraints = N-1;
 wall_constraints = N_dyn;
 retraction_force_constraints = 2*N_dyn;
-force_constraints  = 2;
+
 dynamic_constraints = N_dyn-1;
 initial_final_constraints = 2;
 
+if FRICTION_CONE
+    force_constraints  = 3;
+else
+    force_constraints  = 2;
+end
 
 % size not known
 ineq =[];% zeros(1, energy_constraints + wall_constraints +retraction_force_constraints+force_constraints+initial_final_constraints);
@@ -100,7 +105,11 @@ Fut = m*l_0*sin(theta0)*phid0/T_th;
 
 ineq = [ineq  (sqrt(Fun^2 + Fut^2) -Fun_max)]   ;%(Fun < fun max )
 ineq = [ineq  (-Fun)]  ; %(Fun >0 )
-%ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
+
+if FRICTION_CONE
+    ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
+end
+
 
 
 %dynamic constraints
