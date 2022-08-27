@@ -43,17 +43,18 @@ initial_final_constraints = 1;
 ineq =[];% zeros(1, energy_constraints + wall_constraints +retraction_force_constraints+force_constraints+initial_final_constraints);
     
 E = zeros(1,N);
-sigma = zeros(1,N);
-% 
-% for i=1:N    
-%     idx = coarse_index(i);
-%     E(idx) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(i))^2*phid(idx)^2 ) + m*ld(i)^2/2 - m*g*l(idx)*cos(theta(i)) + K*(l(idx)-l_uncompressed).^2/2;
-%     sigma(i) = x(num_params+i);        
-%     if (i>=2)
-%         ineq = [ineq (abs(E(idx) - E(idx-1)) - sigma(i))];
-%     end
-% 
-% end
+sigma_energy = zeros(1,N);
+
+for i=1:N    
+    idx = fine_index(i);
+    E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2
+    sigma_energy(i) = x(num_params+i);        
+    if (i>=2)
+        ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy(i))];
+        
+    end
+
+end
 
 
 
@@ -85,22 +86,28 @@ ineq = [ineq  (-Fun)]  ;
 ineq = [ineq  (abs(Fut) -mu*Fun)];
 
 
-% initial final point
-ineq= [ineq norm(p_f - pf) - x(num_params+N+1)];
-
-
-
-eq = [];
-sigma_dyn = [];
+%dynamic constraints
+sigma_dyn = zeros(1, N_dyn);
 for i=1:N_dyn   
     sigma_dyn(i) = x(num_params + N +i);        
     if (i>=2)
         xk = states(:,i);
         xk1 =states(:,i-1);
-        eq = [eq (abs((xk - xk1) -  dt_dyn* dynamics_autonomous(xk1, K) ) - sigma_dyn(i))];
+        ineq = [ineq (norm(xk - xk1 -  dt_dyn* dynamics_autonomous(xk1, K)) - sigma_dyn(i))];
+        
     end
-
 end
+
+
+% initial final point   
+
+ineq= [ineq norm(p_0 - p0) - x(num_params+N+N_dyn+1)];
+ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+2)];
+
+
+
+eq = [];
+
 
 
 if any(isinf(ineq))

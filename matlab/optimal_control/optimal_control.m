@@ -40,9 +40,9 @@ T_pend = 2*pi*sqrt(l_0/g)/2; % half period TODO replace with linearized
 num_params = 4;
 %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =
 %norm(p_f - pf)  
-x0 = [  0.1, 0.1,     6,     T_pend,    zeros(1,N), zeros(1,N_dyn),     0];
-lb = [ 0.0,  -20,     0,       0.01,    zeros(1,N), zeros(1,N_dyn),     0];
-ub = [  10,   20,    20,   T_pend*2, 100*ones(1,N), 100*zeros(1,N_dyn), 100];
+x0 = [  0.1, 0.1,     15,     T_pend,      zeros(1,N),    zeros(1,N_dyn),        0,  0];
+lb = [ -30.0,  -30,   15,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
+ub = [  30,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
 
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
