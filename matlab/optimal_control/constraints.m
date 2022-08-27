@@ -43,7 +43,7 @@ solution_constr.time = t;
 energy_constraints = N-1;
 wall_constraints = N;
 retraction_force_constraints = 2*N_dyn;
-force_constraints  = 3;
+force_constraints  = 2;
 dynamic_constraints = N_dyn-1;
 initial_final_constraints = 2;
 
@@ -56,7 +56,7 @@ sigma_energy = zeros(1,N);
 
 for i=1:N    
     idx = fine_index(i);
-    E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2
+    E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2;
     sigma_energy(i) = x(num_params+i);        
     if (i>=2)
         ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy(i))];
@@ -95,9 +95,9 @@ end
 Fun = m*l_0*thetad0/T_th;
 Fut = m*l_0*sin(theta0)*phid0/T_th;
 
-ineq = [ineq  (sqrt(Fun^2 + Fut^2) -Fun_max)]   ;
-ineq = [ineq  (-Fun)]  ;
-ineq = [ineq  (abs(Fut) -mu*Fun)];
+ineq = [ineq  (sqrt(Fun^2 + Fut^2) -Fun_max)]   ;%(Fun < fun max )
+ineq = [ineq  (-Fun)]  ; %(Fun >0 )
+%ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
 
 
 %dynamic constraints
@@ -121,7 +121,7 @@ ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+2)];
 
 
 eq = [];
-
+eq= [eq norm(p_f - pf) ];
 
 
 if any(isinf(ineq))
