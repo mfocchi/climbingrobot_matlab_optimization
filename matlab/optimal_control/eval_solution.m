@@ -1,16 +1,16 @@
 function [p, theta, phi, l,  E,  path_length, initial_error, final_error, thetad, phid,ld, t] = eval_solution(x,  dt, p0, pf)
 
-global m g l_uncompressed N_dyn dt_dyn
+global m g l_uncompressed 
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
-% Tf = x(4);
+Tf = x(4);
 
 
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-[states, t] = integrate_dynamics(state0,dt_dyn, N_dyn, K);
+[states, t] = integrate_dynamics(state0,dt, floor(Tf/dt), K);
 
 theta = states(1,:);
 phi = states(2,:);

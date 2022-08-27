@@ -1,11 +1,8 @@
-
-
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 N num_params  l_uncompressed T_th N_dyn dt_dyn
+global m  g w1 w2 w3 w4 w5 N num_params  l_uncompressed T_th N_dyn 
 
 m = 5;
 g = 9.81;
-
 
 % physical limits
 Fun_max =150;
@@ -20,9 +17,9 @@ w4 = 10.0; % slacks initial / final
 w5 = 0.01; %ekinf (important! energy has much higher values!)
 
 N = 10 ; % energy constraints
+N_dyn = 40 %dynamic constraints (discretization)
 
-dt=0.001;
-dt_dyn = 0.04;
+dt=0.001; % to evaluate solution
 
 
 % Marco Frego test: initial state
@@ -30,22 +27,22 @@ l_0 = 3;
 theta0 =atan2(0.38, l_0);
 %theta0 = 0.05; 
 phi0 = 0 ;
-
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
+
 % Marco Frego test: final state
 pf = [0.001; 5; -8];
 
 l_uncompressed = l_0;
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/2; % half period TODO replace with linearized
-N_dyn = floor(T_pend/dt_dyn);
 
-num_params = 3;
-%opt vars=   thetad0, phid0, K, slacks_dyn, slacks_energy,   sigma =
-%norm(p_f - pf)  /time
-x0 = [  0.1, 0.1,    6,    zeros(1,N), zeros(1,N_dyn),   0];%, T_pend ];
-lb = [ 0.0,  -20,    0,    zeros(1,N)  zeros(1,N_dyn),   0];% ,0.01];
-ub = [  10,   20,   20, 100*ones(1,N), 100*zeros(1,N_dyn), 100];%, T_pend*2, ];
+
+num_params = 4;
+%opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =
+%norm(p_f - pf)  
+x0 = [  0.1, 0.1,     6,     T_pend,    zeros(1,N), zeros(1,N_dyn),     0];
+lb = [ 0.0,  -20,     0,       0.01,    zeros(1,N), zeros(1,N_dyn),     0];
+ub = [  10,   20,    20,   T_pend*2, 100*ones(1,N), 100*zeros(1,N_dyn), 100];
 
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)

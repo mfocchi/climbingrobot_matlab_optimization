@@ -1,11 +1,13 @@
 function coste = cost(x, p0,  pf)
 
-    global m w1 w2 w3 w4 w5 N   num_params N_dyn dt_dyn
+    global m w1 w2 w3 w4 w5 N   num_params N_dyn 
 
     thetad0 = x(1);
     phid0 = x(2);
     K = x(3);
-    % Tf = x(4);
+    Tf = x(4);
+    % variable intergration step
+    dt_dyn = Tf / N_dyn;
    
     
     [theta0, phi0, l_0] = computePolarVariables(p0);

@@ -1,13 +1,15 @@
 function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu)
 
-global  g N   m num_params l_uncompressed T_th N_dyn dt_dyn
+global  g N   m num_params l_uncompressed T_th N_dyn 
 
 % ineq are <= 0
 
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
-% Tf = x(4);
+Tf = x(4);
+% variable intergration step
+dt_dyn = Tf / N_dyn;
 
 coarse_index = floor(linspace(1, N_dyn, N));
 
@@ -89,16 +91,16 @@ ineq= [ineq norm(p_f - pf) - x(num_params+N+1)];
 
 
 eq = [];
-% sigma_dyn = [];
-% for i=1:N_dyn   
-%     sigma_dyn(i) = x(num_params + N +i);        
-%     if (i>=2)
-%         xk = states(:,i);
-%         xk1 =states(:,i-1);
-%         eq = [eq (abs((xk - xk1) -  dt_dyn* dynamics_autonomous(xk1, K) ) - sigma_dyn(i))];
-%     end
-% 
-% end
+sigma_dyn = [];
+for i=1:N_dyn   
+    sigma_dyn(i) = x(num_params + N +i);        
+    if (i>=2)
+        xk = states(:,i);
+        xk1 =states(:,i-1);
+        eq = [eq (abs((xk - xk1) -  dt_dyn* dynamics_autonomous(xk1, K) ) - sigma_dyn(i))];
+    end
+
+end
 
 
 if any(isinf(ineq))
