@@ -1,8 +1,10 @@
-function  plot_curve(p, p0,pf,  E, plot_energy, color_input)
+function  plot_curve(p, p_constr, p0,pf,  E, plot_energy, color_input)
       
-       plot3(p(1,:), p(2,:), p(3,:) ,color_input ) ;   
+       plot3(p(1,:), p(2,:), p(3,:) ,color_input ) ;
+       
        hold on ;
-
+       plot3(p_constr(1,:), p_constr(2,:), p_constr(3,:) ,'o' ) ;
+       
 
         plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
         plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;

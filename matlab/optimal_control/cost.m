@@ -53,6 +53,6 @@ function coste = cost(x, p0,  pf)
     
     fut = abs(Fut)
     %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste =   w5* Ekinfcost + w3 * slack_energy + w4 * slack_final ;
+    coste =   Tf  + w5* Ekinfcost + w3 * slack_energy + w4 * slack_final +w6*slack_dyn;
 
 end

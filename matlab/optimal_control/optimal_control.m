@@ -6,19 +6,20 @@ g = 9.81;
 
 % physical limits
 Fun_max =550;
-Fr_max =180; % Fr in negative
-mu = 2.8;
+Fr_max =130; % Fr in negative
+mu = 0.8;
 T_th = 0.05;
+
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 0.01 ; % energy weight E
-w4 = 100000.0; % slacks  final (used)
+w4 = 100.0; % slacks  final (used)
 w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
 
 N = 10 ; % energy constraints
-N_dyn = 40; %dynamic constraints (discretization)
+N_dyn = 80; %dynamic constraints (discretization)
 
 dt=0.001; % to evaluate solution
 
@@ -31,7 +32,7 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [0.001; 5; -8];
+pf = [0.5; 5; -8];
 
 l_uncompressed = l_0;
 %pendulum period
@@ -41,9 +42,12 @@ T_pend = 2*pi*sqrt(l_0/g)/2; % half period TODO replace with linearized
 num_params = 4;
 %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =
 %norm(p_f - pf)  
-x0 = [  0.1, 0.1,     15,     T_pend,      zeros(1,N),    zeros(1,N_dyn),        0,  0];
-lb = [ -30.0,  -30,   15,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-ub = [  30,   30,    40,   T_pend*4,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
+x0 = [  1, 0.1,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),        0,  0];
+
+% with thetad0 = 1 it detaches from the wall but does not reach the
+% target
+lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
+ub = [  50,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
 constr_tolerance = 1e-4;
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
@@ -74,7 +78,7 @@ opt_Tf = x(4);
 Fun = m*l_0*thetad(1)/T_th;
 Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
 
-plot_curve( p, p0, pf,  E.Etot, false, 'k');
+plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'k');
 %[Fun , Fut] = evaluate_initial_impulse(x);
 problem_solved = (EXITFLAG == 1) ;
 % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
@@ -88,19 +92,22 @@ if  problem_solved
     number_of_converged_solutions = 1;       
     initial_kin_energy = energy.Ekin0;% 
     final_kin_energy =  energy.Ekinf;
-
-    plot_curve( p ,  p0, pf,    E.Etot, true, 'r'); % converged are red
+    plot_curve( p , solution_constr.p,  p0, pf,    E.Etot, true, 'r'); % converged are red
+  
 end
 
 
     
 number_of_converged_solutions
-initial_kin_energy
 final_kin_energy
 Fun
 Fut 
 initial_error
 final_error
+slacks_energy 
+slacks_dyn    
+slacks_initial_final
+
 
 %for Daniele
 Fr_vec = -opt_K*(l-l_uncompressed);
@@ -154,9 +161,7 @@ if (DEBUG)
         c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constraints)
     end
     
-    slacks_energy 
-    slacks_dyn    
-    slacks_initial_final 
+ 
 
 
     figure
@@ -195,6 +200,22 @@ if (DEBUG)
     plot(time, l,'r'); hold on; grid on;
     plot(solution_constr.time, solution_constr.l,'-ob');
     ylabel('l')
+    
+    figure
+    subplot(3,1,1)
+    plot(time, thetad,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.thetad,'-ob');
+    ylabel('thetad')
+
+    subplot(3,1,2)
+    plot(time, phid,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.phid,'-ob');
+    ylabel('phid')
+    
+    subplot(3,1,3)
+    plot(time, ld,'r'); hold on; grid on;
+    plot(solution_constr.time, solution_constr.ld,'-ob');
+    ylabel('ld')
     
     
     
