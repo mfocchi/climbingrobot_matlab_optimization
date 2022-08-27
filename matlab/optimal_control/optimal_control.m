@@ -47,8 +47,8 @@ ub = [  10,   20,    20,   T_pend*2, 100*ones(1,N), 100*zeros(1,N_dyn), 100];
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
 
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-2);
+options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', 1e-4);
 
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
