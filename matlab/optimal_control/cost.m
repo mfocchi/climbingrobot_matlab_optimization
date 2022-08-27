@@ -1,6 +1,6 @@
 function coste = cost(x, p0,  pf)
 
-    global m w1 w2 w3 w4 w5 N   num_params N_dyn 
+    global m w1 w2 w3 w4 w5 w6 N   num_params N_dyn 
 
     thetad0 = x(1);
     phid0 = x(2);
@@ -39,18 +39,15 @@ function coste = cost(x, p0,  pf)
     p_f= p_f(:);
     pf = pf(:);
     
-    p0_cost = w1 * norm(p_0 - p0);
-    pf_cost = w2 * norm(p_f -pf);
-    lf_cost = w2*abs(norm(pf) - l_f);
-    slack_energy= w3 * sum(x(num_params+1:num_params+N));
+
+    slack_energy=  sum(x(num_params+1:num_params+N)); % if in eq constrraints max(abs(x(num_params+1:num_params+N)));
     slack_dyn = max(x(num_params+N+1:num_params+N+N_dyn));
-    sigma_final_initial = w4 *sum (x(num_params+N+N_dyn + 1:end));
-  
-  
-    Ekinfcost= w5 * (    (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
+    slack_final  = sum (x(num_params+N+N_dyn + 1:end));
 
+    Ekinfcost=  (    (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
 
+ 
     %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste =   Ekinfcost + 0.001* slack_energy + 0.001*slack_dyn + 0.001*sigma_final_initial ;
+    coste =  w3 * slack_energy + w4 * slack_final ;
 
 end
