@@ -40,7 +40,6 @@ solution_constr.l = l;
 solution_constr.thetad = thetad;
 solution_constr.phid = phid;
 solution_constr.ld = ld;
-
 solution_constr.time = t;
 
 % number of constraints
@@ -130,14 +129,14 @@ ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
 
 
 eq = [];
-% eq= [eq norm(p_f - pf) ];
+%energy as equality (w3 <= 10 otherwise it does not converge)
 % for i=1:N    
+%     sigma_energy(i) = x(num_params+i);  
 %     idx = fine_index(i);
+%     E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2; 
 %     if (i>=2)
-%         eq = [eq abs(E(i) - E(i-1))];
-%         
+%         eq = [eq E(i) - E(i-1) - sigma_energy(i)];        
 %     end
-% 
 % end
 
 if any(isinf(ineq))

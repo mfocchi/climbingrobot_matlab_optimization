@@ -39,8 +39,11 @@ function coste = cost(x, p0,  pf)
     p_f= p_f(:);
     pf = pf(:);
     
+    % energy as ineq constraint
+    slack_energy=  sum(x(num_params+1:num_params+N)); 
+    %energy as eq constrraints 
+    %slack_energy= max(abs(x(num_params+1:num_params+N)));
 
-    slack_energy=  sum(x(num_params+1:num_params+N)); % if in eq constrraints max(abs(x(num_params+1:num_params+N)));
     slack_dyn = max(x(num_params+N+1:num_params+N+N_dyn));
     slack_final  = max (x(num_params+N+N_dyn + 1:end));
 
