@@ -16,7 +16,7 @@ T_th = 0.05;
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
-w3 = 1 ; % energy weight E
+w3 = 1 ; % slacks constant energy weight E
 w4 = 10.0; % slacks initial / final 
 w5 = 0.01; %ekinf (important! energy has much higher values!)
 
