@@ -20,7 +20,7 @@ w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
 
 N = 10 ; % energy constraints
-N_dyn = 80; %dynamic constraints (discretization)
+N_dyn = 40; %dynamic constraints (discretization)
 
 dt=0.001; % to evaluate solution
 
@@ -72,7 +72,7 @@ if TIME_OPTIMIZATION
     end
 else
     
-    fprintf(2, 'MAIN LOOP: time optim off, bath search\n')
+    fprintf(2, 'MAIN LOOP: time optim off, batch search\n')
     options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
@@ -118,12 +118,10 @@ end
 
 opt_K = solution.K;
 opt_Tf = solution.time(end);
-%evaluate inpulse ( the integral of the gaussian is 1) 
-Fun = m*l_0*solution.thetad(1)/T_th;
-Fut = m*l_0*sin(solution.theta(1))*solution.phid(1)/T_th;
+
  
-fprintf('Fun:  %f\n\n',Fun)
-fprintf('Fut:  %f\n\n',Fut)
+fprintf('Fun:  %f\n\n',solution.Fun)
+fprintf('Fut:  %f\n\n',solution.Fut)
 fprintf('cost:  %f\n\n',solution.cost)
 fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
 fprintf('initial_error:  %f\n\n',solution.initial_error)
@@ -134,7 +132,7 @@ fprintf(strcat('slacks_dyn: ', repmat(' %f ', 1, N_dyn),' \n\n'),solution.slacks
 fprintf('slacks_final:  %f\n\n',solution.slacks_initial_final)
 
 %for Daniele
-save('test.mat','solution')
+save('test.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 DEBUG = true;
 
@@ -207,21 +205,21 @@ if (DEBUG)
 %     ylabel('Ekin')
 %     
    
-    figure
-    subplot(3,1,1)
-    plot(solution.time, solution.theta,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.theta,'-ob');
-    ylabel('theta')
-
-    subplot(3,1,2)
-    plot(solution.time, solution.phi,'r');hold on; grid on;
-    plot(solution_constr.time, solution_constr.phi,'-ob');
-    ylabel('phi')
-    
-    subplot(3,1,3)
-    plot(solution.time, solution.l,'r'); hold on; grid on;
-    plot(solution_constr.time, solution_constr.l,'-ob');
-    ylabel('l')
+%     figure
+%     subplot(3,1,1)
+%     plot(solution.time, solution.theta,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.theta,'-ob');
+%     ylabel('theta')
+% 
+%     subplot(3,1,2)
+%     plot(solution.time, solution.phi,'r');hold on; grid on;
+%     plot(solution_constr.time, solution_constr.phi,'-ob');
+%     ylabel('phi')
+%     
+%     subplot(3,1,3)
+%     plot(solution.time, solution.l,'r'); hold on; grid on;
+%     plot(solution_constr.time, solution_constr.l,'-ob');
+%     ylabel('l')
 %     
 %     figure
 %     subplot(3,1,1)
@@ -261,8 +259,8 @@ end
 
 disp('inputs')
 p0
-Fut 
-Fun
+solution.Fut 
+solution.Fun
 opt_K
 disp('check')
 opt_Tf

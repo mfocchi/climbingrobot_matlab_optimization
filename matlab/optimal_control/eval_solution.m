@@ -1,6 +1,6 @@
 function solution = eval_solution(x,  dt, p0, pf, fixed_time)
 
-global m g l_uncompressed num_params N N_dyn
+global m g l_uncompressed num_params N N_dyn T_th
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
@@ -111,6 +111,10 @@ solution.ld = ld;
 solution.time = t;
 solution.K = K;
 solution.Fr_vec = -K*(l-l_uncompressed);
+%evaluate inpulse ( the integral of the gaussian is 1) 
+solution.Fun = m*l_0*thetad(1)/T_th;
+solution.Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
+
 
 solution.slacks_energy = x(num_params+1:num_params+N);
 solution.slacks_energy_cost = sum(solution.slacks_energy);
