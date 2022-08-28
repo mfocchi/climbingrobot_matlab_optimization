@@ -51,6 +51,7 @@ solution_constr.thetad = thetad;
 solution_constr.phid = phid;
 solution_constr.ld = ld;
 solution_constr.time = t;
+solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 % number of constraints
 energy_constraints = N-1;

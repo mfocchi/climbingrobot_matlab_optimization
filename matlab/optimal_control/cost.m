@@ -68,6 +68,6 @@ function coste = cost(x, p0,  pf, fixed_time)
     % the trajectory vertical 
 
     %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste =     w3 * slack_energy + w4 * slack_final  ;
+    coste =   w5* Ekinfcost +  w3 * slack_energy + w4 * slack_final  ;
 
 end

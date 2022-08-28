@@ -20,7 +20,7 @@ w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
 
 N = 10 ; % energy constraints
-N_dyn = 40; %dynamic constraints (discretization)
+N_dyn = 80; %dynamic constraints (discretization)
 
 dt=0.001; % to evaluate solution
 
@@ -58,11 +58,21 @@ if TIME_OPTIMIZATION
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
     % evaluate constraint violation 
     [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
-    [p, theta, phi, l,  E, path_length , initial_error , final_error_real, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
-    problem_solved = (EXITFLAG == 1) ;
+    solution = eval_solution(x, dt,  p0, pf) ;
+    solution.cost = final_cost;
+    problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
+    % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
+    % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
+    
+    if problem_solved
+        plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, true, 'r');
+    else 
+        fprintf(2,"Problem didnt converge!")
+        plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, true, 'k');
+    end
 else
     
-    fprintf(2, 'MAIN LOOP: time optim off\n')
+    fprintf(2, 'MAIN LOOP: time optim off, bath search\n')
     options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
@@ -71,7 +81,8 @@ else
     min_final_error = 100;
     optimal_traj_index =1;
     solution_constr_vec=[];
-    p_vec = cell(1,N_search);
+    solution_vec = [];
+    figure
     for i=1:N_search
         num_params = 3;    
         x0 = [  0,     0.0,    6,           zeros(1,N),    zeros(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
@@ -80,75 +91,50 @@ else
         [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Tf(i)),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, Tf(i)), options);
         % evaluate constraint violation 
         [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, Tf(i));
-        [p, theta, phi, l,  E, path_length , initial_error , final_error_real, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf, Tf(i)) ;   
-        problem_solved = (EXITFLAG == 1) ;
-        final_error_discrete = norm(pf - solution_constr.p(:,end));
-    
+        solution = eval_solution(x, dt,  p0, pf, Tf(i)) ;
+        solution.cost = final_cost;
+        problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
+           
         if problem_solved
-            if final_error_discrete < min_final_error
-                min_final_error = final_error_discrete;
+            if solution_constr.final_error_discrete < min_final_error
+                min_final_error = solution_constr.final_error_discrete;
                 optimal_traj_index = i;                
             else 
-                plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'r');
+                plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'r');
             end
         else 
-            plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'k');            
+            plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'k');            
         end
-        p_vec{i} = p;
+        solution_vec  = [solution_vec solution];
         solution_constr_vec = [solution_constr_vec solution_constr];
     end
+    fprintf(2, 'bath search RESULTS\n')
     optimal_traj_index
-    min_final_error
-    Tf(optimal_traj_index)
-    plot_curve( p_vec{optimal_traj_index},solution_constr_vec(optimal_traj_index).p, p0, pf,  E.Etot, false, 'g');
+    back_search_Tf = Tf(optimal_traj_index)
+    solution = solution_vec(optimal_traj_index);
+    solution_constr = solution_constr_vec(optimal_traj_index);
+    plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'g');  
 end
 
-slacks_energy = x(num_params+1:num_params+N);
-slacks_energy_cost = sum(slacks_energy);
-slacks_dyn = x(num_params+N+1:num_params+N+N_dyn);
-slacks_initial_final = x(num_params+N+N_dyn+1:end);
-slacks_initial_final_cost = sum(slacks_initial_final);
-
-energy = E;
-
-opt_K = x(3);
-opt_Tf = time(end);
+opt_K = solution.K;
+opt_Tf = solution.time(end);
 %evaluate inpulse ( the integral of the gaussian is 1) 
-Fun = m*l_0*thetad(1)/T_th;
-Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
-
-plot_curve( p,solution_constr.p, p0, pf,  E.Etot, true, 'k');
-% EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
-% EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
-
-
-number_of_converged_solutions = nan;
-initial_kin_energy = nan;
-final_kin_energy = nan;
-if  problem_solved 
-    number_of_converged_solutions = 1;       
-    initial_kin_energy = energy.Ekin0;% 
-    final_kin_energy =  energy.Ekinf;
-    plot_curve( p , solution_constr.p,  p0, pf,    E.Etot, true, 'r'); % converged are red
-  
-end
-
-
-    
-number_of_converged_solutions
-final_kin_energy
-Fun
-Fut 
-initial_error
-final_error_real
-slacks_energy 
-slacks_dyn    
-slacks_initial_final
-
+Fun = m*l_0*solution.thetad(1)/T_th;
+Fut = m*l_0*sin(solution.theta(1))*solution.phid(1)/T_th;
+ 
+fprintf('Fun:  %f\n\n',Fun)
+fprintf('Fut:  %f\n\n',Fut)
+fprintf('cost:  %f\n\n',solution.cost)
+fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
+fprintf('initial_error:  %f\n\n',solution.initial_error)
+fprintf('final_error_real:  %f\n\n',solution.final_error_real)
+fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
+fprintf(strcat('slacks_energy: ', repmat(' %f ', 1, N),' \n\n'),solution.slacks_energy)
+fprintf(strcat('slacks_dyn: ', repmat(' %f ', 1, N_dyn),' \n\n'),solution.slacks_dyn)
+fprintf('slacks_final:  %f\n\n',solution.slacks_initial_final)
 
 %for Daniele
-Fr_vec = -opt_K*(l-l_uncompressed);
-save('test.mat','energy','Fr_vec','theta', 'phi', 'l','thetad','phid','ld','time')
+save('test.mat','solution')
 
 DEBUG = true;
 
@@ -158,7 +144,6 @@ if (DEBUG)
             disp('1- energy constraints')
         c(1:energy_constraints)
     end
-
 
     wall_constraints_idx = energy_constraints;
     if any(c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)>constr_tolerance)
@@ -203,54 +188,54 @@ if (DEBUG)
 
     figure
     ylabel('Fr')
-    plot(time,Fr_vec); hold on; grid on;
-    plot(time,0*ones(size(l)),'r');
-    plot(time,-Fr_max*ones(size(l)),'r');
+    plot(solution.time,solution.Fr_vec); hold on; grid on;
+    plot(solution.time,0*ones(size(solution.l)),'r');
+    plot(solution.time,-Fr_max*ones(size(solution.l)),'r');
 
 
 %     figure
 %     subplot(2,1,1)
-%     plot(p(1,:))
+%     plot(solution.p(1,:))
 %     ylabel('X')
 % 
 %     subplot(2,1,2)
-%     plot(ld)
+%     plot(solution.ld)
 %     ylabel('ld')
 %     
 %     figure
-%     plot(time, energy.Ekin); hold on; grid on;
+%     plot(time, solution.energy.Ekin); hold on; grid on;
 %     ylabel('Ekin')
 %     
    
     figure
     subplot(3,1,1)
-    plot(time, theta,'r');hold on; grid on;
+    plot(solution.time, solution.theta,'r');hold on; grid on;
     plot(solution_constr.time, solution_constr.theta,'-ob');
     ylabel('theta')
 
     subplot(3,1,2)
-    plot(time, phi,'r');hold on; grid on;
+    plot(solution.time, solution.phi,'r');hold on; grid on;
     plot(solution_constr.time, solution_constr.phi,'-ob');
     ylabel('phi')
     
     subplot(3,1,3)
-    plot(time, l,'r'); hold on; grid on;
+    plot(solution.time, solution.l,'r'); hold on; grid on;
     plot(solution_constr.time, solution_constr.l,'-ob');
     ylabel('l')
 %     
 %     figure
 %     subplot(3,1,1)
-%     plot(time, thetad,'r');hold on; grid on;
+%     plot(solution.time, solution.thetad,'r');hold on; grid on;
 %     plot(solution_constr.time, solution_constr.thetad,'-ob');
 %     ylabel('thetad')
 % 
 %     subplot(3,1,2)
-%     plot(time, phid,'r');hold on; grid on;
+%     plot(solution.time, solution.phid,'r');hold on; grid on;
 %     plot(solution_constr.time, solution_constr.phid,'-ob');
 %     ylabel('phid')
 %     
 %     subplot(3,1,3)
-%     plot(time, ld,'r'); hold on; grid on;
+%     plot(solution.time, solution.ld,'r'); hold on; grid on;
 %     plot(solution_constr.time, solution_constr.ld,'-ob');
 %     ylabel('ld')
 %     
@@ -258,23 +243,19 @@ if (DEBUG)
     
     figure
     subplot(3,1,1)
-    plot(time, p(1,:),'r') ; hold on;    
+    plot(solution.time, solution.p(1,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(1,:),'-ob') ; hold on;    
     ylabel('X')
     
     subplot(3,1,2)
-    plot(time, p(2,:),'r') ; hold on;    
+    plot(solution.time, solution.p(2,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(2,:),'-ob') ; hold on;    
     ylabel('Y')
     
     subplot(3,1,3)
-    plot(time, p(3,:),'r') ; hold on;    
+    plot(solution.time, solution.p(3,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(3,:),'-ob') ; hold on;
     ylabel('Z')
-    
-    
-    
-    
     
 end
 
@@ -285,6 +266,5 @@ Fun
 opt_K
 disp('check')
 opt_Tf
-pf
-solution_constr.p(:,end)
+
 
