@@ -1,11 +1,21 @@
-function coste = cost(x, p0,  pf)
+function coste = cost(x, p0,  pf, fixed_time)
 
-    global m w1 w2 w3 w4 w5 w6 N  T_th num_params N_dyn 
+    global m w1 w2 w3 w4 w5 w6 N  T_th num_params N_dyn  
 
     thetad0 = x(1);
     phid0 = x(2);
     K = x(3);
-    Tf = x(4);
+
+    
+   
+    switch nargin
+        case 4
+            Tf = fixed_time;
+            %fprintf(2, 'cost: time optim off\n')
+        otherwise           
+            Tf = x(4);
+    end
+
     % variable intergration step
     dt_dyn = Tf / N_dyn;
    

@@ -1,19 +1,20 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE
+global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE 
 
 m = 5;
 g = 9.81;
 
 % physical limits
-Fun_max =200;
+Fun_max =1000;
 Fr_max =130; % Fr in negative
 mu = 2.0;
 T_th = 0.05;
-FRICTION_CONE=1;
+FRICTION_CONE=0;
+TIME_OPTIMIZATION = 1;
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
-w3 = 0.01 ; % slacks energy weight E
+w3 = 1 ; % slacks energy weight E
 w4 = 100.0; % slacks  final (used)
 w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
@@ -32,33 +33,75 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [0.38; 5.0; -8];
+pf = [1.0; 5.0; -8];
 
 l_uncompressed = l_0;
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 
-
-num_params = 4;
-%opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =
-%norm(p_f - pf)  
-x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),           0];
-
-% with thetad0 = 1 it detaches from the wall but does not reach the
-% target
-%lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-lb = [ -30,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),         0];
-ub = [  30,   30,    40,   T_pend*1.5,      100*ones(1,N),   100*ones(1,N_dyn), 100];
 constr_tolerance = 1e-4;
+
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
 
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-                        'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
+if TIME_OPTIMIZATION
+    options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+    'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
-tic
-[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
-toc
+    num_params = 4;    
+    x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
+    % with thetad0 = 1 it detaches from the wall but does not reach the
+    % target
+    %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
+    lb = [ -30,    -30,   0.1,    0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
+    ub = [  30,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn),    100];
+    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
+    % evaluate constraint violation 
+    [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
+    [p, theta, phi, l,  E, path_length , initial_error , final_error_real, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
+    problem_solved = (EXITFLAG == 1) ;
+else
+    
+    fprintf(2, 'MAIN LOOP: time optim off\n')
+    options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+    'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
+
+    N_search = 10;
+    Tf =linspace(0.5*T_pend, 2*T_pend, N_search);
+    min_final_error = 100;
+    optimal_traj_index =1;
+    solution_constr_vec=[];
+    p_vec = cell(1,N_search);
+    for i=1:N_search
+        num_params = 3;    
+        x0 = [  0,     0.0,    6,           zeros(1,N),    zeros(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
+        lb = [ -30,    -30,   0.1,          zeros(1,N),     zeros(1,N_dyn),         0];
+        ub = [  30,   30,     40,        100*ones(1,N),   100*ones(1,N_dyn),      100];
+        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Tf(i)),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, Tf(i)), options);
+        % evaluate constraint violation 
+        [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, Tf(i));
+        [p, theta, phi, l,  E, path_length , initial_error , final_error_real, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf, Tf(i)) ;   
+        problem_solved = (EXITFLAG == 1) ;
+        final_error_discrete = norm(pf - solution_constr.p(:,end));
+    
+        if problem_solved
+            if final_error_discrete < min_final_error
+                min_final_error = final_error_discrete;
+                optimal_traj_index = i;                
+            else 
+                plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'r');
+            end
+        else 
+            plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'k');            
+        end
+        p_vec{i} = p;
+        solution_constr_vec = [solution_constr_vec solution_constr];
+    end
+    optimal_traj_index
+    min_final_error
+    Tf(optimal_traj_index)
+    plot_curve( p_vec{optimal_traj_index},solution_constr_vec(optimal_traj_index).p, p0, pf,  E.Etot, false, 'g');
+end
 
 slacks_energy = x(num_params+1:num_params+N);
 slacks_energy_cost = sum(slacks_energy);
@@ -66,22 +109,15 @@ slacks_dyn = x(num_params+N+1:num_params+N+N_dyn);
 slacks_initial_final = x(num_params+N+N_dyn+1:end);
 slacks_initial_final_cost = sum(slacks_initial_final);
 
-% evaluate constraint violation 
-[c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
-
-[p, theta, phi, l,  E, path_length , initial_error , final_error, thetad, phid,ld, time ] = eval_solution(x, dt,  p0, pf) ;
-
 energy = E;
 
 opt_K = x(3);
-opt_Tf = x(4);
+opt_Tf = time(end);
 %evaluate inpulse ( the integral of the gaussian is 1) 
 Fun = m*l_0*thetad(1)/T_th;
 Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
 
-plot_curve( p,solution_constr.p, p0, pf,  E.Etot, false, 'k');
-%[Fun , Fut] = evaluate_initial_impulse(x);
-problem_solved = (EXITFLAG == 1) ;
+plot_curve( p,solution_constr.p, p0, pf,  E.Etot, true, 'k');
 % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
 % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
 
@@ -104,7 +140,7 @@ final_kin_energy
 Fun
 Fut 
 initial_error
-final_error
+final_error_real
 slacks_energy 
 slacks_dyn    
 slacks_initial_final
@@ -186,21 +222,21 @@ if (DEBUG)
 %     ylabel('Ekin')
 %     
    
-%     figure
-%     subplot(3,1,1)
-%     plot(time, theta,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.theta,'-ob');
-%     ylabel('theta')
-% 
-%     subplot(3,1,2)
-%     plot(time, phi,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.phi,'-ob');
-%     ylabel('phi')
-%     
-%     subplot(3,1,3)
-%     plot(time, l,'r'); hold on; grid on;
-%     plot(solution_constr.time, solution_constr.l,'-ob');
-%     ylabel('l')
+    figure
+    subplot(3,1,1)
+    plot(time, theta,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.theta,'-ob');
+    ylabel('theta')
+
+    subplot(3,1,2)
+    plot(time, phi,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.phi,'-ob');
+    ylabel('phi')
+    
+    subplot(3,1,3)
+    plot(time, l,'r'); hold on; grid on;
+    plot(solution_constr.time, solution_constr.l,'-ob');
+    ylabel('l')
 %     
 %     figure
 %     subplot(3,1,1)

@@ -1,11 +1,19 @@
-function [p, theta, phi, l,  E,  path_length, initial_error, final_error, thetad, phid,ld, t] = eval_solution(x,  dt, p0, pf)
+function [p, theta, phi, l,  E,  path_length, initial_error, final_error, thetad, phid,ld, t] = eval_solution(x,  dt, p0, pf, fixed_time)
 
-global m g l_uncompressed 
+global m g l_uncompressed  
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
-Tf = x(4);
+
+switch nargin
+    case 5
+        Tf = fixed_time;
+        %fprintf(2, 'eval_sol: time optim off\n')
+    otherwise           
+        Tf = x(4);
+end
+
 
 
 [theta0, phi0, l_0] = computePolarVariables(p0);

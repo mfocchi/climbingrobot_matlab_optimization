@@ -1,13 +1,23 @@
-function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu)
+function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, fixed_time)
 
-global  g N   m num_params l_uncompressed T_th N_dyn FRICTION_CONE
+global  g N   m num_params l_uncompressed T_th N_dyn FRICTION_CONE 
+
 
 % ineq are <= 0
 
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
-Tf = x(4);
+
+
+switch nargin
+    case 7
+        Tf = fixed_time;
+        %fprintf(2, 'constraints: time optim off\n')
+    otherwise           
+        Tf = x(4);
+end
+
 % variable intergration step
 dt_dyn = Tf / N_dyn;
 
