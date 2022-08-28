@@ -32,7 +32,7 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [0.5; 1.0; -8];
+pf = [0.38; 5.0; -8];
 
 l_uncompressed = l_0;
 %pendulum period
@@ -42,13 +42,13 @@ T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 num_params = 4;
 %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =
 %norm(p_f - pf)  
-x0 = [  1, 0.1,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),        0,  0];
+x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),           0];
 
 % with thetad0 = 1 it detaches from the wall but does not reach the
 % target
 %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-lb = [ 0,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-ub = [  30,   30,    40,   T_pend*1.5,      100*ones(1,N),   100*ones(1,N_dyn), 100,100];
+lb = [ -30,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),         0];
+ub = [  30,   30,    40,   T_pend*1.5,      100*ones(1,N),   100*ones(1,N_dyn), 100];
 constr_tolerance = 1e-4;
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)

@@ -47,9 +47,8 @@ solution_constr.time = t;
 energy_constraints = N-1;
 wall_constraints = N_dyn;
 retraction_force_constraints = 2*N_dyn;
-
 dynamic_constraints = N_dyn-1;
-initial_final_constraints = 2;
+initial_final_constraints = 1;
 
 if FRICTION_CONE
     force_constraints  = 3;
@@ -125,10 +124,8 @@ for i=1:N_dyn
 end
 
 
-% initial final point   
-
-ineq= [ineq norm(p_0 - p0) - x(num_params+N+N_dyn+1)];
-ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+2)];
+% final point   
+ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
 
 
 
