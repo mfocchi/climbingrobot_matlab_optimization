@@ -21,13 +21,35 @@ switch nargin
         Tf = x(4);
 end
 
+% size not known
+ineq = zeros(1,0);
+    
+
 % variable intergration step
 dt_dyn = Tf / N_dyn;
 fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
 
+
 % single shooting
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
+
+
+
+
+%dynamic constraints
+sigma_dyn = zeros(1, N_dyn);
+states(:,1) = state0;
+for i=1:N_dyn   
+    sigma_dyn(i) = x(num_params + N +i);        
+    if (i>=2)
+        states(:,i) = states(:,i-1) + dt_dyn* dynamics_autonomous(states(:,i-1), K) + sigma_dyn(i);
+        ineq = [ineq max(abs(  states(:,i) - states(:,i-1) -  dt_dyn* dynamics_autonomous(states(:,i-1), K) )) -sigma_dyn(i)];
+        
+    end
+end
+
+
 [states, t] = integrate_dynamics(state0,dt_dyn, N_dyn, K);
 
 
@@ -54,10 +76,11 @@ solution_constr.time = t;
 solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 % number of constraints
+number_of_constr.dynamic_constraints = N_dyn-1;
 number_of_constr.energy_constraints = N-1;
 number_of_constr.wall_constraints = N_dyn;
 number_of_constr.retraction_force_constraints = 2*N_dyn;
-number_of_constr.dynamic_constraints = N_dyn-1;
+
 number_of_constr.initial_final_constraints = 1;
 
 if FRICTION_CONE
@@ -66,9 +89,7 @@ else
     number_of_constr.force_constraints  = 2;
 end
 
-% size not known
-ineq =[];% zeros(1, energy_constraints + wall_constraints +retraction_force_constraints+force_constraints+initial_final_constraints);
-    
+
 E = zeros(1,N);
 sigma_energy = zeros(1,N);
 
@@ -119,19 +140,6 @@ if FRICTION_CONE
     ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
 end
 
-
-
-%dynamic constraints
-sigma_dyn = zeros(1, N_dyn);
-for i=1:N_dyn   
-    sigma_dyn(i) = x(num_params + N +i);        
-    if (i>=2)
-        xk = states(:,i);
-        xk1 =states(:,i-1);
-        ineq = [ineq (norm(xk - xk1 -  dt_dyn* dynamics_autonomous(xk1, K)) - sigma_dyn(i))];
-        
-    end
-end
 
 
 % final point   
