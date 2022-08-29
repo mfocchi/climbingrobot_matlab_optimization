@@ -92,13 +92,13 @@ end
 
 E = zeros(1,N);
 sigma_energy = zeros(1,N);
-
+sigma_energy_fixed = 10;
 for i=1:N    
     idx = fine_index(i);
     E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2;
     sigma_energy(i) = x(num_params+i);        
     if (i>=2)
-        ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy(i))];
+        ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy_fixed)];
         %ineq = [ineq 0];
     end
 
@@ -140,10 +140,11 @@ if FRICTION_CONE
     ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
 end
 
-
-
-% final point   
-ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
+% final point   (
+%ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
+% final point  fixed slack 
+fixed_slack = 0.05; 
+ineq= [ineq norm(p_f - pf) - fixed_slack];
 
 
 

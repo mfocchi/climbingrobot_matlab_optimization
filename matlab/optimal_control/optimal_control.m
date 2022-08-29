@@ -49,12 +49,12 @@ if TIME_OPTIMIZATION
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
     num_params = 4;    
-    x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    zeros(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
+    x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    0*ones(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
     % with thetad0 = 1 it detaches from the wall but does not reach the
     % target
     %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
     lb = [ -30,    -30,   0.1,    0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
-    ub = [  30,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn),    100];
+    ub = [  30,   30,    40,   T_pend*2,      zeros(1,N),   100*ones(1,N_dyn),         0];
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
     % evaluate constraint violation 
     [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
@@ -127,8 +127,8 @@ fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
 fprintf('initial_error:  %f\n\n',solution.initial_error)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
-fprintf(strcat('slacks_energy: ', repmat(' %f ', 1, N),' \n\n'),solution.slacks_energy)
-fprintf(strcat('slacks_dyn: ', repmat(' %f ', 1, N_dyn),' \n\n'),solution.slacks_dyn)
+fprintf(strcat('slacks_energy: ', repmat(' %.8f ', 1, N),' \n\n'),solution.slacks_energy)
+fprintf(strcat('slacks_dyn: ', repmat(' %.8f ', 1, N_dyn),' \n\n'),solution.slacks_dyn)
 fprintf('slacks_final:  %f\n\n',solution.slacks_initial_final)
 
 %for Daniele
@@ -138,14 +138,21 @@ DEBUG = true;
 
 if (DEBUG)
 
-    if any( c(1:num_constr.energy_constraints)>constr_tolerance)
-            disp('1- energy constraints')
-        c(1:num_constr.energy_constraints)
+    
+    if  any(c(1: num_constr.dynamic_constraints)>constr_tolerance)
+        disp('1 - dynamics  constraints violated')
+        c( 1:   num_constr.dynamic_constraints)
+    end
+    
+    energy_constraints_idx = num_constr.dynamic_constraints;
+    if any( c(energy_constraints_idx + 1:energy_constraints_idx  + num_constr.energy_constraints)>constr_tolerance)
+            disp('2- energy constraints violated')
+        c(energy_constraints_idx + 1: energy_constraints_idx + num_constr.energy_constraints)
     end
 
-    wall_constraints_idx = num_constr.energy_constraints;    
+    wall_constraints_idx = energy_constraints_idx + num_constr.energy_constraints;    
     if any(c(wall_constraints_idx+1:wall_constraints_idx+num_constr.wall_constraints)>constr_tolerance)
-        disp('2- wall constraints')
+        disp('3- wall constraints violated')
         c(wall_constraints_idx+1:wall_constraints_idx  + num_constr.wall_constraints)
     end  
     
@@ -153,39 +160,25 @@ if (DEBUG)
     retraction_force_constraints_idx = wall_constraints_idx+num_constr.wall_constraints;
     
     if any( c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+num_constr.retraction_force_constraints)>constr_tolerance)
-        disp('3- retraction force constraints')
+        disp('4- retraction force constraints violated')
          c(retraction_force_constraints_idx+1:retraction_force_constraints_idx + num_constr.retraction_force_constraints)
-    end
-
-    
-    
+    end  
 
     force_constraints_idx = retraction_force_constraints_idx + num_constr.retraction_force_constraints;
     
     if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>constr_tolerance)
-        disp('4 -force constraints')
+        disp('5 -force constraints violated')
         c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)
         Fun
         Fut
     end
-    
-
-   
-    init_dynamic_constraints_idx = force_constraints_idx + num_constr.force_constraints ;
-    if  any(c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx+num_constr.dynamic_constraints)>constr_tolerance)
-        disp('5 - dynamics  constraints')
-        c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx + num_constr.dynamic_constraints)
-    end
-    
-    
-    init_final_constraints_idx = init_dynamic_constraints_idx+num_constr.dynamic_constraints;
+        
+    init_final_constraints_idx = force_constraints_idx+num_constr.force_constraints;
     if  any(   c(init_final_constraints_idx+1: init_final_constraints_idx+num_constr.initial_final_constraints)>constr_tolerance)
-        disp('6 - initial final  constraints')
+        disp('6 -  final  constraints violated ')
         c(init_final_constraints_idx+1: init_final_constraints_idx+num_constr.initial_final_constraints)
     end
-    
- 
-
+   
 
     figure
     ylabel('Fr')

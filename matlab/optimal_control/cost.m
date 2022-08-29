@@ -63,11 +63,12 @@ function coste = cost(x, p0,  pf, fixed_time)
     %final = w4 * slack_final
     %energy = w3 * slack_energy
     %ekinf= w5* Ekinfcost
+    %dyn= w6* Ekinfcost
     
     % fut = abs(Fut)  % minimizing this and increasing the weight it turns
     % the trajectory vertical 
 
     %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste =   w5* Ekinfcost +  w3 * slack_energy + w4 * slack_final  ;
+    coste =   w6* slack_dyn ;
 
 end
