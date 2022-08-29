@@ -5,11 +5,11 @@ m = 5;
 g = 9.81;
 
 % physical limits
-Fun_max =1000;
-Fr_max =130; % Fr in negative
-mu = 2.0;
+Fun_max =500;
+Fr_max = 130; % Fr in negative
+mu = 0.8;
 T_th = 0.05;
-FRICTION_CONE=0;
+FRICTION_CONE= 0;
 TIME_OPTIMIZATION = 1;
 
 w1 = 1 ; % green initial cost (not used)

@@ -23,11 +23,25 @@ end
 
 % size not known
 ineq = zeros(1,0);
-    
+
+% number of constraints
+number_of_constr.dynamic_constraints = N_dyn;
+number_of_constr.energy_constraints = N-1;
+number_of_constr.wall_constraints = N_dyn;
+number_of_constr.retraction_force_constraints = 2*N_dyn;
+
+number_of_constr.initial_final_constraints = 1;
+
+if FRICTION_CONE
+    number_of_constr.force_constraints  = 3;
+else
+    number_of_constr.force_constraints  = 2;
+end
 
 % variable intergration step
 dt_dyn = Tf / N_dyn;
 fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
+
 
 
 % single shooting
@@ -35,23 +49,26 @@ fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
 
 
-
-
-%dynamic constraints
+%1 dynamic constraints
 sigma_dyn = zeros(1, N_dyn);
-states(:,1) = state0;
+t_ = 0;
 for i=1:N_dyn   
     sigma_dyn(i) = x(num_params + N +i);        
     if (i>=2)
         states(:,i) = states(:,i-1) + dt_dyn* dynamics_autonomous(states(:,i-1), K) + sigma_dyn(i);
-        ineq = [ineq max(abs(  states(:,i) - states(:,i-1) -  dt_dyn* dynamics_autonomous(states(:,i-1), K) )) -sigma_dyn(i)];
-        
+        t_ = t_ + dt_dyn;
+        t = [ t t_];
+        ineq(i) =  norm(  states(:,i) - states(:,i-1) -  dt_dyn* dynamics_autonomous(states(:,i-1), K) ) -sigma_dyn(i);
+    else
+      ineq(i) =0;
+      states(:,i) = state0;
+      t(i) = t_;  
     end
 end
 
-
-[states, t] = integrate_dynamics(state0,dt_dyn, N_dyn, K);
-
+% debug
+% disp('after dyn')
+% length(ineq)
 
 theta = states(1,:);
 phi = states(2,:);
@@ -75,21 +92,10 @@ solution_constr.ld = ld;
 solution_constr.time = t;
 solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
-% number of constraints
-number_of_constr.dynamic_constraints = N_dyn-1;
-number_of_constr.energy_constraints = N-1;
-number_of_constr.wall_constraints = N_dyn;
-number_of_constr.retraction_force_constraints = 2*N_dyn;
-
-number_of_constr.initial_final_constraints = 1;
-
-if FRICTION_CONE
-    number_of_constr.force_constraints  = 3;
-else
-    number_of_constr.force_constraints  = 2;
-end
 
 
+
+% 2 energy constraints
 E = zeros(1,N);
 sigma_energy = zeros(1,N);
 sigma_energy_fixed = 10;
@@ -103,31 +109,35 @@ for i=1:N
     end
 
 end
+% % debug
+% disp('after energy')
+% length(ineq)
 
 
-
-% constraint to do not enter the wall, p_x >=0
+% 3 constraint to do not enter the wall, p_x >=0
 for i=1:N_dyn 
 
-    ineq = [ineq -p(1,i) ];
+    ineq = [ineq -p(1,i) ];   
     
 end 
-
+% % debug
+% disp('after wall')
+% length(ineq)
 
 % constraints on retraction force   -Fr_max < Fr = -K*(l-luncompr) < 0 
 Fr = zeros(1,N_dyn);
-for i=1:N_dyn 
-    
+for i=1:N_dyn     
     Fr(i) = -K*(l(i) - l_uncompressed);
     ineq = [ineq  Fr(i) ]; % Fr <0
     
 end 
-for i=1:N_dyn
- 
+for i=1:N_dyn 
   ineq = [ineq -Fr_max - Fr(i)];    % -Fr_max -Fr <0
 end
 
-
+% debug
+% disp('after Fr')
+% length(ineq)
 
 %evaluate inpulse ( the integral of the gaussian is 1) 
 Fun = m*l_0*thetad0/T_th;
@@ -139,6 +149,10 @@ ineq = [ineq  (-Fun)]  ; %(Fun >0 )
 if FRICTION_CONE
     ineq = [ineq  (abs(Fut) -mu*Fun)]; %friction constraints
 end
+% 
+% % debug
+% disp('after Fu')
+% length(ineq)
 
 % final point   (
 %ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
