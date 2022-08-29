@@ -34,7 +34,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
     %rough integration
     [theta0, phi0, l_0] = computePolarVariables(p0);
     state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-    [states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K);
+    [states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K, 'rk4');
 
 
 

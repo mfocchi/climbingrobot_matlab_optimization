@@ -1,4 +1,4 @@
-function [dxdt] = dynamics_autonomous(x, K) 
+function [dxdt] = dynamics_autonomous(t, x, K) % because we have autonomous system t wont be used
 
     global m g l_uncompressed
     %Retrieving states

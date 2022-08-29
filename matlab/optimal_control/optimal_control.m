@@ -1,5 +1,5 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE 
+global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE SUBSTEP_INTEGRATION int_method
 
 m = 5;
 g = 9.81;
@@ -9,8 +9,13 @@ Fun_max = 1000;
 Fr_max = 130; % Fr in negative
 mu = 0.8;
 T_th = 0.05;
-FRICTION_CONE= 0;
+FRICTION_CONE = 0;
 TIME_OPTIMIZATION = 1;
+SUBSTEP_INTEGRATION = 1;
+int_steps = 5;
+%int_method = 'euler';
+int_method = 'rk4';
+
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
@@ -20,7 +25,7 @@ w5 = 0.001; %ekinf (important! energy has much higher values!)
 w6 = 0.0001; %slacks dynamics
 
 N = 10 ; % energy constraints
-N_dyn = 40; %dynamic constraints (discretization)
+N_dyn = 10; %dynamic constraints (discretization)
 
 dt=0.001; % to evaluate solution
 
@@ -33,14 +38,14 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [1.0; 5.0; -8];
+pf = [1.0; 5.0; -12];
 
 l_uncompressed = l_0;
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 
 constr_tolerance = 1e-4;
-int_steps = 20;
+
 %test
 %[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], 0, 0.001, 100,10)
 
@@ -55,7 +60,9 @@ if TIME_OPTIMIZATION
     %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
     lb = [ -30,    -30,   0.1,    0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
     ub = [  30,   30,    40,   T_pend*2,     0*ones(1,N),   0*ones(1,N_dyn),         0];
+    tic
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, int_steps),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, int_steps), options);
+    toc
     % evaluate constraint violation 
     [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, int_steps);
     solution = eval_solution(x, dt,  p0, pf) ;
@@ -127,6 +134,7 @@ fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
 fprintf('initial_error:  %f\n\n',solution.initial_error)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
+fprintf('max_integration_error:  %f\n\n',solution.final_error_real - solution_constr.final_error_discrete)
 fprintf(strcat('slacks_energy: ', repmat(' %.8f ', 1, N),' \n\n'),solution.slacks_energy)
 fprintf(strcat('slacks_dyn: ', repmat(' %.8f ', 1, N_dyn),' \n\n'),solution.slacks_dyn)
 fprintf('slacks_final:  %f\n\n',solution.slacks_initial_final)

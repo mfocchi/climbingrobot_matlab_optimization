@@ -1,6 +1,6 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, int_steps, fixed_time )
 
-global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE 
+global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE  SUBSTEP_INTEGRATION int_method
 
 
 % ineq are <= 0
@@ -25,7 +25,7 @@ end
 ineq = zeros(1,0);
 
 % number of constraints
-number_of_constr.dynamic_constraints = N_dyn;
+number_of_constr.dynamic_constraints = 0;%N_dyn;
 number_of_constr.energy_constraints = N-1;
 number_of_constr.wall_constraints = N_dyn;
 number_of_constr.retraction_force_constraints = 2*N_dyn;
@@ -51,24 +51,29 @@ state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
 %1 integrate and set dynamic constraints
 sigma_dyn = zeros(1, N_dyn);
 
-for i=1:N_dyn   
-    sigma_dyn(i) = x(num_params + N +i);        
-    if (i>=2)     
-        % no slack
-        [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K);
-        ineq(i) = 0;
-%         [int, t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K); 
-%         states(:,i) = int + sigma_dyn(i);
-%         ineq(i) =  norm(  states(:,i)  - states(:,i-1) -int) -sigma_dyn(i);
-    else
+if SUBSTEP_INTEGRATION
+    %substep integraiton
+    for i=1:N_dyn   
+        sigma_dyn(i) = x(num_params + N +i);        
+        if (i>=2)     
 
-      states(:,i) = state0;
-      t(i) = 0;  
-      ineq(i) =0;
-    end    
+            % no slack
+            [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K, int_method);
+            %ineq(i) = 0;
+            %with slacks
+    %         [int, t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K); 
+    %         states(:,i) = int + sigma_dyn(i);
+    %         ineq(i) =  norm(  states(:,i)  - states(:,i-1) -int) -sigma_dyn(i);
+        else
+          states(:,i) = state0;
+          t(i) = 0;  
+          %ineq(i) =0;
+        end    
+    end
+else
+    % no substep integration
+    [~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K, int_method);
 end
-
-
 % debug
 % disp('after dyn')
 % length(ineq)
