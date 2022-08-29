@@ -5,7 +5,7 @@ m = 5;
 g = 9.81;
 
 % physical limits
-Fun_max =500;
+Fun_max = 1000;
 Fr_max = 130; % Fr in negative
 mu = 0.8;
 T_th = 0.05;
@@ -40,9 +40,9 @@ l_uncompressed = l_0;
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 
 constr_tolerance = 1e-4;
-
+int_steps = 20;
 %test
-%[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], dt_dyn, N_dyn,10)
+%[states, t] = integrate_dynamics([theta0; phi0; l_0; 0;0;0], 0, 0.001, 100,10)
 
 if TIME_OPTIMIZATION
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
@@ -54,10 +54,10 @@ if TIME_OPTIMIZATION
     % target
     %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
     lb = [ -30,    -30,   0.1,    0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
-    ub = [  30,   30,    40,   T_pend*2,      zeros(1,N),   100*ones(1,N_dyn),         0];
-    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
+    ub = [  30,   30,    40,   T_pend*2,     0*ones(1,N),   0*ones(1,N_dyn),         0];
+    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, int_steps),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, int_steps), options);
     % evaluate constraint violation 
-    [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
+    [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, int_steps);
     solution = eval_solution(x, dt,  p0, pf) ;
     solution.cost = final_cost;
     problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
@@ -67,7 +67,7 @@ if TIME_OPTIMIZATION
     if problem_solved
         plot_curve( solution,solution_constr, p0, pf,  true, 'r');
     else 
-        fprintf(2,"Problem didnt converge!")
+        fprintf(2,"Problem didnt converge!\n")
         plot_curve( solution,solution_constr, p0, pf,  true, 'k');
     end
 else
@@ -88,9 +88,9 @@ else
         x0 = [  0,     0.0,    6,           zeros(1,N),    zeros(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
         lb = [ -30,    -30,   0.1,          zeros(1,N),     zeros(1,N_dyn),         0];
         ub = [  30,   30,     40,        100*ones(1,N),   100*ones(1,N_dyn),      100];
-        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Tf(i)),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, Tf(i)), options);
+        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, int_steps, Tf(i)),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, int_steps, Tf(i)), options);
         % evaluate constraint violation 
-        [c ceq,num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, Tf(i));
+        [c ceq,num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, int_steps, Tf(i));
         solution = eval_solution(x, dt,  p0, pf, Tf(i)) ;
         solution.cost = final_cost;
         problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
@@ -169,8 +169,8 @@ if (DEBUG)
     if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>constr_tolerance)
         disp('5 -force constraints violated')
         c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)
-        Fun
-        Fut
+        solution.Fun
+        solution.Fut
     end
         
     init_final_constraints_idx = force_constraints_idx+num_constr.force_constraints;
@@ -255,8 +255,9 @@ end
 
 disp('inputs')
 p0
-solution.Fut 
+ 
 solution.Fun
+solution.Fut
 opt_K
 disp('check')
 opt_Tf

@@ -1,15 +1,14 @@
-function coste = cost(x, p0,  pf, fixed_time)
+function coste = cost(x, p0,  pf, int_steps, fixed_time)
 
     global m w1 w2 w3 w4 w5 w6 N  T_th num_params N_dyn  
 
     thetad0 = x(1);
     phid0 = x(2);
     K = x(3);
-
-    
+  
    
     switch nargin
-        case 4
+        case 5
             Tf = fixed_time;
             %fprintf(2, 'cost: time optim off\n')
         otherwise           
@@ -17,12 +16,26 @@ function coste = cost(x, p0,  pf, fixed_time)
     end
 
     % variable intergration step
-    dt_dyn = Tf / N_dyn;
-   
+    dt_dyn = Tf / N_dyn; 
     
+    %accurate intergation
+%     [theta0, phi0, l_0] = computePolarVariables(p0);
+%     state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
+%     %1 integrate dynamics
+%     for i=1:N_dyn          
+%         if (i>=2)
+%           [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K);          
+%         else
+%           states(:,i) = state0;
+%           t(i) = 0;  
+%         end
+%     end
+
+    %rough integration
     [theta0, phi0, l_0] = computePolarVariables(p0);
     state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-    [states, t] = integrate_dynamics(state0,dt_dyn, N_dyn, K);
+    [states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K);
+
 
 
     theta = states(1,:);
@@ -68,7 +81,8 @@ function coste = cost(x, p0,  pf, fixed_time)
     % fut = abs(Fut)  % minimizing this and increasing the weight it turns
     % the trajectory vertical 
 
-    %coste =  Tf  + Ekinfcost + slack_energy + sigma_final_initial ;
-    coste = w5* Ekinfcost +  w6* slack_dyn ;
+    
+    %coste =  w3 * slack_energy + w5* Ekinfcost +  w6* slack_dyn  +w4 * slack_final;
+    coste =    w5* Ekinfcost;
 
 end

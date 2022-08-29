@@ -1,6 +1,6 @@
-function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, fixed_time)
+function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, int_steps, fixed_time )
 
-global  g N   m num_params l_uncompressed T_th N_dyn FRICTION_CONE 
+global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE 
 
 
 % ineq are <= 0
@@ -14,7 +14,7 @@ p0 = p0(:);
 pf = pf(:);
 
 switch nargin
-    case 7
+    case 8
         Tf = fixed_time;
         %fprintf(2, 'constraints: time optim off\n')
     otherwise           
@@ -29,7 +29,6 @@ number_of_constr.dynamic_constraints = N_dyn;
 number_of_constr.energy_constraints = N-1;
 number_of_constr.wall_constraints = N_dyn;
 number_of_constr.retraction_force_constraints = 2*N_dyn;
-
 number_of_constr.initial_final_constraints = 1;
 
 if FRICTION_CONE
@@ -39,7 +38,7 @@ else
 end
 
 % variable intergration step
-dt_dyn = Tf / N_dyn;
+dt_dyn = Tf / (N_dyn-1);
 fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
 
 
@@ -49,22 +48,26 @@ fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
 
 
-%1 dynamic constraints
+%1 integrate and set dynamic constraints
 sigma_dyn = zeros(1, N_dyn);
-t_ = 0;
+
 for i=1:N_dyn   
     sigma_dyn(i) = x(num_params + N +i);        
-    if (i>=2)
-        states(:,i) = states(:,i-1) + dt_dyn* dynamics_autonomous(states(:,i-1), K) + sigma_dyn(i);
-        t_ = t_ + dt_dyn;
-        t = [ t t_];
-        ineq(i) =  norm(  states(:,i) - states(:,i-1) -  dt_dyn* dynamics_autonomous(states(:,i-1), K) ) -sigma_dyn(i);
+    if (i>=2)     
+        % no slack
+        [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K);
+        ineq(i) = 0;
+%         [int, t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K); 
+%         states(:,i) = int + sigma_dyn(i);
+%         ineq(i) =  norm(  states(:,i)  - states(:,i-1) -int) -sigma_dyn(i);
     else
-      ineq(i) =0;
+
       states(:,i) = state0;
-      t(i) = t_;  
-    end
+      t(i) = 0;  
+      ineq(i) =0;
+    end    
 end
+
 
 % debug
 % disp('after dyn')
@@ -104,8 +107,12 @@ for i=1:N
     E(i) = m*l(idx)^2/2*(thetad(idx)^2+sin(theta(idx))^2*phid(idx)^2 ) + m*ld(idx)^2/2 - m*g*l(idx)*cos(theta(idx)) + K*(l(idx)-l_uncompressed).^2/2;
     sigma_energy(i) = x(num_params+i);        
     if (i>=2)
-        ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy_fixed)];
-        %ineq = [ineq 0];
+        % fixed slack
+        %ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy_fixed)];
+        %variable slack
+        %ineq = [ineq (abs(E(i) - E(i-1)) - sigma_energy(i))];
+        % no constraint
+        ineq = [ineq 0];
     end
 
 end
@@ -144,6 +151,7 @@ Fun = m*l_0*thetad0/T_th;
 Fut = m*l_0*sin(theta0)*phid0/T_th;
 
 ineq = [ineq  (sqrt(Fun^2 + Fut^2) -Fun_max)]   ;%(Fun < fun max )
+%ineq = [ineq  (Fun -Fun_max)]   ;%(Fun < fun max )
 ineq = [ineq  (-Fun)]  ; %(Fun >0 )
 
 if FRICTION_CONE
@@ -154,8 +162,10 @@ end
 % disp('after Fu')
 % length(ineq)
 
-% final point   (
+% final point  variable slack  
 %ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
+
+
 % final point  fixed slack 
 fixed_slack = 0.05; 
 ineq= [ineq norm(p_f - pf) - fixed_slack];
