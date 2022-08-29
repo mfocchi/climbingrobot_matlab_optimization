@@ -65,10 +65,10 @@ if TIME_OPTIMIZATION
     % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
     
     if problem_solved
-        plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, true, 'r');
+        plot_curve( solution,solution_constr, p0, pf,  true, 'r');
     else 
         fprintf(2,"Problem didnt converge!")
-        plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, true, 'k');
+        plot_curve( solution,solution_constr, p0, pf,  true, 'k');
     end
 else
     
@@ -100,10 +100,10 @@ else
                 min_final_error = solution_constr.final_error_discrete;
                 optimal_traj_index = i;                
             else 
-                plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'r');
+                plot_curve( solution,solution_constr, p0, pf, false, 'r');
             end
         else 
-            plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'k');            
+            plot_curve( solution,solution_constr, p0, pf, false, 'k');            
         end
         solution_vec  = [solution_vec solution];
         solution_constr_vec = [solution_constr_vec solution_constr];
@@ -113,7 +113,7 @@ else
     back_search_Tf = Tf(optimal_traj_index)
     solution = solution_vec(optimal_traj_index);
     solution_constr = solution_constr_vec(optimal_traj_index);
-    plot_curve( solution.p,solution_constr.p, p0, pf,  solution.energy.Etot, false, 'g');  
+    plot_curve( solution,solution_constr, p0, pf, false, 'g');  
 end
 
 opt_K = solution.K;

@@ -1,5 +1,5 @@
-function  plot_curve(p, p_constr, p0,pf,  E, plot_energy, color_input)
-      
+function  plot_curve(solution, solution_constr, p0,pf,  plot_energy, color_input)
+        global time
         % Vertical line
         plot3([0 p0(1)],[0 p0(2)],[0 p0(3)],'k--');   hold on ;
         %anchor     
@@ -7,11 +7,11 @@ function  plot_curve(p, p_constr, p0,pf,  E, plot_energy, color_input)
 
 
         % Min-max axis
-        min_x = min(p(1,:))-3 ; 
-        max_x = max(p(1,:))+3 ;
-        min_y = min(p(2,:))-3 ;
-        max_y = max(p(2,:))+3 ;
-        min_z = min(p(3,:))-2;
+        min_x = min(solution.p(1,:))-3 ; 
+        max_x = max(solution.p(1,:))+3 ;
+        min_y = min(solution.p(2,:))-3 ;
+        max_y = max(solution.p(2,:))+3 ;
+        min_z = min(solution.p(3,:))-2;
         max_z = 2;
 
 
@@ -34,11 +34,11 @@ function  plot_curve(p, p_constr, p0,pf,  E, plot_energy, color_input)
 
 
        % actual traj 
-       plot3(p(1,:), p(2,:), p(3,:) ,'Color',color_input ) ;
+       plot3(solution.p(1,:), solution.p(2,:), solution.p(3,:) ,'Color',color_input ) ;
        
        % discrete traj
     
-       plot3(p_constr(1,:), p_constr(2,:), p_constr(3,:) ,'o', 'Color', color_input ) ;
+       plot3(solution_constr.p(1,:), solution_constr.p(2,:), solution_constr.p(3,:) ,'o', 'Color', color_input ) ;
        
 
         plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
@@ -59,7 +59,7 @@ function  plot_curve(p, p_constr, p0,pf,  E, plot_energy, color_input)
         
     if (plot_energy)
         figure
-        plot(E)    
+        plot(solution.time, solution.energy.Etot)    
         title('Plotting the Energy')
         grid on
         xlabel('time');
