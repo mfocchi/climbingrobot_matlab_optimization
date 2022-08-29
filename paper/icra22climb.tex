@@ -29,20 +29,20 @@ Control, Planning, climbing robot, optimization,
 \end{IEEEkeywords}
 
 \section{Introduction}\label{sec:introduction}
-% introduction of the problem
-Today, Robots are capable of climbing vertical walls replacing humans to do difficult tasks and preventing them from dangerous situations \cite{tag0}.The idea of developing climbing robots was expected for years but only until 1986, A.NISHI et al. were the first who designed a robot that can walk on a vertical wall in their seminal paper \cite{seminal_paper}. After that during the last three decades many prototypes (over 200) were proposed according to the desired purpose of the climbing robot e.g, inspection, cleaning, and maintenance of tall towers,.. etc. However, the designing structure requires solving two problems. one is the type of adhesion method that should be used to attach the robot to the wall. and second, the type of walking mechanism that should be used to climb the wall \cite{TAVAKOLI2015301}. They can be either legs and pads (geckco), or rope (dragline eth).
+%Strong background references addresses "what is already known" 
+The idea of developing climbing robots was expected for years but only until 1986, A.NISHI et al. were the first who designed a robot that can walk on a vertical surface in their seminal paper \cite{seminal_paper}. In addition, many prototypes were proposed during the last thirty years to replace humans in difficult tasks and preventing them from dangerous situations. However, 
+% Mention a Gap in knowledge
+there are still other intelligent ways to climb walls not yet inspired from nature \cite{bio_inspired2015}.
 
-With respect to other mobile robots key feature of  climbing 
-robots is their ability  to address terrains of high inclination (up to vertical or beyond).  
-
-According to the application other  capabilities may also be desired: R1) ranging from carrying a payload, R2) be able to move fast (.e.g. in search and rescue missions).
-
+% Introduction of the problem 
+The research work done on climbing robots is classified in \cite{A.Hajeeretall} and can be summarized in \cite{Fang2022} based on both attachment, adhesion method that should be used to attach the robot to the wall and locomotion, the type of walking mechanism to climb the wall. which are considered as the two main problems to be solved in designing climbing robots. Other capabilities may be also desired: R1) ranging from carrying a payload, R2) be able to move fast (.e.g. in search and rescue missions).
+ 
+% This coming part will be improved with the help of Michele!  
 % limits wiht high inclinatoions
-It is well known that there is a limit in the inclination a robot can address related to the 
-value of the friction coefficient at the contact.
-
-% advantage of using a rope (summarize a bit todo)
-The advantage of using a the rope  is to allow the contact
+For the attachment technique, It is well known that there is a limit in the inclination a robot can address related to the 
+value of the friction coefficient at the contact. that's why we suggest using a rope to attach our robot to the wall.
+% advantages of using a rope (summarize a bit todo)
+The advantage of using a the rope is to allow the contact
 forces to better satisfy friction constraints (i.e., be more in the
 middle of the friction cones) when walking on highly inclined
 terrains. Indeed, in a slope with a very high
@@ -51,28 +51,29 @@ the terrain that surpasses the friction force that is needed to
 prevent slippage. A rope can introduce an external force to
 compensate for gravity solving this issue and allowing the
 robot to walk on ideally any terrain inclination (even vertical).
-An additional advantage of using a rope in legged robots is
-that the robot can keep a more kinematically advantageous configuration (i.e. far from kinematic limits) without the need to lean back or forth to keep stability.
-
-With respect to the most most common climbing robots \cite{gecko robot} that use sticky pads and employ locomotion gaits to climb up/down a wall, the aid of a rope can dramatically increase the locomotion speed (R2) by a winding/releasing mechanism, therefore being a preferable solution in applications that require a prompt intervention like rescue missions. 
-
+%advantages of using a rope
+An additional advantage of using a rope in legged robots \cite{} is
+that the robot can keep a more kinematically advantageous configuration (i.e. far from kinematic limits) without the need to lean back or forth to keep stability. 
+%advantages of using a rope
+Furthermore, with respect to most common climbing robots that uses sticky pads \cite{Kim2008}, \cite{Riskin2009} and employ locomotion gaits to climb up/down a wall, the aid of a rope like the novel bio-inspired dragline locomotion in \cite{Wang2014} can dramatically increase the locomotion speed (R2) by a winding/releasing mechanism, therefore being a preferable solution in applications that require a prompt intervention like rescue missions. 
 
 % we can reach the target with jumps 
-Indeed, rather than slowly taking steps to move, the robot can take one or multiple jumps to reach the target on the wall. For each jump it exploits the winding/releasing  mechanism to behave like a variable length  pendulum ( see Fig. \ref{fig:}). 
+For the locomotion mechanism, we suggest using the jumping as a moving method on the wall. Indeed, rather than slowly taking steps to move, the robot can take one or multiple jumps to reach the target on the wall. The jumping locomotion is similar to the Salto-1P jumping robot shown in \cite{Haldane2017} but the difference (key feature) of climbing robots relies in the ability to address terrains of high inclination (up to vertical or beyond). For each jump it exploits the winding/releasing  mechanism to behave like a variable length  pendulum ( see Fig. \ref{fig:}). 
 
+% advantages od jumping
 Additionally, the amount of payload that can be carried by sticky/adhesive based climbing robots is very limited due to the leg actuation limits and tangential component of the adhesive force that is limited.
 While using a rope, being it inextensible (on a certain extent) the amount of payload the  robot is able to carry is much higher (requirement R1) and is only limited by the maximum force deliverable by the windind mehcanism (e.g. an hoist), which using a gearbox can be designed to be very high. 
 
-% other advantages
+% last advantage of jumping
 Finally, a rope ensures an inherent safety (the robot cannot fall) and efficiency when rapelling down (i.e. exploiting the effect of gravity to unwind the rope. 
  
  
 %difficulties due to the dynamics
-However, having the robot attached to a  rope poses many challenges: one is the under-actuation (the robot is not able to control the position of its center of mass while not in contact) and the other is that a rope represents a 
+However, having the robot attached to a rope poses many challenges: one is the under-actuation (the robot is not able to control the position of its center of mass while not in contact) and the other is that a rope represents a 
 unilateral constraint (can only pull and not push), which further complicates the already hybrid dynamics of this class of robots. 
 
 % difficulties in the jump
-Taking a jump with a rope that can be released,   the resulting motion of the robot (and so the possibility to reach the target) will depend on two factors: 1) the initial impulse that the robot exerts  on the wall to lift-off, 2) the time-law the rope is released/re-winded.
+Taking a jump with a rope that can be released, the resulting motion of the robot (and so the possibility to reach the target) will depend on two factors: 1) the initial impulse that the robot exerts  on the wall to lift-off, 2) the time-law the rope is released/re-winded.
 
 % optimization for plannig 
 Therefore, a planning strategy for these kind of motions, to be successful, 
