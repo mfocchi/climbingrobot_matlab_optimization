@@ -1,4 +1,4 @@
-function [ineq, eq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, fixed_time)
+function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, fixed_time)
 
 global  g N   m num_params l_uncompressed T_th N_dyn FRICTION_CONE 
 
@@ -9,6 +9,9 @@ thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
 
+% check they are column vectors
+p0 = p0(:);
+pf = pf(:);
 
 switch nargin
     case 7
@@ -20,16 +23,13 @@ end
 
 % variable intergration step
 dt_dyn = Tf / N_dyn;
-
 fine_index = floor(linspace(1, N_dyn,N));%[1:N_dyn/N:N_dyn];
 
-% check they are column vectors
-p0 = p0(:);
-pf = pf(:);
-
+% single shooting
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
 [states, t] = integrate_dynamics(state0,dt_dyn, N_dyn, K);
+
 
 theta = states(1,:);
 phi = states(2,:);
@@ -54,16 +54,16 @@ solution_constr.time = t;
 solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 % number of constraints
-energy_constraints = N-1;
-wall_constraints = N_dyn;
-retraction_force_constraints = 2*N_dyn;
-dynamic_constraints = N_dyn-1;
-initial_final_constraints = 1;
+number_of_constr.energy_constraints = N-1;
+number_of_constr.wall_constraints = N_dyn;
+number_of_constr.retraction_force_constraints = 2*N_dyn;
+number_of_constr.dynamic_constraints = N_dyn-1;
+number_of_constr.initial_final_constraints = 1;
 
 if FRICTION_CONE
-    force_constraints  = 3;
+    number_of_constr.force_constraints  = 3;
 else
-    force_constraints  = 2;
+    number_of_constr.force_constraints  = 2;
 end
 
 % size not known

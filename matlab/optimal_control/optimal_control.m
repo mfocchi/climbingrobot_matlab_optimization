@@ -57,7 +57,7 @@ if TIME_OPTIMIZATION
     ub = [  30,   30,    40,   T_pend*2,      100*ones(1,N),   100*ones(1,N_dyn),    100];
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu), options);
     % evaluate constraint violation 
-    [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
+    [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu);
     solution = eval_solution(x, dt,  p0, pf) ;
     solution.cost = final_cost;
     problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
@@ -90,7 +90,7 @@ else
         ub = [  30,   30,     40,        100*ones(1,N),   100*ones(1,N_dyn),      100];
         [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Tf(i)),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, Tf(i)), options);
         % evaluate constraint violation 
-        [c ceq, energy_constraints,wall_constraints, retraction_force_constraints, force_constraints, initial_final_constraints, dynamic_constraints, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, Tf(i));
+        [c ceq,num_constr, solution_constr] = constraints(x, p0,  pf,  Fun_max, Fr_max, mu, Tf(i));
         solution = eval_solution(x, dt,  p0, pf, Tf(i)) ;
         solution.cost = final_cost;
         problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
@@ -138,47 +138,50 @@ DEBUG = true;
 
 if (DEBUG)
 
-    if any( c(1:energy_constraints)>constr_tolerance)
+    if any( c(1:num_constr.energy_constraints)>constr_tolerance)
             disp('1- energy constraints')
-        c(1:energy_constraints)
+        c(1:num_constr.energy_constraints)
     end
 
-    wall_constraints_idx = energy_constraints;
-    if any(c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)>constr_tolerance)
+    wall_constraints_idx = num_constr.energy_constraints;    
+    if any(c(wall_constraints_idx+1:wall_constraints_idx+num_constr.wall_constraints)>constr_tolerance)
         disp('2- wall constraints')
-        c(wall_constraints_idx+1:wall_constraints_idx+wall_constraints)
-    end
-   
+        c(wall_constraints_idx+1:wall_constraints_idx  + num_constr.wall_constraints)
+    end  
     
     
-    retraction_force_constraints_idx = wall_constraints_idx+wall_constraints;
-    if any( c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+retraction_force_constraints)>constr_tolerance)
+    retraction_force_constraints_idx = wall_constraints_idx+num_constr.wall_constraints;
+    
+    if any( c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+num_constr.retraction_force_constraints)>constr_tolerance)
         disp('3- retraction force constraints')
-         c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+retraction_force_constraints)
+         c(retraction_force_constraints_idx+1:retraction_force_constraints_idx + num_constr.retraction_force_constraints)
     end
 
+    
+    
 
-    force_constraints_idx = retraction_force_constraints_idx+retraction_force_constraints;
-    if any(c(force_constraints_idx+1: force_constraints_idx+force_constraints)>constr_tolerance)
+    force_constraints_idx = retraction_force_constraints_idx + num_constr.retraction_force_constraints;
+    
+    if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>constr_tolerance)
         disp('4 -force constraints')
-        c(force_constraints_idx+1: force_constraints_idx+force_constraints)
+        c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)
         Fun
         Fut
     end
     
 
    
-    init_dynamic_constraints_idx = force_constraints_idx+force_constraints ;
-    if  any(c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx+dynamic_constraints)>constr_tolerance)
+    init_dynamic_constraints_idx = force_constraints_idx + num_constr.force_constraints ;
+    if  any(c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx+num_constr.dynamic_constraints)>constr_tolerance)
         disp('5 - dynamics  constraints')
-        c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx+dynamic_constraints)
+        c(init_dynamic_constraints_idx+1: init_dynamic_constraints_idx + num_constr.dynamic_constraints)
     end
     
     
-    init_final_constraints_idx = init_dynamic_constraints_idx+dynamic_constraints;
-    if  any(   c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constraints)>constr_tolerance)
+    init_final_constraints_idx = init_dynamic_constraints_idx+num_constr.dynamic_constraints;
+    if  any(   c(init_final_constraints_idx+1: init_final_constraints_idx+num_constr.initial_final_constraints)>constr_tolerance)
         disp('6 - initial final  constraints')
-        c(init_final_constraints_idx+1: init_final_constraints_idx+initial_final_constraints)
+        c(init_final_constraints_idx+1: init_final_constraints_idx+num_constr.initial_final_constraints)
     end
     
  
