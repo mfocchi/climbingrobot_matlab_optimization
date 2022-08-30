@@ -1,7 +1,7 @@
-function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt,n_steps, K, method)
+function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt,n_steps, K,l_uncompressed,  method)
     
     switch nargin
-        case 5
+        case 6
             method = 'euler';
         otherwise
             
@@ -18,14 +18,14 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt,n_steps, K, met
         case 'euler'    
             % forwatd euler
             for i=1:n_steps-1               
-                x_ = x_ + dt* dynamics_autonomous(t_, x_, K); % we have autonomous dynamics so t wont count
+                x_ = x_ + dt* dynamics_autonomous(t_, x_, K,l_uncompressed); % we have autonomous dynamics so t wont count
                 t_ = t_ + dt;
                 x_vec = [x_vec x_];
                 t_vec = [t_vec t_];
             end
         case 'rk4'
             h = dt;
-            F = @(t, x) dynamics_autonomous(t, x, K); % we have autonomous dynamics so t wont count
+            F = @(t, x) dynamics_autonomous(t, x, K,l_uncompressed); % we have autonomous dynamics so t wont count
             for i=1:n_steps-1                 
                 k_1 = F(t_      , x_           );
                 k_2 = F(t_+0.5*h, x_+ 0.5*h*k_1);

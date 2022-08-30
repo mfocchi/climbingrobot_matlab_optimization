@@ -1,6 +1,6 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, int_steps, fixed_time )
 
-global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE  SUBSTEP_INTEGRATION int_method
+global  g N  m num_params  T_th N_dyn FRICTION_CONE  SUBSTEP_INTEGRATION int_method
 
 
 % ineq are <= 0
@@ -8,7 +8,7 @@ global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE  SUBSTEP_INTEG
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
-
+l_uncompressed = x(4);
 % check they are column vectors
 p0 = p0(:);
 pf = pf(:);
@@ -18,7 +18,7 @@ switch nargin
         Tf = fixed_time;
         %fprintf(2, 'constraints: time optim off\n')
     otherwise           
-        Tf = x(4);
+        Tf = x(5);
 end
 
 % size not known
@@ -58,7 +58,7 @@ if SUBSTEP_INTEGRATION
         if (i>=2)     
 
             % no slack
-            [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K, int_method);
+            [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K, l_uncompressed, int_method);
             %ineq(i) = 0;
             %with slacks
     %         [int, t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K); 
@@ -72,7 +72,7 @@ if SUBSTEP_INTEGRATION
     end
 else
     % no substep integration
-    [~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K, int_method);
+    [~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K,l_uncompressed, int_method);
 end
 % debug
 % disp('after dyn')

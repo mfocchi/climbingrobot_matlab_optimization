@@ -1,5 +1,5 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 N num_params  l_uncompressed T_th N_dyn FRICTION_CONE SUBSTEP_INTEGRATION int_method
+global m  g w1 w2 w3 w4 w5 w6 N num_params  T_th N_dyn FRICTION_CONE SUBSTEP_INTEGRATION int_method
 
 m = 5;
 g = 9.81;
@@ -38,9 +38,9 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf = [1.0; 5.0; -12];
+pf = [4.0; 5.0; -12];
 
-l_uncompressed = l_0;
+
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 
@@ -53,13 +53,13 @@ if TIME_OPTIMIZATION
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
-    num_params = 4;    
-    x0 = [  0, 0.0,     6,     T_pend,      zeros(1,N),    0*ones(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
+    num_params = 5;    
+    x0 = [  0, 0.0,     10,    l_0/2, T_pend,      zeros(1,N),    0*ones(1,N_dyn),           0]; %opt vars=   thetad0, phid0, K, luncompressed time,  slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
     % with thetad0 = 1 it detaches from the wall but does not reach the
     % target
     %lb = [ 1,    -30,   0.1,    0.01,         zeros(1,N),     zeros(1,N_dyn),       0,  0];
-    lb = [ -30,    -30,   0.1,    0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
-    ub = [  30,   30,    40,   T_pend*2,     0*ones(1,N),   0*ones(1,N_dyn),         0];
+    lb = [ -30,    -30,   0.1, 0,   0.01,        zeros(1,N),     zeros(1,N_dyn),         0];
+    ub = [  30,   30,    80,  l_0, T_pend*2,     0*ones(1,N),   0*ones(1,N_dyn),         0];
     tic
     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, int_steps),x0,[],[],[],[],lb,ub,@(x)  constraints(x, p0,  pf, Fun_max, Fr_max, mu, int_steps), options);
     toc
@@ -124,6 +124,7 @@ else
 end
 
 opt_K = solution.K;
+opt_l_uncompressed = solution.l_uncompressed;
 opt_Tf = solution.time(end);
 
  
@@ -267,6 +268,7 @@ p0
 solution.Fun
 solution.Fut
 opt_K
+opt_l_uncompressed
 disp('check')
 opt_Tf
 
