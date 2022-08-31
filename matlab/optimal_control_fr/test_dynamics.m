@@ -1,5 +1,15 @@
+
+clear all 
+
+global m g
+
 state0 = [ 0.626            0            3          0.5          0.1            0];
-K = 10;
+
+
+m = 5;
+g = 9.81;
+
+
 N_dyn = 20
 Tf = 1.5
 dt_dyn = Tf / N_dyn;

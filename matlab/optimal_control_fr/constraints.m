@@ -1,6 +1,6 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fun_max, Fr_max, mu, int_steps, fixed_time )
 
-global  g N  m num_params l_uncompressed T_th N_dyn FRICTION_CONE  SUBSTEP_INTEGRATION int_method
+global     m num_params  T_th N_dyn FRICTION_CONE  SUBSTEP_INTEGRATION int_method
 
 
 % ineq are <= 0

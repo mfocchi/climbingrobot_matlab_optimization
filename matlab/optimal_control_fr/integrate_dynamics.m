@@ -13,7 +13,7 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt,n_steps, Fr, me
     t_ = t0;
     x_ = x0;
     x_vec = x0;
-    t_vec = 0; 
+    t_vec = t_; 
     switch method 
         case 'euler'    
             % forwatd euler
