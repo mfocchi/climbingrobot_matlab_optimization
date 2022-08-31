@@ -1,24 +1,25 @@
 function solution = eval_solution(x,  dt, p0, pf, fixed_time)
 
-global m g l_uncompressed num_params N N_dyn T_th
+global m g  num_params N N_dyn T_th
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
 K = x(3);
+l_uncompressed = x(4);
 
 switch nargin
     case 5
         Tf = fixed_time;
         %fprintf(2, 'eval_sol: time optim off\n')
     otherwise           
-        Tf = x(4);
+        Tf = x(5);
 end
 
 
 
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-[~,~,states, t] = integrate_dynamics(state0,0,dt, floor(Tf/dt), K);
+[~,~,states, t] = integrate_dynamics(state0,0,dt, floor(Tf/dt), K,l_uncompressed);
 
 theta = states(1,:);
 phi = states(2,:);
@@ -110,6 +111,7 @@ solution.phid = phid;
 solution.ld = ld;
 solution.time = t;
 solution.K = K;
+solution.l_uncompressed = l_uncompressed;
 solution.Fr_vec = -K*(l-l_uncompressed);
 %evaluate inpulse ( the integral of the gaussian is 1) 
 solution.Fun = m*l_0*thetad(1)/T_th;
