@@ -68,7 +68,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
     %slack_energy= max(abs(x(num_params+1:num_params+N)));
 
     slack_dyn = max(x(num_params+N+1:num_params+N+N_dyn));
-    slack_final  = max (x(num_params+N+N_dyn + 1:end));
+    slack_final  = sum (x(num_params+N+N_dyn + 1:end));
 
     Ekinfcost=  ( (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
     Fut = m*l_0*sin(theta0)*phid0/T_th;
