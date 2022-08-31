@@ -1,19 +1,31 @@
-function  plot_curve(solution, solution_constr, p0,pf,  plot_energy, color_input)
-        global time
+function  plot_curve(solution, solution_constr, p0, pf, p_via,  plot_energy, color_input)
+        global N_dyn
         % Vertical line
         plot3([0 p0(1)],[0 p0(2)],[0 p0(3)],'k--');   hold on ;
         %anchor     
         plot3(0,0,0,'Marker','*','Color','k','MarkerSize',10);
-
+        
+        % initila point 
+        plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
+         
+        % via point
+        plot3(p_via(1), p_via(2), p_via(3) ,'.','Color','b', 'MarkerSize',60) ;
+      
+        %final point 
+        plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
+       
+        % via point actual
+        plot3(solution_constr.p(1,N_dyn),solution_constr.p(2,N_dyn), solution_constr.p(3,N_dyn) ,'.','Color','k', 'MarkerSize',60) ;
+      
+        
 
         % Min-max axis
-        min_x = min(solution.p(1,:))-3 ; 
-        max_x = max(solution.p(1,:))+3 ;
-        min_y = min(solution.p(2,:))-3 ;
-        max_y = max(solution.p(2,:))+3 ;
-        min_z = min(solution.p(3,:))-2;
+        min_x = min(min(solution.p(1,:)), pf(1))-3 ; 
+        max_x = max(max(solution.p(1,:)), pf(1))+3 ;
+        min_y = min(min(solution.p(2,:)), pf(2))-3 ;
+        max_y = max(max(solution.p(2,:)), pf(2)) +3 ;
+        min_z = min(pf(3,:))-4;
         max_z = 2;
-
 
         hold on ; grid on ; axis equal
         set(gca,'CameraPosition',[10   35   10])
@@ -36,13 +48,10 @@ function  plot_curve(solution, solution_constr, p0,pf,  plot_energy, color_input
        % actual traj 
        plot3(solution.p(1,:), solution.p(2,:), solution.p(3,:) ,'Color',color_input ) ;
        
-       % discrete traj
-    
+       % discrete traj    
        plot3(solution_constr.p(1,:), solution_constr.p(2,:), solution_constr.p(3,:) ,'o', 'Color', color_input ) ;
        
 
-        plot3(p0(1), p0(2), p0(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
-        plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
         grid on;
           view(3)
           

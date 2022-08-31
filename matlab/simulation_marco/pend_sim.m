@@ -3,37 +3,33 @@ clc
 close all
 g = 9.81;
 
-load ('../optimal_control/test.mat')
+load ('test.mat')
  
-global delta_duration friction_coefficient Fun0  Fut0 l_0 optK Tsim Fr_vec time target_height DEBUG
+global delta_duration friction_coefficient Fun_vec  Fut_vec l_0   Fr_vec mean sigma time target_height zeta 
 
 m = 5;   % Mass [kg]
-DEBUG = 0;
+
 
 delta_duration =  T_th;
 friction_coefficient= mu; 
-Fun0 = solution.Fun;
-Fut0 = solution.Fut; 
-optK = solution.K;
+
+%gaussian params
+mean = T_th/2;
+sigma = 3*T_th/2;
+
+Fun_vec = solution.Fun;
+Fut_vec = solution.Fut; 
+Fr_vec = solution.Fr;
+
 time = solution.time;
+zeta = solution.zeta;
 target_height = pf(3);
 [theta0, phi0, l_0] = computePolarVariables(p0);
 
 dt = 0.001;
-Tsim = 3.;
 
-if DEBUG
-    %to debug reset the initial states
-    Fr_vec = solution.Fr_vec;
-   
-    tspan = solution.time;
-    x0 = [solution.theta(1); solution.thetad(1); solution.phi(1); solution.phid(1); l_0; solution.ld(1)]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
-
-else
-    %Initial Conditions
-    x0 = [theta0; phi0; 0.; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
-    tspan = [0:dt: Tsim]; % use the event function to stop!
-end
+%Initial Conditions
+x0 = [theta0; 0.;phi0; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
 
 
 %%Simulation:
@@ -41,21 +37,7 @@ end
 Opt    = odeset('Events', @stopFun);
 
 %1 - Solve differential equations with variable step solver
-[time_sim, x] = ode23(@(time_sim,x) diffEq(time_sim,x,m,@Fr,@Fun, @Fut), tspan, x0, Opt); 
-
-% 2- Euler solution
-% x_log = x0;
-% x = x0;
-% for i=1:length(tspan)
-%    xdot = diffEq(tspan(i),x,m,@Fr,@Fun, @Fut) 
-%    x = x +xdot*dt;
-%    x_log = [x_log x]; 
-% end
-% x = x_log';
-
-% 3- Solve differential equations with  fixed step solver(debug)
-% [x] = ode4(@(t,x) diffEq(t,x,m,@Fr,@Fun, @Fut), tspan, x0);
-% t = tspan;
+[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,m,@Fr,@Fun, @Fut), time, x0, Opt); 
 
 theta_sim = x(:,1);
 thetad_sim = x(:,2);
@@ -114,9 +96,7 @@ legend('sim', 'opt')
 % legend('sim', 'opt')
 
 
-
 % eval total energy sim
-Etot_sim =  (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m.*ld_sim.^2/2 -m*g*l_sim.*cos(theta_sim) + optK*(l_sim-l_0).^2/2;
 Ekin_sim=   (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m.*ld_sim.^2/2;
 
 
@@ -125,11 +105,7 @@ figure(2)
 plot(time_sim, Ekin_sim,'b.');hold on;grid on;
 plot(time, solution.energy.Ekin,'r');
 ylabel('Ekin') 
-
-figure(3)
-plot(time_sim, Etot_sim,'b.');hold on; grid on;
-plot(time, solution.energy.Etot','r');
-ylabel('Etot') 
+legend('sim', 'opt')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
@@ -139,30 +115,20 @@ title('3D Plot Animation');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
 
 % Min-max axis
-min_x = min(X)-3 ; 
-max_x = max(X)+3 ;
-min_y = min(Y)-3 ;
-max_y = max(Y)+3 ;
-min_z = min(Z)-2;
+ % Min-max axis
+min_x = min(min(X), pf(1))-3 ; 
+max_x = max(max(X), pf(1))+3 ;
+min_y = min(min(Y), pf(2))-3 ;
+max_y = max(max(Y), pf(2)) +3 ;
+min_z = min(min(Z, pf(3,:)))-4;
+max_z = 2;
 max_z = 2;
 
-% figure(2)
-% set(gcf,'Position',[50 50 1280 720]) % YouTube: 720p
-% set(gcf,'Position',[50 50 854 480]) % YouTube: 480p
-% set(gcf,'Position',[50 50 640 640]) % Social
-% 
-% Create and open video writer object
-% v = VideoWriter('spherical_pendulum.mp4');
-% v.Quality = 100;
-% open(v);
-%     
 hold on ; grid on ; axis equal
 set(gca,'CameraPosition',[10   35   10])
 set(gca,'XLim',[min_x max_x])
 set(gca,'YLim',[min_y max_y])
 set(gca,'ZLim',[min_z max_z])
-% set(gca,'XTickLabel',[],'YTickLabel',[],'ZTickLabel',[])
-
 
 %     Vertical line
 h(1) = plot3([0 p0(1)],[0 p0(2)],[0 p0(3)],'k--');
@@ -200,66 +166,31 @@ for i = 1:length(X)
         addpoints(h(5)  ,X(i),Y(i),Z(i))
        
     end
-
-    %Pendulum rod (red)
-    %addpoints(h(6) , [0 X(i)],[0 Y(i)],[0 Z(i)]);
-
-    %Pendulum sphere (red)
-    %addpoints(h(7)  , X(i),Y(i),Z(i));
-       
+      
     drawnow limitrate;
     pause(0.001);
-    %frame = getframe(gcf);    
-%   writeVideo(v,frame);   
-    
-end
-
-% close(v);
-
-
-
-
-function [fr] = Fr(t, x)
-global optK l_0 Fr_vec time DEBUG    
-
-    if DEBUG
-    % use simulated Fr
-    %   index = min(find(time(:)>=t(:)));
-    %   
-    %   fr = Fr_vec(index)
-        %use interp to be precise
-       fr = interp1(time(:),Fr_vec(:),t);
-    else
-       fr = - optK*(x(5)-l_0);
-    end
 
 end
 
-function [f] = myGaussian(t, sigma, m)
-    f = (1/(sqrt(2*pi*sigma^2)))*exp(-0.5*((t-m)/sigma)^2);
+function [fr] = Fr(t)
+global   Fr_vec time
+   idx = min(find(time>=t));
+   fr = Fr_vec(idx);
 end
 
 
 function [fun] = Fun(t)
-    global delta_duration;
-    global Fun0;
-    if (t <= delta_duration)
-        fun = Fun0;
-    else
-        fun = 0;
-    end
-    %fun = Fun0*myGaussian(t,delta_duration/6, delta_duration/2);
+global   Fun_vec time
+   idx = min(find(time>=t));
+   fun = Fun_vec(idx);   
 end
 
+
 function [fut] = Fut(t)
-     global delta_duration;
-     global Fut0;
-    if (t <= delta_duration)
-        fut = Fut0;
-    else
-        fut = 0;
-    end
-    %fut = Fut0*myGaussian(t,delta_duration/6, delta_duration/2);
+global   Fut_vec time
+   idx = min(find(time>=t));
+   fut = Fut_vec(idx);
+   
 end
 
 function [value, isterminal, direction] = stopFun(t, x)
@@ -270,16 +201,13 @@ function [value, isterminal, direction] = stopFun(t, x)
         dphi = x(4);
         l = x(5);
         dl = x(6);
-        
-        
+           
         X = l*cos(phi)*sin(theta);    
         Y = l*sin(phi)*sin(theta);
         Z = -l*cos(theta);
         
         %value =  (Z - target_height);
-        value =  (time(end) - t);
-
-    
+        value =  (time(end) - t);    
         %direction  =-1 Detect zero crossings of value in the negative direction only
         %direction  =0 Detect all zero crossings of value 
         %direction  =1 Detect zero crossings of value  in the positive direction only
@@ -291,10 +219,10 @@ function [value, isterminal, direction] = stopFun(t, x)
 end
 
 function [dxdt] = diffEq(t,x, m, Fr, Fun ,Fut)
-global DEBUG
+
 
 %x = [theta, dottheta, phi, dotphi, l, dotl]
-g = 9.8;   %Gravity   [m/s2]
+g = 9.81;   %Gravity   [m/s2]
 
 %Retrieving states
 theta = x(1);
@@ -304,15 +232,9 @@ dphi = x(4);
 l = x(5);
 dl = x(6);
 
-if DEBUG % reset the state already
-  ddtheta = -2/l*(dtheta*dl) + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta) ;
-  ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl ;
-  ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t, x);
-else
-  ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
-  ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
-  ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t, x);
-end
+ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
+ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta  -(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
+ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t);
 
 dxdt = [dtheta; ddtheta; dphi; ddphi; dl; ddl];
 

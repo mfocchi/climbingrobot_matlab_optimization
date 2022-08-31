@@ -5,14 +5,14 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
     thetad0 = x(1);
     phid0 = x(2);
     K = x(3);
-  
+    l_uncompressed = x(4);
    
     switch nargin
         case 5
             Tf = fixed_time;
             %fprintf(2, 'cost: time optim off\n')
         otherwise           
-            Tf = x(4);
+            Tf = x(5);
     end
 
     % variable intergration step
@@ -24,7 +24,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
 %     %1 integrate dynamics
 %     for i=1:N_dyn          
 %         if (i>=2)
-%           [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K);          
+%           [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, K,l_uncompressed);          
 %         else
 %           states(:,i) = state0;
 %           t(i) = 0;  
@@ -34,7 +34,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
     %rough integration
     [theta0, phi0, l_0] = computePolarVariables(p0);
     state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-    [states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K, 'rk4');
+    [states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, K,l_uncompressed, 'rk4');
 
 
 
@@ -68,7 +68,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
     %slack_energy= max(abs(x(num_params+1:num_params+N)));
 
     slack_dyn = max(x(num_params+N+1:num_params+N+N_dyn));
-    slack_final  = max (x(num_params+N+N_dyn + 1:end));
+    slack_final  = sum (x(num_params+N+N_dyn + 1:end));
 
     Ekinfcost=  ( (m*l(end)^2/2).*( thetad(end)^2 + sin(theta(end))^2 *phid(end)^2 )  + (m*ld(end)^2/2)   );
     Fut = m*l_0*sin(theta0)*phid0/T_th;

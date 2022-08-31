@@ -1,24 +1,56 @@
-function solution = eval_solution(x,  dt, p0, pf, fixed_time)
+function solution = eval_solution(x,  dt, p0, pf)
 
-global m g l_uncompressed num_params N N_dyn T_th
+global m g   num_params  N_dyn T_th int_method
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
-K = x(3);
+Tf1 = x(3);
+Tf2 = x(4);
 
-switch nargin
-    case 5
-        Tf = fixed_time;
-        %fprintf(2, 'eval_sol: time optim off\n')
-    otherwise           
-        Tf = x(4);
+Fr_rough = x(num_params+1:num_params+2*N_dyn); 
+%resample Fr rough that now is sampled in 2 parts of different dt
+n_samples1 = floor(Tf1/dt);
+rough_count = 1;
+t_ = 0;
+
+for i=1: n_samples1
+
+    
+   t_= t_+dt;
+   if t_> ((n_samples1) *dt/(N_dyn))
+        rough_count = rough_count + 1;
+        t_ =0;
+        
+   end  
+  
+    Fr(i) =  Fr_rough(rough_count);
 end
 
+n_samples2 = floor(Tf2/dt);
+t_ = 0;
+% you need to do the first transition yourself cause rough_count is Ndyn
+% and you arleady filled in that step
+rough_count = N_dyn +1;
+for i=n_samples1+1:n_samples1 + n_samples2
+   t_= t_+dt;   
+   if t_> ((n_samples2) *dt/(N_dyn))
+        rough_count = rough_count + 1;
+        t_ =0;
+        
+   end      
+    Fr(i) =  Fr_rough(rough_count);
+end
 
+solution.Fr_rough  = Fr_rough;
+solution.Fr  = Fr;
+solution.Tf1 = Tf1;
+solution.Tf2 = Tf2;
 
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
-[~,~,states, t] = integrate_dynamics(state0,0,dt, floor(Tf/dt), K);
+%tried with (Tf1+Tf2)/(n_samples1+n_samples2 it does not change
+[~,~,states, t] = integrate_dynamics(state0,0,dt, n_samples1+n_samples2, Fr);
+
 
 theta = states(1,:);
 phi = states(2,:);
@@ -72,7 +104,7 @@ solution.energy.Ekinf = 0;
 solution.energy.Uf = 0;
 
 % Calculating and ploting the total Energy from the new fit: theta, thetad and phid
-solution.energy.Etot =  (m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2) +m.*ld.^2/2 - m*g*l.*cos(theta) + K*(l-l_uncompressed).^2/2;
+solution.energy.Etot =  (m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2) +m.*ld.^2/2 - m*g*l.*cos(theta);
 
 
 % kinetic energy at the beginning
@@ -90,12 +122,12 @@ end
 %compare for sanity check should be equal to  E.Ekin0
 solution.energy.Ekinfangles=  (m*l(end)^2/2).*(thetad(end)^2 + sin(theta(end))^2 *phid(end)^2) + m*ld(end)^2/2;
 
-solution.energy.U0 =  -m*g*l(1)*cos(theta(1)) + K*(l(1)-l_uncompressed).^2/2;
+solution.energy.U0 =  -m*g*l(1)*cos(theta(1));
 solution.energy.Ekinfx = m/2*pd(1,end)'*pd(1,end);
 solution.energy.Ekinfy = m/2*pd(2,end)'*pd(2,end);
 solution.energy.Ekinfz = m/2*pd(3,end)'*pd(3,end);
 solution.energy.Ekinf = m/2*pd(:,end)'*pd(:,end);
-solution.energy.Uf = -m*g*l(end)*cos(theta(end)) +K*(l(end)-l_uncompressed).^2/2;
+solution.energy.Uf = -m*g*l(end)*cos(theta(end))  ;
 
 solution.initial_error = norm(p(:,1) -p0);
 solution.final_error_real = norm(p(:,end) -pf);
@@ -109,19 +141,10 @@ solution.thetad = thetad;
 solution.phid = phid;
 solution.ld = ld;
 solution.time = t;
-solution.K = K;
-solution.Fr_vec = -K*(l-l_uncompressed);
+
 %evaluate inpulse ( the integral of the gaussian is 1) 
 solution.Fun = m*l_0*thetad(1)/T_th;
 solution.Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
 
-
-solution.slacks_energy = x(num_params+1:num_params+N);
-solution.slacks_energy_cost = sum(solution.slacks_energy);
-
-solution.slacks_dyn = x(num_params+N+1:num_params+N+N_dyn);
-solution.slacks_initial_final = x(num_params+N+N_dyn+1:end);
-
-solution.slacks_initial_final_cost = sum(solution.slacks_initial_final);
 
 end

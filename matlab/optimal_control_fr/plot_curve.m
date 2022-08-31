@@ -7,11 +7,11 @@ function  plot_curve(solution, solution_constr, p0,pf,  plot_energy, color_input
 
 
         % Min-max axis
-        min_x = min(solution.p(1,:))-3 ; 
-        max_x = max(solution.p(1,:))+3 ;
-        min_y = min(solution.p(2,:))-3 ;
-        max_y = max(solution.p(2,:))+3 ;
-        min_z = min(solution.p(3,:))-2;
+        min_x = min(min(solution.p(1,:)), pf(1))-3 ; 
+        max_x = max(max(solution.p(1,:)), pf(1))+3 ;
+        min_y = min(min(solution.p(2,:)), pf(2))-3 ;
+        max_y = max(max(solution.p(2,:)), pf(2)) +3 ;
+        min_z = min(pf(3,:))-4;
         max_z = 2;
 
 
