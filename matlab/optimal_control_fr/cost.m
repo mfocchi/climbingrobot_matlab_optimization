@@ -28,7 +28,7 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
 %     if SUBSTEP_INTEGRATION
 %         for i=1:N_dyn          
 %             if (i>=2)
-%               [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, Fr(i)*ones(1,int_steps), int_method); % keep Fr constant
+%               [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, Fr(i-1)*ones(1,int_steps), int_method); % keep Fr constant
 %             else
 %               states(:,i) = state0;
 %               t(i) = 0;  

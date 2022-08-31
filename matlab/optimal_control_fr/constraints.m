@@ -25,8 +25,6 @@ Fr = x(num_params+1:num_params+N_dyn);
 ineq = zeros(1,0);
 
 % number of constraints
-number_of_constr.dynamic_constraints = 0;%N_dyn;
-number_of_constr.energy_constraints = 0;
 number_of_constr.wall_constraints = N_dyn;
 number_of_constr.retraction_force_constraints = 2*N_dyn;
 number_of_constr.initial_final_constraints = 1;
@@ -50,7 +48,7 @@ if SUBSTEP_INTEGRATION
     %substep integraiton
     for i=1:N_dyn           
         if (i>=2)     
-            [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, Fr(i)*ones(1,int_steps), int_method); % keep Fr constant           
+            [states(:,i), t(i)] = integrate_dynamics(states(:,i-1), t(i-1), dt_dyn/(int_steps-1), int_steps, Fr(i-1)*ones(1,int_steps), int_method); % keep Fr constant           
         else
           states(:,i) = state0;
           t(i) = 0;      

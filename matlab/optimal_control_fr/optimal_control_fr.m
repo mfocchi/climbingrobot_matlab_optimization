@@ -101,9 +101,10 @@ if (DEBUG)
 
     figure
     ylabel('Fr')
-    plot(solution.time,solution.Fr,'r'); hold on; grid on;
     plot(solution_constr.time,solution.Fr_rough,'bo'); hold on; grid on;
-    
+   
+    plot(solution.time,solution.Fr,'r'); hold on; grid on;
+   
     plot(solution.time,0*ones(size(solution.l)),'k');
     plot(solution.time,-Fr_max*ones(size(solution.l)),'k');
 
