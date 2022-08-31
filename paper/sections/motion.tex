@@ -1,0 +1,24 @@
+The motion plan for the robot is decided solving an optimal control problem \emph{a la} Pondryagin.
+Generally speaking, we can set up the problem in the following way:
+\begin{equation}
+  \begin{aligned}
+    &\text{min}_{\vect{u}(t)} l\left(\vect{x}(t),\vect{u}(t)\right)\\
+    &\text{subj. to}\\
+    &\,\,\dot{x} = f(\vect{x},\vect{u})\\
+    &\,\,\vect{u} \in \mathcal{U}\\
+    &\,\,\vect{x} \in \mathcal{X}\\
+    &\,\,\vect{x}(t_0) = \vect{x}_0, \vect{x}(t_f)=\vect{x}_f.
+  \end{aligned}
+\end{equation}
+where $\vect{x}$ are the state variables, $\vect{u}$ are the input variables, $f(\cdot,cdot)$ is the dynamic equation of the system,
+$\mathcal{U}$ is set of admissible input values, $\mathcal{X}$ is the set of admissible states, $t_0$ and $t_f$ are the initial and final
+instants ($t_f$ can also be an optimisation variable) and $\vect{x}_0$ and $\vect{x}_f$ are the desired initial and final states.
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../icra22climb"
+%%% End:

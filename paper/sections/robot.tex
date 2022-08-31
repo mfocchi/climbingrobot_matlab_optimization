@@ -157,7 +157,7 @@ The three Euler-Legrance equations can be therefore be written as:
 %% 	The second Euler-Lagrange equation yields
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
- 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) - 0 = F_{u,t} . l . s_\theta\\
+ 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) - 0 = F_{u,t}  l  s_\theta\\
 %% 		& \ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
 %%		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
 %% 	\end{align*}
@@ -179,7 +179,7 @@ The three Euler-Legrance equations can be therefore be written as:
 	\end{aligned}
         \label{eq:nonlinearDyn}
         \end{equation}
-        Clearly, in this derivarion of the model, we have heavily
+        Clearly, in this derivation of the model, we have heavily
         relied on the point-mass nature of the body.  A possible issue
         could be the rotational dynamics of the body around its axis,
         which could wastes energy generating unnecessary motions and
@@ -188,3 +188,27 @@ The three Euler-Legrance equations can be therefore be written as:
         assumptions (e.g., thrusting force oriented in the direction
         of the centre of mass), the results based on the simplified
         model can be applied to a realistic system with a good approximation.
+
+\subsection{Robot motion: problems and solution overview}
+The problem of moving CLIO bewtween two given configurations is not an
+easy one.  First of all, even the simplified dyanamics in
+Equation~\eqref{eq:nonlinearDyn} is highly nonlinear.  Second, in
+general the configurations the system moves between can in general be
+two distant points of the workspace. Therefore, it is not possible to
+use the linearised dyanmics.  Third, one of our
+actuators, the thrusting force $\mathbf{F}_u$, has an impulsive nature
+and operates at discrte time instants. Therefore, it is not possible
+to use this part of the actuation in any feedback control scheme.
+Finally, the way the tangential compoent $F_{u,t}$ is generated is by
+using friction. Therefore the two components $F_{u,n}$ and $F_{u,t}$ are linked
+by a nonlinear constraints expressing the friction cone. Because the friction cone
+depnds on the specific point or area where the robot is pointing its leg,
+this mechanism is not totally reliable (i.e., there can be significant deviation
+between the generated and the exected values of $F_{u,t}$).
+
+In view of this comlexity, we propose an approach based on two steps:
+1. first a motion strategy is planned prior to starting the motion,
+2. after the take of phase a motion controller operates on
+$\mathbf{F}_r$ in a feedback control scheme to fix small deviation and
+to secure that the robot lands close enough to the expected position.
+
