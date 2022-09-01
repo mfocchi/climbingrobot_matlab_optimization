@@ -87,9 +87,9 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 	\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
 	\]
 	where $Q_i^p$ is the generalized force $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$.
-	$\mathbf{F}_r$ is oriented along the rope and $\mathbf{F}_u$ does not have any component along the rope (otherwise
-	it will forms bend):
-	\begin{align*}
+	$\mathbf{F}_r$ is oriented along the rope and $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
+        \begin{equation}
+        \begin{aligned}
 		\mathbf{F}_r  &= F_r \begin{bmatrix}
 			c_\phi s_\theta\\
 			s_\phi s_\theta\\
@@ -104,7 +104,9 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 			s_\phi c_\theta\\
 			s_\theta
 		\end{bmatrix}^T &= F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n}    .	 
-	\end{align*}  
+              \end{aligned}
+              \label{eq:forces}
+        \end{equation}
 	while
 	\begin{align*}
 		\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
