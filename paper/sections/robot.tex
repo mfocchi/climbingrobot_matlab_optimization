@@ -38,14 +38,17 @@ write:
 From this equation, we can compute the velcoities and the kinetic energy:
         
 %% 	From equation \ref{eq1}, the velocities along the axes are:  
-	\begin{align*}
-		\dot{x} &= 
-		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
-		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
-		\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
-	\end{align*}
-Next, the velocity of the mass is :
-\begin{align*}
+% \begin{equation}
+% \begin{aligned}
+% 		\dot{x} &= 
+% 		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
+% 		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
+% 		\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
+%               \end{aligned}
+%               \end{equation˛
+% Next, the velocity of the mass is :
+\begin{equation}
+\begin{aligned}
   		\dot{x} &= 
 		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
 		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
@@ -59,8 +62,9 @@ Next, the velocity of the mass is :
   		T &=\frac{ m }{2} v^2 \\
 	%	&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) \\
 		&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
-	\end{align*}
-	
+              \end{aligned}
+              \label{eq:vel}
+      \end{equation}
 	% Thus, the kinetic energy $T$ of the system :
 	% \begin{align*}
 	% 	T &=\frac{ m }{2} v^2 \\
