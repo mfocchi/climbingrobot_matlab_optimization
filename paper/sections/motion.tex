@@ -7,7 +7,7 @@ Generally speaking, we can set up the problem in the following way:
     &\,\,\dot{\vect{x}} = f(\vect{x},\vect{u})\\
     &\,\,\vect{u} \in \mathcal{U}\\
     &\,\,\vect{x} \in \mathcal{X}\\
-    &\,\,\vect{x}(t_0) = \vect{x}_0, \vect{x}(t_f)=\vect{x}_f.
+    &\,\,\vect{x}(t_0) = \vect{X}_0, \vect{x}(t_f)=\vect{X}_f.
   \end{aligned}
 \end{equation}
 where $\vect{x}$ are the state variables, $\vect{u}$ are the input variables, $f(\cdot,\cdot)$ is the dynamic equation of the system,
@@ -27,13 +27,19 @@ given by $\vec{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equat
       \end{bmatrix}
   \end{aligned}
 \end{equation}
-The terminal constraints are usually expressed in the cartesian space $[x,y.z]$, and can be expressed in as a function of
-the state variables using ~\eqref{eq1}:
+The terminal constraints are usually expressed in the cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$, and they can be can be expressed as a function of
+the state variables inverting~\eqref{eq1} and~\eqref{eq:vel}. For instance, for the initial conditions, we have:
 \begin{equation}
   \begin{aligned}
-    x(t_0) = x_3(t_0) s_{x_1(t_0)} c_{x_2(t_0)},  &\,\,x(t_f) = x_3(t_f) s_{x_1(t_f)} c_{x_2(t_f)}\\
-    y(t_0) = x_3(t_0) s_{x_1(t_0)} s_{x_2(t_0)}, &\,\,y(t_f) = x_3(t_f) s_{x_1(t_f)} s_{x_2(t_f)}\\
-    z(t_0) = -x_3(t_0) c_{x_1(t_0)}, &\,\, z(t_f) = -x_3(t_f) c_{x_1(t_f)} 
+    &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \quad x_2(t_0) = \atandue(Y_0,X_0),\\
+    &x_3(t_0) = \sqrt{X_0^2+Y_0^2+Z_0^2},\quad \\
+    &x_4(t_0) = \frac{1}{\Lambda}\left(c_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 +c_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0+s_{x_1(t_0)}\dot{Z}_0\right)\\
+    &x_5(t_0) = \frac{1}{\Lambda s_{x_1(t_0)}}\left(-s_{x_2(t_0)} \dot{X}_0) \right) + \\
+    &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 +\\
+    &\quad + \frac{1}{2 \Lambda}\left(-c_{x_1(t_0)}\left(\sqrt{2}\sin\left(2 x_2(t_0)+\pi/4\right)-1 \right) \right) \dot{Z}_0 \\
+    &x_6(t_0) = \frac{x_3(0)}{\Lambda}\left(s_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 + s_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0\right)\\
+    & \quad + \frac{1}{2 \Lambda} c_{x_1(t_0)}\left(\sqrt{2} \cos\left(2 x_2(t_0)+\pi/4\right)-\frac{1}{2}\right) \dor{Z}_0 \\
+    &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right) \quad .
   \end{aligned}
 \end{equation}
 
