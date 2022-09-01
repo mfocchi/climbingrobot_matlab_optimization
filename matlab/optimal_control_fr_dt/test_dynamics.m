@@ -19,8 +19,8 @@ dt_dyn2 = Tf2 / (N_dyn-1);
 dt = 0.001;
 int_steps = 10;
 
-Fr = linspace(1,50,floor(Tf/dt));
-Fr_rough = linspace(1,20, 2*N_dyn);
+Fr = linspace(1,80,floor(Tf/dt));
+Fr_rough = linspace(1,80, 2*N_dyn);
 % 
 % Fr = 130*ones(1,floor(Tf/dt));
 % Fr_rough = 130*ones(1, 2*N_dyn);
@@ -29,7 +29,7 @@ Fr_rough = linspace(1,20, 2*N_dyn);
 %substep integraiton
 %before obstacle
 for i=1:N_dyn           
-    i
+    
     if (i>=2)     
         [states_rough_sub2(:,i), t_rough_sub2(i)] = integrate_dynamics(states_rough_sub2(:,i-1), t_rough_sub2(i-1), dt_dyn1/(int_steps-1), int_steps, Fr_rough(i-1)*ones(1,int_steps), 'rk4'); % keep Fr constant           
     

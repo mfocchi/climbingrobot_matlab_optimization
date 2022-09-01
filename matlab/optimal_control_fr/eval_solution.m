@@ -37,7 +37,7 @@ solution.Fr  = Fr;
 [theta0, phi0, l_0] = computePolarVariables(p0);
 state0 = [theta0, phi0, l_0, thetad0, phid0, 0];
 
-[~,~,states, t] = integrate_dynamics(state0,0,dt, n_samples, Fr);
+[~,~,states, t] = integrate_dynamics(state0,0,dt, n_samples, Fr,'rk4');
 
 theta = states(1,:);
 phi = states(2,:);
@@ -128,10 +128,12 @@ solution.thetad = thetad;
 solution.phid = phid;
 solution.ld = ld;
 solution.time = t;
+solution.Tf = Tf;
+
 
 %evaluate inpulse ( the integral of the gaussian is 1) 
 solution.Fun = m*l_0*thetad(1)/T_th;
 solution.Fut = m*l_0*sin(theta(1))*phid(1)/T_th;
-
+solution.achieved_target =  p(:,end);
 
 end
