@@ -1,43 +1,47 @@
 clear all
 clc
 close all
+
+global delta_duration friction_coefficient Fun  Fut Fr l_0      time   MICHELE_APPROACH DEBUG
 g = 9.81;
 
-load ('test.mat')
- 
-global delta_duration friction_coefficient Fun_vec  Fut_vec l_0   Fr_vec mean sigma time target_height zeta 
+
+MICHELE_APPROACH = true;
+DEBUG = false;
+
+if MICHELE_APPROACH
+    load ('../optimal_control_fr/test_michele.mat') 
+else    
+    load ('test_marco.mat')
+end
+    
 
 m = 5;   % Mass [kg]
 
 
 delta_duration =  T_th;
 friction_coefficient= mu; 
-
-%gaussian params
-mean = T_th/2;
-sigma = 3*T_th/2;
-
-Fun_vec = solution.Fun;
-Fut_vec = solution.Fut; 
-Fr_vec = solution.Fr;
-
+Fun = solution.Fun;
+Fut = solution.Fut; 
+Fr = solution.Fr;
 time = solution.time;
-zeta = solution.zeta;
-target_height = pf(3);
 [theta0, phi0, l_0] = computePolarVariables(p0);
 
 dt = 0.001;
 
 %Initial Conditions
-x0 = [theta0; 0.;phi0; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
-
+if DEBUG
+  x0 = [theta0; solution.thetad(1); phi0; solution.phid(1); l_0; solution.ld(1)]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
+else
+  x0 = [theta0; 0.;phi0; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
+end
 
 %%Simulation:
 % define the stop function event
 Opt    = odeset('Events', @stopFun);
 
 %1 - Solve differential equations with variable step solver
-[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,m,@Fr,@Fun, @Fut), time, x0, Opt); 
+[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,m,@FrFun,@FunFun, @FutFun), time, x0, Opt); 
 
 theta_sim = x(:,1);
 thetad_sim = x(:,2);
@@ -52,27 +56,52 @@ X = l_sim.*cos(phi_sim).*sin(theta_sim);
 Y = l_sim.*sin(phi_sim).*sin(theta_sim);
 Z = -l_sim.*cos(theta_sim);
 
-fprintf('first touchdown is at : [%3.2f, %3.2f, %3.2f], for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
+fprintf('the touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
+fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
+fprintf('with error : %3.2f\n',norm(solution.achieved_target - [X(end); Y(end);Z(end)]));
+fprintf('original target     : [%3.2f, %3.2f, %3.2f] \n',pf );
+fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
 
 figure(1)
 subplot(3,1,1)
-plot(time_sim, theta_sim,'b.'); hold on;grid on;
-plot(time, solution.theta,'r');
-ylabel('theta')
+plot(time_sim, X,'b.'); hold on;grid on;
+plot(time, solution.p(1,:),'r');
+ylabel('X')
 legend('sim', 'opt')
 
 subplot(3,1,2)
-plot(time_sim, phi_sim,'b.'); hold on;grid on;
-plot(time, solution.phi,'r');
-ylabel('phi')
+plot(time_sim, Y,'b.'); hold on;grid on;
+plot(time, solution.p(2,:),'r');
+ylabel('Y')
 legend('sim', 'opt')
 
 
 subplot(3,1,3)
-plot(time_sim, l_sim,'b.'); hold on;grid on;
-plot(time, solution.l,'r');
-ylabel('l')
+plot(time_sim, Z,'b.'); hold on;grid on;
+plot(time, solution.p(3,:),'r');
+ylabel('Z')
 legend('sim', 'opt')
+
+% 
+% figure(1)
+% subplot(3,1,1)
+% plot(time_sim, theta_sim,'b.'); hold on;grid on;
+% plot(time, solution.theta,'r');
+% ylabel('theta')
+% legend('sim', 'opt')
+% 
+% subplot(3,1,2)
+% plot(time_sim, phi_sim,'b.'); hold on;grid on;
+% plot(time, solution.phi,'r');
+% ylabel('phi')
+% legend('sim', 'opt')
+% 
+% 
+% subplot(3,1,3)
+% plot(time_sim, l_sim,'b.'); hold on;grid on;
+% plot(time, solution.l,'r');
+% ylabel('l')
+% legend('sim', 'opt')
 
 %derivatives
 % figure(1)
@@ -172,29 +201,44 @@ for i = 1:length(X)
 
 end
 
-function [fr] = Fr(t)
-global   Fr_vec time
+function [fr] = FrFun(t)
+global   Fr time
    idx = min(find(time>=t));
-   fr = Fr_vec(idx);
+   fr = Fr(idx);
 end
 
 
-function [fun] = Fun(t)
-global   Fun_vec time
-   idx = min(find(time>=t));
-   fun = Fun_vec(idx);   
+function [fun] = FunFun(t)
+global   Fun time delta_duration MICHELE_APPROACH
+    if MICHELE_APPROACH
+        if (t <= delta_duration)
+            fun = Fun;
+        else
+            fun = 0;
+        end
+    else
+       idx = min(find(time>=t));
+       fun = Fun(idx);   
+    end
 end
 
 
-function [fut] = Fut(t)
-global   Fut_vec time
-   idx = min(find(time>=t));
-   fut = Fut_vec(idx);
-   
+function [fut] = FutFun(t)
+global   Fut time delta_duration MICHELE_APPROACH
+    if MICHELE_APPROACH
+        if (t <= delta_duration)
+            fut = Fut;
+        else
+            fut = 0;
+        end
+    else
+       idx = min(find(time>=t));
+       fut = Fut(idx);   
+    end
 end
 
 function [value, isterminal, direction] = stopFun(t, x)
-        global target_height time delta_duration
+        global time 
         theta = x(1);
         dtheta = x(2);
         phi = x(3);
@@ -220,6 +264,7 @@ end
 
 function [dxdt] = diffEq(t,x, m, Fr, Fun ,Fut)
 
+global DEBUG
 
 %x = [theta, dottheta, phi, dotphi, l, dotl]
 g = 9.81;   %Gravity   [m/s2]
@@ -232,9 +277,15 @@ dphi = x(4);
 l = x(5);
 dl = x(6);
 
-ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
-ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta  -(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
-ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t);
+if DEBUG % reset the state already
+    ddtheta = -2/l*(dtheta*dl) + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta) ;
+    ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta-(2/l)*dphi*dl ;
+    ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t);
+else
+    ddtheta = -(2*dtheta*dl)/l + cos(theta)*sin(theta)*(dphi^2)-(g/l)*sin(theta)+Fun(t)/(m*l);
+    ddphi = -2*(cos(theta)/sin(theta))*dphi*dtheta  -(2/l)*dphi*dl+ Fut(t)/(m*l*sin(theta));
+    ddl = l*(dtheta^2)+l*(sin(theta)^2)*dphi^2+g*cos(theta)+(1/m)*Fr(t);
+end
 
 dxdt = [dtheta; ddtheta; dphi; ddphi; dl; ddl];
 

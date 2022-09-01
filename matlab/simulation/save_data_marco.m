@@ -118,16 +118,17 @@ plot(time, Fut)
 ylabel('Fut')
 figure
 plot_curve(solution, p0, pf,  'r');
-save('test.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
+save('test_marco.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 
 
-function res = ForceFun(zeta,Fun,sigma,mu)
-  res = Fun.*1/sqrt(2*pi*sigma^2).*exp(-(zeta-mu).^2./(2*sigma^2));
+function res = ForceFun(zeta,Fun0,sigma,mu_gauss)
+
+  res =  Fun0.*1/sqrt(2*pi*sigma^2).*exp(-(zeta-mu_gauss).^2./(2*sigma^2));
 end
 
-function res = ForceFut(zeta,Fut,sigma,mu)
-  res = Fut.*1/sqrt(2*pi*sigma^2).*exp(-(zeta-mu).^2./(2*sigma^2));
-  1/sqrt(2*pi*sigma^2)
+function res = ForceFut(zeta,Fut0,sigma,mu_gauss)
+  res =  Fut0.*1/sqrt(2*pi*sigma^2).*exp(-(zeta-mu_gauss).^2./(2*sigma^2));
+  
 end
 

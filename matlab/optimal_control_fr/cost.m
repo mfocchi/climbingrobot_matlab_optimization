@@ -75,6 +75,6 @@ function coste = cost(x, p0,  pf, int_steps, fixed_time)
 
     
     %coste =  w3 * slack_energy + w5* Ekinfcost +  w6* slack_dyn  +w4 * slack_final;
-    coste =   0.001*abs(Fut) + w4 * max(diff(Fr))  +  w5* Ekinfcost;
+    coste =   0.001*abs(Fut) + w4 * sum(diff(Fr))  +  w5* Ekinfcost;
 
 end
