@@ -141,4 +141,54 @@
    volume = {2017-Septe},
    year = {2017},
 }
-
+@article{Ding2020,
+	abstract = {This paper proposes a kinodynamic motion plan-ning framework for multi-legged robot jumping based on the mixed-integer convex program (MICP), which simultaneously reasons about centroidal motion, contact points, wrench, and gait sequences. This method uniquely combines configuration space discretization and the construction of feasible wrench polytope (FWP) to encode kinematic constraints, actuator limit, friction cone constraint, and gait sequencing into a single MICP. The MICP could be efficiently solved to the global optimum by off-the-shelf numerical solvers and provide highly dynamic jumping motions without requiring initial guesses. Simulation and experimental results demonstrate that the proposed method could find novel and dexterous maneuvers that are directly deployable on the two-legged robot platform to traverse through challenging terrains.},
+	archivePrefix = {arXiv},
+	arxivId = {2011.01809},
+	author = {Ding, Yanran and Li, Chuanzheng and Park, Hae Won},
+	doi = {10.1109/IROS45743.2020.9341572},
+	eprint = {2011.01809},
+	file = {:home/mfocchi/Dropbox/PAPERS/NEW_SOA/jump/2020 ding_mixed_integer.pdf:pdf},
+	isbn = {9781728162126},
+	issn = {21530866},
+	journal = {IEEE Int. Conf. Intell. Robot. Syst.},
+	pages = {3998--4005},
+	title = {{Kinodynamic motion planning for multi-legged robot jumping via mixed-integer convex program}},
+	year = {2020}
+}
+@article{Nguyen2019,
+	abstract = {This paper presents a novel methodology for implementing optimized jumping behavior on quadruped robots. Our method includes efficient trajectory optimization, precise high-frequency tracking controller and robust landing controller for stabilizing the robot body position and orientation after impact. Experimental validation was successfully conducted on the MIT Cheetah 3, enabling the robot to repeatably jump onto and jump down from a desk with the height of 30″ (0.76 m). The result demonstrates the advantages of the approach as well as the capability of the robot hardware itself.},
+	author = {Nguyen, Quan and Powell, Matthew J. and Katz, Benjamin and Carlo, Jared Di and Kim, Sangbae},
+	doi = {10.1109/ICRA.2019.8794449},
+	file = {:home/mfocchi/Dropbox/PAPERS/NEW_SOA/jump/2019_Nguyen.pdf:pdf},
+	isbn = {9781538660263},
+	issn = {10504729},
+	journal = {Proc. - IEEE Int. Conf. Robot. Autom.},
+	pages = {7448--7454},
+	title = {{Optimized jumping on the MIT cheetah 3 robot}},
+	volume = {2019-May},
+	year = {2019}
+}
+@article{Abdalla12020,
+	abstract = {Developing feasible body trajectories for legged systems on arbitrary terrains is a challenging task. Given some contact points, the trajectories for the Center of Mass (CoM) and body orientation, designed to move the robot, must satisfy crucial constraints to maintain balance, and to avoid violating physical actuation and kinematic limits. In this paper, we present a paradigm that allows to design feasible trajectories in an efficient manner. In continuation to our previous work, we extend the notion of the 2D feasible region, where static balance and the satisfaction of actuation limits were guaranteed, whenever the projection of the CoM lies inside the proposed admissible region. We here develop a general formulation of the improved feasible region to guarantee dynamic balance alongside the satisfaction of both actuation and kinematic limits for arbitrary terrains in an efficient manner. To incorporate the feasibility of the kinematic limits, we introduce an algorithm that computes the reachable region of the CoM. Furthermore, we propose an efficient planning strategy that utilizes the improved feasible region to design feasible CoM and body orientation trajectories. Finally, we validate the capabilities of the improved feasible region and the effectiveness of the proposed planning strategy, using simulations and experiments on the HyQ robot and comparing them to a previously developed heuristic approach. Various scenarios and terrains that mimic confined and challenging environments are used for the validation.},
+	archivePrefix = {arXiv},
+	arxivId = {2011.07967},
+	author = {Abdalla1, Abdelrahman and Focchi, Michele and Orsolino, Romeo and Semini, Claudio},
+	eprint = {2011.07967},
+	file = {:home/mfocchi/Desktop/2011.07967.pdf:pdf},
+	title = {{An Efficient Paradigm for Feasibility Guarantees in Legged Locomotion}},
+	url = {http://arxiv.org/abs/2011.07967},
+	year = {2020}
+}
+@article{Nishi1986,
+	abstract = {The development of a mobile robot which can work on the vertical walls of tall buildings, the side walls of large ships, etc. has been expected for a long time. A magnetic force or vacuum pressure is available to sustain the robot on a vertical wall, and wheels, crawlers and some other walking mechanisms can be used as the methods of moving. Many combinations of these mechanisms will be developed for various applications. Two kinds of robot model were built and tested. The air was sucked from the peripheral nozzle of the suction cup to the fan and crawlers were used as the moving system. There are two dangerous situations-slipping and falling, and their limits are determined. It is important to decrease the shock of an impulsive load, such as a falling body colliding with the robot on the wall. In such a case, a guard with a shock absorber is useful for avoiding this danger, and its optimum design condition is derived. The aerodynamic matching between the fan and suction cup is also important to understand the safety conditions and to design an active controller to avoid dangerous situations. It is investigated using the above models. {\textcopyright} 1986 Taylor and Francis Group, LLC.},
+	author = {Nishi, Akira and Wakasugi, Yasuo and Watanabe, Kazuya},
+	doi = {10.1163/156855386X00300},
+	issn = {15685535},
+	journal = {Adv. Robot.},
+	number = {1},
+	pages = {35--45},
+	title = {{Design of a robot capable of moving on a vertical wall}},
+	volume = {1},
+	year = {1986}
+}
