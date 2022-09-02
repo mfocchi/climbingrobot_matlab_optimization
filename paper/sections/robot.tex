@@ -1,7 +1,7 @@
 
 \subsection{Simplified Model}
-We can define a simplified mathematical model by making the following assumptions: 1. The mass is entirely concentrated in the body attached to the wire, 2.  The wire can be unwounded and rewounded but it is rigid and remains completely elongated (i.e., it cannot make bends), 3. The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase).
-A geometric sketch of the system is reported in Figure \ref{fig:sp}. where $\theta$ is the polar angle [rad] and $\phi$ is the Azimuth angle [rad] .  
+We can define a simplified mathematical model by making the following assumptions: 1. The mass is entirely concentrated in the body attached to the wire, 2. We can unwind and rewind the wire which is assumed to be rigid and remains completely elongated (i.e., it cannot make bends), 3. The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase).
+A geometric sketch of the system is shown in Figure \ref{fig:sp}. where the rigid rope has a variable length of $l$ [m]. the polar angle is $\theta$ [rad], and $\phi$ is the Azimuth angle [rad].
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{figs/spherical_pendulum}
@@ -11,7 +11,9 @@ A geometric sketch of the system is reported in Figure \ref{fig:sp}. where $\the
 Our input variable to the system are: 1. the rewinder pull action or
 braking action $\mathbf{F}_r$ oriented along the wire, 2. an impulsive
 push force $\mathbf{F}_u$ that the robot can generate when it is
-attached to the mountain wall Let $e$ be a frame attached to the mass
+attached to the mountain wall. 
+
+Let $e$ be a frame attached to the mass
 and with axis oriented along the $x$ axis and let $w$ be the world
 frame attached to the suspension point of the pendulum.  If we
 consider the homogeneous transformation linking $e$ to $w$, we can
@@ -28,53 +30,40 @@ write:
 		0 & 0 &0 &1\end{bmatrix}
 	\]
 	where $c_x$ is a shorthand for $\cos x$ and $s_x$ is a shorthand for $\sin x$.
-	From this equation, we have that the position $\mathbf{p}$ of the mass is given by:
-	\begin{align} \label{eq1}
+	From the transformation matrix $T_e^w$, we have that the position $\mathbf{p}$ of the mass is given by:
+	\begin{align}  
 		\mathbf{p} = \begin{bmatrix} x\\ y\\ z \end{bmatrix} =
-		\begin{bmatrix} l s_\theta c_\phi\\
+		\begin{bmatrix}   
+            l s_\theta c_\phi\\
 			l s_\theta s_\phi\\
-			-l c_\theta \end{bmatrix}
-	\end{align}
-From this equation, we can compute the velcoities and the kinetic energy:
-        
-%% 	From equation \ref{eq1}, the velocities along the axes are:  
-% \begin{equation}
-% \begin{aligned}
-% 		\dot{x} &= 
-% 		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
-% 		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
-% 		\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
-%               \end{aligned}
-%               \end{equation˛
-% Next, the velocity of the mass is :
-\begin{equation}
-\begin{aligned}
-  		\dot{x} &= 
-		l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
-		\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
-		v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 \\		
-		% &=  l^2 c_\theta^2 c_\phi^2 \dot{\theta}^2 + l^2 s_\theta^2 s_\phi^2 \dot{\phi}^2 + s_\theta^2 c_\phi^2 \dot{l}^2 - 2l^2 c_\theta s_\theta c_\phi s_\phi   \dot{\theta} \dot{\phi} - 2l s_\theta^2 s_\phi c_\phi \dot{l} \dot{\phi} \\
-		% & + 2l c_\theta s_\theta c_\phi^2  \dot{\theta} \dot{l} + l^2 c_\theta^2 s_\phi^2 \dot{\theta}^2 + l^2 s_\theta^2 c_\phi^2 \dot{\phi}^2 + s_\theta^2 s_\phi^2 \dot{l}^2 + 2l^2 c_\theta s_\theta s_\phi c_\phi \dot{\theta} \dot{\phi} \\
-		% &+ 2l s_\theta^2 c_\phi s_\phi \dot{l} \dot{\phi} + 2l c_\theta s_\theta s_\phi^2  \dot{\theta} \dot{l} + l^2 s_\theta^2  \dot{\theta}^2 + c_\theta^2 \dot{l}^2 - 2l s_\theta c_\theta   \dot{\theta} \dot{l} \\ \\
-		% &= l^2 c_\theta^2 \left(c_\phi^2 + s_\phi^2\right) \dot{\theta}^2 + l^2 s_\theta^2  \left( s_\phi^2 + c_\phi^2 \right) \dot{\phi}^2 + l^2 s_\theta^2  \dot{\theta}^2 + \dot{l}^2 s_\theta^2 \left(c_\phi^2 + s_\phi^2\right) \\
-		% &+ 2l c_\theta s_\theta \left(c_\phi^2 + s_\phi^2\right) \dot{\theta} \dot{l} + c_\theta^2 \dot{l}^2 - 2l s_\theta c_\theta \dot{\theta} \dot{l} \\  \\
-                        &=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
-  		T &=\frac{ m }{2} v^2 \\
-	%	&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) \\
-		&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
-              \end{aligned}
-              \label{eq:vel}
-      \end{equation}
-	% Thus, the kinetic energy $T$ of the system :
-	% \begin{align*}
-	% 	T &=\frac{ m }{2} v^2 \\
-	% 	&= \frac{m}{2} \left(\dot{x}^2 + \dot{y}^2 + \dot{z}^2\right) \\
-	% 	&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
-	% \end{align*}
-Te potential energy $V$ is simply given by:
-%		\begin{align*}
-$V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Legrangian function:
-%	\end{align*}
+			-l c_\theta \end{bmatrix} \label{eq1}
+    \end{align}
+%From equation \ref{eq1}, we can compute the velocities and the kinetic energy:   
+From equation \ref{eq1}, the velocities along the axes are:  
+\begin{align*}
+	\dot{x} &= 
+	l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
+	\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
+	\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
+\end{align*}
+Next, the velocity of the mass is :
+\begin{align*}
+	v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 \\		
+	&=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
+\end{align*}
+Thus, the kinetic energy $T$ of the system :
+\begin{align*}
+	T &=\frac{ m }{2} v^2 \\
+	&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
+\end{align*}
+The potential energy $V$ simply given by:
+	\begin{align*}
+	V &= mgz\\
+	&= -mgl c_\theta
+    \end{align*}
+	%	\begin{align*}
+which leads to the following Lagrangian function :
+	%\end{align*}
 %%  The Lagrangian function is given by:
  	\begin{equation}
  		L = T - V = \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2 + mgl c_\theta
@@ -86,8 +75,8 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 	\[
 	\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
 	\]
-	where $Q_i^p$ is the generalized force $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$.
-	$\mathbf{F}_r$ is oriented along the rope and $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
+	where the generalized force is $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$ , and 
+	$\mathbf{F}_r$ is oriented along the rope. $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
         \begin{equation}
         \begin{aligned}
 		\mathbf{F}_r  &= F_r \begin{bmatrix}
@@ -103,17 +92,17 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 			c_\phi c_\theta \\
 			s_\phi c_\theta\\
 			s_\theta
-		\end{bmatrix}^T &= F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n}    .	 
+		\end{bmatrix}^T &= F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n}    	 
               \end{aligned}
               \label{eq:forces}
         \end{equation}
-	while
+	while,
 	\begin{align*}
 		\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
 			l c_\phi c_\theta\\
 			l s_\phi c_\theta\\
 			l s_\theta
-		\end{bmatrix}, 
+		\end{bmatrix}, \qquad
 		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
 			- l s_\phi s_\theta\\
 			l c_\phi s_\theta\\
@@ -127,12 +116,12 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 	\end{align*}
  	Hence,
  	\begin{align*}
- 		Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1}
+ 		Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
 %% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
 %% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
 %% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
 %% 		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
- 		= F_{u,n} l ,
+ 		= F_{u,n} l , \\
 % 	\end{align*}
 % 	\begin{align*}
  		Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}
@@ -150,7 +139,7 @@ $V = mgz = -mgl c_\theta   ,$ which leads to the following expression for the Le
 %% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
  		= F_{r} .
  	\end{align*}
-The three Euler-Legrance equations can be therefore be written as:	
+The obtained Euler-Lagrange equations are written as :
 	
 	
 %% 	The first Euler-Lagrange equation yields
@@ -163,7 +152,7 @@ The three Euler-Legrance equations can be therefore be written as:
 %% 	The second Euler-Lagrange equation yields
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
- 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) - 0 = F_{u,t}  l  s_\theta\\
+ 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) = F_{u,t}  l  s_\theta\\
 %% 		& \ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
 %%		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
 %% 	\end{align*}
@@ -175,7 +164,7 @@ The three Euler-Legrance equations can be therefore be written as:
 %% 		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{F_r}{m} 
  	\end{align*}
            %%
-        leading to the following non-linear dynamic equations for the system
+        Leading to the non-linear dynamic equations of the system :
 %        Overall, the nonlinear equations of the system are:
         \begin{equation}
         \begin{aligned}
@@ -188,31 +177,31 @@ The three Euler-Legrance equations can be therefore be written as:
         Clearly, in this derivation of the model, we have heavily
         relied on the point-mass nature of the body.  A possible issue
         could be the rotational dynamics of the body around its axis,
-        which could wastes energy generating unnecessary motions and
+        which could waste energy generating unnecessary motions and
         impede the landing phase. This issue will be part of our
-        future work. However, as discussed next, under reasonanable
+        future work. However, as discussed next, under reasonable
         assumptions (e.g., thrusting force oriented in the direction
-        of the centre of mass), the results based on the simplified
+        of the center of mass), the results based on the simplified
         model can be applied to a realistic system with a good approximation.
 
 \subsection{Robot motion: problems and solution overview}
-The problem of moving CLIO bewtween two given configurations is not an
-easy one.  First of all, even the simplified dyanamics in
-Equation~\eqref{eq:nonlinearDyn} is highly nonlinear.  Second, in
-general the configurations the system moves between can in general be
-two distant points of the workspace. Therefore, it is not possible to
-use the linearised dyanmics.  Third, one of our
+The problem of moving CLIO between two given configurations is not an
+easy task.  First of all, even the simplified dynamics in
+Equation~\eqref{eq:nonlinearDyn} is highly nonlinear.  Second, 
+the configurations the robot moves between can be in general two 
+distant points of the workspace. Therefore, it is not possible to
+use the linearized dynamics.  Third, one of our
 actuators, the thrusting force $\mathbf{F}_u$, has an impulsive nature
-and operates at discrte time instants. Therefore, it is not possible
+and operates at discrete time instants. Therefore, it is not possible
 to use this part of the actuation in any feedback control scheme.
-Finally, the way the tangential compoent $F_{u,t}$ is generated is by
-using friction. Therefore the two components $F_{u,n}$ and $F_{u,t}$ are linked
+Finally, the way the tangential component $F_{u,t}$ is generated is by
+using friction. Therefore, the two components $F_{u,n}$ and $F_{u,t}$ are linked
 by a nonlinear constraints expressing the friction cone. Because the friction cone
-depnds on the specific point or area where the robot is pointing its leg,
+depends on the specific point or area where the robot is pointing its leg,
 this mechanism is not totally reliable (i.e., there can be significant deviation
-between the generated and the exected values of $F_{u,t}$).
+between the generated and the exacted values of $F_{u,t}$).
 
-In view of this comlexity, we propose an approach based on two steps:
+In view of this complexity, we propose an approach based on two steps:
 1. first a motion strategy is planned prior to starting the motion,
 2. after the take of phase a motion controller operates on
 $\mathbf{F}_r$ in a feedback control scheme to fix small deviation and
