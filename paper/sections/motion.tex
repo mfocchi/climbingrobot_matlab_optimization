@@ -3,49 +3,49 @@ Generally speaking, we can set up the problem in the following way:
 \begin{equation}
   \begin{aligned}
     &\text{min}_{\vect{u}(t)} l\left(\vect{x}(t),\vect{u}(t)\right)\\
-    &\text{subj. to}\\
+    &\text{subject to}\\
     &\,\,\dot{\vect{x}} = f(\vect{x},\vect{u})\\
     &\,\,\vect{u} \in \mathcal{U}\\
     &\,\,\vect{x} \in \mathcal{X}\\
     &\,\,\vect{x}(t_0) = \vect{X}_0, \vect{x}(t_f)=\vect{X}_f.
   \end{aligned}
 \end{equation}
-where $\vect{x}$ are the state variables, $\vect{u}$ are the input variables, $f(\cdot,\cdot)$ is the dynamic equation of the system,
+where $\vect{x}$ is vector of state variables, $\vect{u}$ is the control input, $f(\cdot,\cdot)$ is the dynamic equation of the system,
 $\mathcal{U}$ is set of admissible input values, $\mathcal{X}$ is the set of admissible states, $t_0$ and $t_f$ are the initial and final
-instants ($t_f$ can also be an optimisation variable) and $\vect{X}_0$ and $\vect{Y}_f$ are the desired initial and final states.
-The state $\vect{x}$ is in this our problem composed by
+instants ($t_f$ can also be an optimization variable) and $\vect{X}_0$ and $\vect{Y}_f$ are the desired initial and final states.
+The state $\vect{x}$ in our problem is composed by 
 $\vect{x}^T = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the command variables are
 given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
 \begin{equation}
   \begin{aligned}
-    \dot{
       \begin{bmatrix}
-        x_1\\x_2 \\x_3\\x_4\\x_5\\x_6\end{bmatrix}
-    } =
+        \dot{x_1}\\\dot{x_2} \\ \dot{x_3}\\ \dot{x_4}\\ \dot{x_5}\\ \dot{x_6}\end{bmatrix}
+     =
     \begin{bmatrix}
       x_4\\
        x_5\\ x_6 \\  - \frac{2}{x_3} x_4 x_6 + c_{x_1} s_{x_1}  x_5^2 - \frac{g}{x_3}  s_{x_1} +  \frac{1}{mx_3}F_{u,n}\\
        - 2 \frac{c_{x_1}}{s_{x_1}} x_4 x_5 - \frac{2}{x_3} x_5 x_6 + \frac{1}{mx_3 s_{x_1}} F_{u,t}\\
-       x_3 x_4^2 + x_3 s^2{x_1}x_5^2+g c_{x_1}+\frac{1}{m}F_r .
+       x_3 x_4^2 + x_3 s^2_{x_1}x_5^2+g c_{x_1} +\frac{1}{m}F_r .
      \end{bmatrix}
     \end{aligned}
 \end{equation}
 
 \noindent
 {\bf Terminal Constraints.}
-The terminal constraints are usually expressed in the cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$, and they can be can be expressed as a function of
-the state variables inverting~\eqref{eq1} and~\eqref{eq:vel}. For instance, for the initial conditions, we have:
+The terminal constraints are usually expressed in the Cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$, and they can be expressed as a function of
+the state variables inverting~\eqref{eq1} and~\eqref{eq:vel}. For instance, when time equals zero (initial conditions), we have:
 \begin{equation}
   \begin{aligned}
-    &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \quad x_2(t_0) = \atandue(Y_0,X_0),\\
+    &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \\ 
+    &x_2(t_0) = \atandue(Y_0,X_0),\\
     &x_3(t_0) = \sqrt{X_0^2+Y_0^2+Z_0^2},\quad \\
     &x_4(t_0) = \frac{1}{\Lambda}\left(c_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 +c_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0+s_{x_1(t_0)}\dot{Z}_0\right)\\
     &x_5(t_0) = \frac{1}{\Lambda s_{x_1(t_0)}}\left(-s_{x_2(t_0)} \dot{X}_0) \right) + \\
-    &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 +\\
+    &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 \\
     &\quad + \frac{1}{2 \Lambda}\left(-c_{x_1(t_0)}\left(\sqrt{2}\sin\left(2 x_2(t_0)+\pi/4\right)-1 \right) \right) \dot{Z}_0 \\
     &x_6(t_0) = \frac{x_3(0)}{\Lambda}\left(s_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 + s_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0\right)\\
     & \quad + \frac{1}{2 \Lambda} c_{x_1(t_0)}\left(\sqrt{2} \cos\left(2 x_2(t_0)+\pi/4\right)-\frac{1}{2}\right) \dot{Z}_0 \\
-    &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right) \quad .
+    &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right).
   \end{aligned}
 \end{equation}
 
@@ -53,32 +53,32 @@ the state variables inverting~\eqref{eq1} and~\eqref{eq:vel}. For instance, for 
 {\bf State Constraints.}
 State constraints are related to regions of the operation space that are not accessible. For instance, an irregular form of the walls
 could generate obstacles that the robot 
-has to overcome in order to reach its final destination. Generally speaking the unaccessible area is modelled as
-a a region whose boundary is a  surface defined in the cartesian space. We assume that this surface can be expressed by
-a differential manifold 2D manifold expressed by $f(X,\,Y,\,Z) = 0$. Therefore the admissible region is generally given by
-$f(X,\,Y,\,Z) \geq 0$ and could be non-convex. By using Equation~\eqref{eq1} we can express the cartesian constraint
+has to overcome in order to reach its final destination. Generally speaking, the inaccessible area is modeled as
+a a region whose boundary is a  surface defined in the Cartesian space. We assume that this surface can be expressed by
+a differential 2D manifold expressed by $f(X,\,Y,\,Z) = 0$. Therefore the admissible region is generally given by
+$f(X,\,Y,\,Z) \geq 0$ and could be non-convex. By using Equation~\eqref{eq1} we can express the Cartesian constraint
 in terms of the state variables; therefore the constraint $\vect{x} \in \mathcal{X}$ can be expressed as $f_1(\vect{x}) \geq 0$, where $f_1$ is
 assumed to be a $\mathcal{C}_\infty$ function.
 
 \noindent
 {\bf Actuation Constraints.}
 The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_u$.
-The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see Equation~\eqref{eq:forces}). Since the rope the rope hangs from
-cannot push the robot, $F_r$ can only be used to retract the robot or to slow down its descent. What is more, the force has an upper bound $F_r^{\text{max}}$ due to the actuators constraints. Therefore, the
-constraints on $F_r$ can be expressed as
+The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see Equation~\eqref{eq:forces}). Since the rope cannot push the robot 
+(assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent. What is more, the force has an upper bound $F_r^{\text{max}}$ due to the actuators constraints. Therefore, the
+constraints on $F_r$ can be expressed as :
 \[
   0 \geq F_r \geq -F_r^{\text{max}} \quad .
 \]
-As regards $\mathbf{F}_u$, since it acts in a very small time reaching high peaks, we model it through a diract impulse: $\mathbf{F}_u   (t) = \mathbf{F}_u \delta(t)$, where
+As regards $\mathbf{F}_u$, since it acts in a very small time reaching high peaks, we model it through a Dirac impulse: $\mathbf{F}_u   (t) = \mathbf{F}_u \delta(t)$, where
 $\mathbf{F}_u$ is a vector with the two components $F_{u,t}$ and $F_{u,n}$.
-The dirac delta is by its very nature a discontinouus function and cannot be handled by the optimal control frameworks. Therefore, a smooth approximations is needed.
+The Dirac delta is by its very nature a discontinuous function and cannot be handled by the optimal control frameworks. Therefore, a smooth approximations is needed.
 After different tests, our choice fell on a Gaussian function $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$. The duration of the impulse
   is roughly given by $3 \sigma$. Given the nature of our actuation mechanism, a realistic choice is to have a duration in the order of tens of milliseconds, which obviously
-  determines a remarkable height for the impulse. The maximum norm of $\mathbf{F}_n$ is obiously upper-boudned by the actuation limits:
+  determines a remarkable height for the impulse. The maximum norm of $\mathbf{F}_n$ is obviously upper-bounded by the actuation limits:
   \[
     \sqrt{F_{u,n}^2 + F_{u,t}^2} \leq F_{u}^{\text{max}} \quad .
   \]
-  Additionally, the tangential compnent $F_{u,t}$ is generated by the friction with the mountain wall. Hence, $F_{u,n}$ and $F_{u,t}$ are co are constrainted by the following relation (friction cone):
+  Additionally, the tangential component $F_{u,t}$ is generated by the friction with the mountain wall. Hence, $F_{u,n}$ and $F_{u,t}$ are constrained by the following relation (friction cone):
 \begin{align*}
 F_{u,t}\leq \mu F_{u,n}
 \end{align*} 
@@ -86,15 +86,16 @@ where $\mu$ is a constant depending on the nature of the terrain. For our simula
 
 \noindent
 {\bf Cost Function.}
-The cost function $l(\cdot)$ is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminatl component, which accoutns for the cost related to the final configuration fo the system.
-For our system, we arre interested in minimising the inerval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because, when the robot lands
-it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumalted energy to rebounce after landing).
-The refore we have
+The cost function $l(\cdot)$ is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration fo the system.
+For our system, we are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because when the robot lands,
+it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
+Therefore, we have:
 \begin{align*}
-&  l\left(\vect{x}(t),\vect{u}(t)\right)  = \lambda_1 \int_{t_0}^{t_f}dt + T(t_f) = \\
-  &                                      = \lambda_1 (t_f - t_0) + \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) + \frac{m }{2} x_6(t_f)^2 \quad .
+& l\left(\vect{x}(t),\vect{u}(t)\right)  = \lambda_1 \int_{t_0}^{t_f}dt + T(t_f)  \\
+                                        &= \lambda_1 (t_f - t_0) + \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
+                                         &\quad+ \frac{m }{2} x_6(t_f)^2 \quad.
 \end{align*}
-We should observe that, in case of a difficult convergence, it is possible to "soften" some of the constraints. For instnace, for the terminal constraint, it is possible to introduce a
+We should observe that, in case of a difficult convergence, it is possible to "soften" some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
 slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or became part of the cost function.
 
 
