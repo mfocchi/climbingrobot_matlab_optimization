@@ -10,14 +10,13 @@ MICHELE_APPROACH = true;
 DEBUG = false;
 
 if MICHELE_APPROACH
-    load ('../optimal_control_fr/test_michele.mat') 
+    load ('test_gazebo.mat')
+    %load ('../optimal_control_fr/test_michele.mat')
 else    
     load ('test_marco.mat')
 end
     
-
 m = 5;   % Mass [kg]
-
 
 delta_duration =  T_th;
 friction_coefficient= mu; 
@@ -25,7 +24,11 @@ Fun = solution.Fun;
 Fut = solution.Fut; 
 Fr = solution.Fr;
 time = solution.time;
+p0 = p0(:);
+pf =  cast(pf,"like", p0); % cast to double in case was save as an int in gazebo
+pf = pf(:);
 [theta0, phi0, l_0] = computePolarVariables(p0);
+
 
 dt = 0.001;
 
@@ -58,71 +61,10 @@ Z = -l_sim.*cos(theta_sim);
 
 fprintf('the touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
 fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
-fprintf('with error : %3.2f\n',norm(solution.achieved_target - [X(end); Y(end);Z(end)]));
+fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
 fprintf('original target     : [%3.2f, %3.2f, %3.2f] \n',pf );
 fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
 
-figure(1)
-subplot(3,1,1)
-plot(time_sim, X,'b.'); hold on;grid on;
-plot(time, solution.p(1,:),'r');
-ylabel('X')
-legend('sim', 'opt')
-
-subplot(3,1,2)
-plot(time_sim, Y,'b.'); hold on;grid on;
-plot(time, solution.p(2,:),'r');
-ylabel('Y')
-legend('sim', 'opt')
-
-
-subplot(3,1,3)
-plot(time_sim, Z,'b.'); hold on;grid on;
-plot(time, solution.p(3,:),'r');
-ylabel('Z')
-legend('sim', 'opt')
-
-% 
-% figure(1)
-% subplot(3,1,1)
-% plot(time_sim, theta_sim,'b.'); hold on;grid on;
-% plot(time, solution.theta,'r');
-% ylabel('theta')
-% legend('sim', 'opt')
-% 
-% subplot(3,1,2)
-% plot(time_sim, phi_sim,'b.'); hold on;grid on;
-% plot(time, solution.phi,'r');
-% ylabel('phi')
-% legend('sim', 'opt')
-% 
-% 
-% subplot(3,1,3)
-% plot(time_sim, l_sim,'b.'); hold on;grid on;
-% plot(time, solution.l,'r');
-% ylabel('l')
-% legend('sim', 'opt')
-
-%derivatives
-% figure(1)
-% subplot(3,1,1)
-% plot(time_sim, thetad_sim,'b.'); hold on;grid on;
-% plot(time, solution.thetad,'r');
-% ylabel('thetad')
-% legend('sim', 'opt')
-% 
-% subplot(3,1,2)
-% plot(time_sim, phid_sim,'b.'); hold on;grid on;
-% plot(time, solution.phid,'r');
-% ylabel('phid')
-% legend('sim', 'opt')
-% 
-% 
-% subplot(3,1,3)
-% plot(time_sim, ld_sim,'b.'); hold on;grid on;
-% plot(time, solution.ld,'r');
-% ylabel('ld')
-% legend('sim', 'opt')
 
 
 % eval total energy sim
@@ -130,15 +72,15 @@ Ekin_sim=   (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m
 
 
 %compare with optim
-figure(2)
-plot(time_sim, Ekin_sim,'b.');hold on;grid on;
-plot(time, solution.energy.Ekin,'r');
-ylabel('Ekin') 
-legend('sim', 'opt')
+% figure(2)
+% plot(time_sim, Ekin_sim,'b.');hold on;grid on;
+% plot(time, solution.energy.Ekin,'r');
+% ylabel('Ekin') 
+% legend('sim', 'opt')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
-figure(4)
+figure(1)
 
 title('3D Plot Animation');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
@@ -200,6 +142,106 @@ for i = 1:length(X)
     pause(0.001);
 
 end
+
+
+%%%%PLOTS for paper
+loadFigOptions
+figure(2)
+ha(1) = axes('position',[three_xgraph three_y1 three_w three_h]);
+plot( time, solution.p(1,:),'r');hold on;
+plot( time_sim, X,'b'); 
+plot( time_gazebo, traj_gazebo(1,:),'k');
+ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
+set(ha(1),'XtickLabel',[])
+
+lgd=legend({'$\mathrm{opt}$', ...
+    '$\mathrm{sim~mat}$', ...
+    '$\mathrm{sim~gaz}$',},...
+        'Location','northwest',...
+        'interpreter','latex',...
+        'Orientation','vertical');
+lgd.FontSize = 35;
+
+ha(2) = axes('position',[three_xgraph three_y2 three_w three_h]);
+plot(ha(2), time, solution.p(2,:),'r', 'linewidth',2);hold on;
+plot(ha(2),time_sim, Y,'b', 'linewidth',2); 
+plot(ha(2),time_gazebo, traj_gazebo(2,:),'k', 'linewidth',2);
+ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
+set(ha(2),'XtickLabel',[])
+
+ha(3) = axes('position',[three_xgraph three_y3 three_w three_h]);
+plot(ha(3), time, solution.p(3,:),'r', 'linewidth',2);hold on;
+plot(ha(3),time_sim, Z,'b', 'linewidth',2); 
+plot(ha(3),time_gazebo, traj_gazebo(3,:),'k', 'linewidth',2);
+ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
+xlabel('t $[\mathrm{s}]$','interpreter','latex')
+
+
+% save the plot
+set(gcf, 'Paperunits' , 'centimeters')
+set(gcf, 'PaperSize', [45 19]);
+set(gcf, 'PaperPosition', [0 0 45 19]);
+print(gcf, '-dpdf',strcat('../../paper/matlab/sim_results.pdf'),'-painters')
+
+
+% 
+% figure(1)
+% subplot(3,1,1)
+% plot(time_sim, theta_sim,'b.'); hold on;grid on;
+% plot(time, solution.theta,'r');
+% ylabel('theta')
+% legend('sim', 'opt')
+% 
+% subplot(3,1,2)
+% plot(time_sim, phi_sim,'b.'); hold on;grid on;
+% plot(time, solution.phi,'r');
+% ylabel('phi')
+% legend('sim', 'opt')
+% 
+% 
+% subplot(3,1,3)
+% plot(time_sim, l_sim,'b.'); hold on;grid on;
+% plot(time, solution.l,'r');
+% ylabel('l')
+% legend('sim', 'opt')
+
+%derivatives
+% figure(1)
+% subplot(3,1,1)
+% plot(time_sim, thetad_sim,'b.'); hold on;grid on;
+% plot(time, solution.thetad,'r');
+% ylabel('thetad')
+% legend('sim', 'opt')
+% 
+% subplot(3,1,2)
+% plot(time_sim, phid_sim,'b.'); hold on;grid on;
+% plot(time, solution.phid,'r');
+% ylabel('phid')
+% legend('sim', 'opt')
+% 
+% 
+% subplot(3,1,3)
+% plot(time_sim, ld_sim,'b.'); hold on;grid on;
+% plot(time, solution.ld,'r');
+% ylabel('ld')
+% legend('sim', 'opt')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function [fr] = FrFun(t)
 global   Fr time

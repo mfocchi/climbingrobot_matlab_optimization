@@ -38,7 +38,7 @@ phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
 % Marco Frego test: final state
-pf_matrix= [[1.0; 1.0; -8],[4.0; 5.0; -8], [4.0; 1.0; -8], [2.0; 2.0; -6], [1.0; 0.0; -6]];
+pf_matrix= [[4.0; 5.0; -8],[1.0; 1.0; -8], [4.0; 1.0; -8], [2.0; 2.0; -6], [1.0; 0.0; -6]];
 
 for n_test = 1: size(pf_matrix,2)
     pf = pf_matrix(:,n_test);

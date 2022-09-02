@@ -1,6 +1,6 @@
 function solution = eval_solution(x,  dt, p0, pf, fixed_time)
 
-global m g   num_params  N_dyn T_th int_method
+global m g   num_params  N_dyn T_th 
 %eval trajectory
 thetad0 = x(1);
 phid0 = x(2);
