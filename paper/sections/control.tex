@@ -1,4 +1,22 @@
-As anticipated in the system description above, one of the most complex aspect of this system is that part of the control, the $\vect{F}_u$ force
+As anticipated in the system description above, one of the most complex aspect of this system is that part of the control, the $\vect{F}_u$ force, has an impulsive nature.
+Its effect can be modeled as an isntantaneous reset of the velocity $\dot{theta}$ (i.e., the state variable $x_4$) and $\dot{\phi}$ (i.e., $x_5$).
+This amount of the reset can be related to the intensity of the two components of the impulse by using known state of the art results~\cite{dim17}:
+\begin{equation}
+  \begin{aligned}
+    &x_4(t_0^+) = x_4(t_0^-) + \frac{1}{m x_3(t_0^-)} F_{u,n}\\
+    &x_5(t_0^+) = x_5(t_0^-) + + \frac{1}{m x_3(0) \sin x_1(0)} F_{u,t} \quad .
+  \end{aligned}
+\end{equation}
+Due to the imprecisions in the actuators and to the lack of knowledge on the terrain characteristics, the velocities after the reset
+could differ from the exepcted values hence perturbing the whole trajectory.
+The only possibility for fixing the deviation is to rely on the only control variable available during the flight, i.e., the traction force $\mathbf{F}_r$, and use it within
+a feedback control law.
+In this section, we will first address the controllability problem, i.e., if such a feedback law can be found for an underactuated system like the one
+one in question. Second, we will show how such a feedback control law can be designed.
+
+\noindent
+{\bf System Controllability. }
+
 
 %%% Local Variables:
 %%% mode: latex
