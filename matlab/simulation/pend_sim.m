@@ -145,6 +145,7 @@ end
 
 
 %%%%PLOTS for paper
+%%
 loadFigOptions
 figure(2)
 ha(1) = axes('position',[three_xgraph three_y1 three_w three_h]);
@@ -163,16 +164,16 @@ lgd=legend({'$\mathrm{opt}$', ...
 lgd.FontSize = 35;
 
 ha(2) = axes('position',[three_xgraph three_y2 three_w three_h]);
-plot(ha(2), time, solution.p(2,:),'r', 'linewidth',2);hold on;
-plot(ha(2),time_sim, Y,'b', 'linewidth',2); 
-plot(ha(2),time_gazebo, traj_gazebo(2,:),'k', 'linewidth',2);
+plot(ha(2), time, solution.p(2,:),'r');hold on;
+plot(ha(2),time_sim, Y,'b'); 
+plot(ha(2),time_gazebo, traj_gazebo(2,:),'k');
 ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
 set(ha(2),'XtickLabel',[])
 
 ha(3) = axes('position',[three_xgraph three_y3 three_w three_h]);
-plot(ha(3), time, solution.p(3,:),'r', 'linewidth',2);hold on;
-plot(ha(3),time_sim, Z,'b', 'linewidth',2); 
-plot(ha(3),time_gazebo, traj_gazebo(3,:),'k', 'linewidth',2);
+plot(ha(3), time, solution.p(3,:),'r');hold on;
+plot(ha(3),time_sim, Z,'b'); 
+plot(ha(3),time_gazebo, traj_gazebo(3,:),'k');
 ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
 xlabel('t $[\mathrm{s}]$','interpreter','latex')
 

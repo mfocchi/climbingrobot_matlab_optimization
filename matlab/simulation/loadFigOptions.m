@@ -19,6 +19,7 @@ three_y2 = 0.435;%s2nd graph
 three_y3 = 0.14; %1st graph
 three_w = 0.8; %width
 three_h = 0.25;
+three_xgraph =0.1;
 %coordinates  for 2 subplots
 two_xgraph = 0.1; %from left
 two_y1 = 0.58;%s2nd graph
