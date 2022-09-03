@@ -1,36 +1,36 @@
 
 \subsection{Simplified Model}
-We can define a simplified mathematical model by making the following assumptions: 1. The mass is entirely concentrated in the body attached to the wire, 2. We can unwind and rewind the wire which is assumed to be rigid and remains completely elongated (i.e., it cannot make bends), 3. The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase).
-A geometric sketch of the system is shown in Figure \ref{fig:sp}. where the rigid rope has a variable length of $l$ [m]. the polar angle is $\theta$ [rad], and $\phi$ is the Azimuth angle [rad].
+We can define a simplified mathematical model by making the following assumptions: 1. The mass is entirely concentrated in the body attached to the wire, 2. We can unwind and rewind the wire but it is rigid and remains completely elongated (i.e., it cannot make bends), 3. The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase).
+A geometric sketch of the system is shown in Figure \ref{fig:sp}. where the polar angle is $\theta$ [rad], the Azimuth angle $\phi$ [rad], and $l$ [m] is the length of the rigid rope. 
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{figs/spherical_pendulum}
 \caption{Logical scheme for the simplified model}
 \label{fig:sp}
 \end{figure}
-Our input variable to the system are: 1. the rewinder pull action or
+Our input variables to the system are: 1. the rewinder pull action or
 braking action $\mathbf{F}_r$ oriented along the wire, 2. an impulsive
 push force $\mathbf{F}_u$ that the robot can generate when it is
 attached to the mountain wall. 
 
 Let $e$ be a frame attached to the mass
-and with axis oriented along the $x$ axis and let $w$ be the world
+and with axis oriented along the $x$ axis, and let $w$ be the world
 frame attached to the suspension point of the pendulum.  If we
 consider the homogeneous transformation linking $e$ to $w$, we can
 write:
 	\[
 	T_e^w = \begin{bmatrix} R_z(\phi) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} R_y(\pi/2 - \theta) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} I_{3,3} &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} L &0 &0 \end{matrix} & 1\end{bmatrix}  
 	\]
-	where $R_z(\phi)$ is the rotation matrix of $\phi$ around $z$ and $R_y(\alpha)$ is the rotation matrix of $\alpha$ around $y$.
-	Overall, we have:
+where $R_z(\phi)$ is the rotation matrix of $\phi$ around $z$ , and $R_y(\alpha)$ is the rotation matrix of $\alpha$ around $y$. 
+Simplifying $T_e^w$, gives :
 	\[
 	T_e^w = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
 		s_\phi s_\theta & c_\phi & c_\theta s_\phi & l s_\phi s_\theta\\
 		-c_\theta & 0 & s_\theta &-l c_\theta\\
-		0 & 0 &0 &1\end{bmatrix}
-	\]
-	where $c_x$ is a shorthand for $\cos x$ and $s_x$ is a shorthand for $\sin x$.
-	From the transformation matrix $T_e^w$, we have that the position $\mathbf{p}$ of the mass is given by:
+		0 & 0 &0 &1\end{bmatrix} 
+	\]		
+where $c_x$ is a shorthand for $\cos x$ , and $s_x$ is a shorthand for $\sin x$.
+The position $\mathbf{p}$ of the mass can be extracted from the transformation matrix $T_e^w$ as : 
 	\begin{align}  
 		\mathbf{p} = \begin{bmatrix} x\\ y\\ z \end{bmatrix} =
 		\begin{bmatrix}   
@@ -39,46 +39,35 @@ write:
 			-l c_\theta \end{bmatrix} \label{eq1}
     \end{align}
 %From equation \ref{eq1}, we can compute the velocities and the kinetic energy:   
-From equation \ref{eq1}, the velocities along the axes are:  
+From equation \eqref{eq1}, the velocities along Cartesian axes are    
 \begin{align*}
 	\dot{x} &= 
 	l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
 	\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
 	\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
 \end{align*}
-Next, the velocity of the mass is :
+Next, the velocity squared of the mass 
 \begin{align*}
-	v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 \\		
-	&=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
+	v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 =  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2 		
+%	&=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
 \end{align*}
-Thus, the kinetic energy $T$ of the system :
+Thus, the kinetic energy $T$ and potential energy $V$  
 \begin{align*}
-	T &=\frac{ m }{2} v^2 \\
-	&=  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2 \\
+	T &=\frac{ m }{2} v^2 =  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2  \\
+    V &= mgz = -mgl c_\theta   \label{eq3}
 \end{align*}
-The potential energy $V$ simply given by:
-	\begin{align*}
-	V &= mgz\\
-	&= -mgl c_\theta
-    \end{align*}
-	%	\begin{align*}
-which leads to the following Lagrangian function :
-	%\end{align*}
-%%  The Lagrangian function is given by:
- 	\begin{equation}
- 		L = T - V = \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2 + mgl c_\theta
- 	\end{equation}
-        By choosing the generalised coordinates as $q_1 = \theta, q_2 = \phi,$ and $q_3 = l$, we can apply the D'Alambert principle and write the
-        following Legrangian equation:
-        %% The generalized coordinates are in this case given by $q_1 = \theta, q_2 = \phi,$ and $q_3 = l$ .
-%% 	If we apply the d'Alembert principle, the Lagrangian Equation can be written as:
-	\[
-	\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
-	\]
-	where the generalized force is $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$ , and 
-	$\mathbf{F}_r$ is oriented along the rope. $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
-        \begin{equation}
-        \begin{aligned}
+which leading to the Lagrangian described as
+\begin{equation}
+	L = T - V = \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2 + mgl c_\theta
+\end{equation}
+The dynamics of the system will be obtained using the Euler-Lagrange equation:
+\[
+\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
+\]
+where $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$ is the generalized force, 	
+	$\mathbf{F}_r$ is oriented along the rope, and $\mathbf{F}_u$ is generated so that it does not have any component along the rope.
+	\begin{equation}
+	\begin{aligned}
 		\mathbf{F}_r  &= F_r \begin{bmatrix}
 			c_\phi s_\theta\\
 			s_\phi s_\theta\\
@@ -93,16 +82,16 @@ which leads to the following Lagrangian function :
 			s_\phi c_\theta\\
 			s_\theta
 		\end{bmatrix}^T &= F_{u,t} \mathbf{f}_{u,t} + F_{u,n} \mathbf{f}_{u,n}    	 
-              \end{aligned}
-              \label{eq:forces}
-        \end{equation}
-	while,
+	\end{aligned}
+	\label{eq:forces}
+	\end{equation}
+	Let the generalized coordinates $q_i$ be chosen as $q_1 = \theta$, $q_2 = \phi$ and $q_3 = l$ . The corresponding velocities are 
 	\begin{align*}
 		\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
 			l c_\phi c_\theta\\
 			l s_\phi c_\theta\\
 			l s_\theta
-		\end{bmatrix}, \qquad
+		\end{bmatrix},  \quad \text{and} \quad 
 		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
 			- l s_\phi s_\theta\\
 			l c_\phi s_\theta\\
@@ -114,57 +103,55 @@ which leads to the following Lagrangian function :
 			-c_\theta
 		\end{bmatrix} .
 	\end{align*}
- 	Hence,
- 	\begin{align*}
- 		Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
-%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
-%% 		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
- 		= F_{u,n} l , \\
-% 	\end{align*}
+	Hence,
+\begin{align*}
+	Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
+	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
+	%% 		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
+	= F_{u,n} l , \\
+	% 	\end{align*}
 % 	\begin{align*}
- 		Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}
-%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
-%% 		&= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
- 		= F_{u,t} l s_\theta,\\
-%% 	\end{align*}
+	Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}
+	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
+	%% 		&= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
+	= F_{u,t} l s_\theta,\\
+	%% 	\end{align*}
 %% 	\begin{align*}
- 		Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}
-%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
-%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
- 		= F_{r} .
- 	\end{align*}
-The obtained Euler-Lagrange equations are written as :
-	
-	
+	Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}
+	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
+	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
+	= F_{r} .
+\end{align*}
+With the defined generalized coordinates, The Euler-Lagrange equations gives us : 	
 %% 	The first Euler-Lagrange equation yields
  	\begin{align*}
 %		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p  \rightarrow  \\
-		& \frac{d}{dt}\left(m l^2 \dot{\theta}\right) - (m l^2 s_\theta c_\theta \dot{\phi}^2 - m g l s_\theta) = F_{u,n}  l \\ 
-%% 		&  m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
+%%		& \frac{d}{dt}\left(m l^2 \dot{\theta}\right) - (m l^2 s_\theta c_\theta \dot{\phi}^2 - m g l s_\theta) = F_{u,n}  l \\ 
+ 		  &m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
 %% 		& \ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{F_{u,n}  }{ml}    
 %% 	\end{align*}
 %% 	The second Euler-Lagrange equation yields
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
- 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) = F_{u,t}  l  s_\theta\\
-%% 		& \ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
+%% 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) = F_{u,t}  l  s_\theta\\
+ 		 &\ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
 %%		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
 %% 	\end{align*}
 %% 	The third Euler-Lagrange equation is as follows:
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{l}} \right) - \frac{\partial L}{\partial l} = Q_3^p    \\
- 		&\frac{d}{dt}\left(m\dot{l}\right) - (m l \dot{\theta}^2 + m l s^2_\theta \dot{\phi}^2 + m g c_\theta) = F_r ,
-%% 		&m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r \\
+%% 		&\frac{d}{dt}\left(m\dot{l}\right) - (m l \dot{\theta}^2 + m l s^2_\theta \dot{\phi}^2 + m g c_\theta) = F_r ,
+ 		&m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r 
 %% 		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{F_r}{m} 
  	\end{align*}
            %%
-        Leading to the non-linear dynamic equations of the system :
+        Overall, the non-linear dynamic equations of the system 
 %        Overall, the nonlinear equations of the system are:
         \begin{equation}
         \begin{aligned}
