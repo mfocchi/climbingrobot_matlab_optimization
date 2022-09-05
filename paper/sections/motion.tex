@@ -1,20 +1,21 @@
-The motion plan for the robot is decided solving an optimal control problem \emph{a la} Pondryagin.
+The motion plan for the robot is decided solving an optimal control problem \emph{à la} Pontryagin.
 Generally speaking, we can set up the problem in the following way:
-\begin{equation}
+\begin{equation}\label{eq:OCP}
   \begin{aligned}
-    &\text{min}_{\vect{u}(t)} l\left(\vect{x}(t),\vect{u}(t)\right)\\
-    &\text{subject to}\\
-    &\,\,\dot{\vect{x}} = f(\vect{x},\vect{u})\\
-    &\,\,\vect{u} \in \mathcal{U}\\
-    &\,\,\vect{x} \in \mathcal{X}\\
-    &\,\,\vect{x}(t_0) = \vect{X}_0, \vect{x}(t_f)=\vect{X}_f.
+    &\min_{\vect{u}(t)} \,M(\vect{x}(t_0),\vect{x}(t_f),t_0,t_f)+\int_{t_0}^{t_f}   L\left(\vect{x}(t),\vect{u}(t),t\right) dt\\
+    &\text{subject to:}\\
+    &\,\,\dot{\vect{x}}(t) = \vect{f}(\vect{x}(t),\vect{u}(t),t),\\
+    &\,\,\vect{u} \in \mathcal{U},\\
+    &\,\,\vect{h}\left(\vect{x}(t),\vect{u}(t),t\right) \leq 0,\\
+    &\,\,\vect{B}(\vect{x}(t_0), t_0, \vect{x}(t_f), t_f)=0,
   \end{aligned}
 \end{equation}
-where $\vect{x}$ is vector of state variables, $\vect{u}$ is the control input, $f(\cdot,\cdot)$ is the dynamic equation of the system,
-$\mathcal{U}$ is set of admissible input values, $\mathcal{X}$ is the set of admissible states, $t_0$ and $t_f$ are the initial and final
-instants ($t_f$ can also be an optimization variable) and $\vect{X}_0$ and $\vect{Y}_f$ are the desired initial and final states.
-The state $\vect{x}$ in our problem is composed by 
-$\vect{x}^T = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the command variables are
+where $\vect{x}$ is the vector of state variables, $\vect{u}$ is the control input constrained in the convex set $\mathcal{U}$, $f$ is the dynamic equation of the system,
+$\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are the boundary conditions, $t_0$ and $t_f$ are the initial and final time, which can be part of the optimisation. The OCP~\eqref{eq:OCP} is in the standard Bolza form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
+
+\noindent
+{\bf Dynamical System.}
+The state $\vect{x}$ of our problem is $\vect{x}^T = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
 given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
 \begin{equation}
   \begin{aligned}
@@ -31,9 +32,9 @@ given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equa
 \end{equation}
 
 \noindent
-{\bf Terminal Constraints.}
-The terminal constraints are usually expressed in the Cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$, and they can be expressed as a function of
-the state variables inverting~\eqref{eq1} and~\eqref{eq:vel}. For instance, when time equals zero (initial conditions), we have:
+{\bf Boundary Conditions.}
+The terminal constraints are usually expressed in the Cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$ and they can be expressed as a function of
+the state variables inverting~\eqref{eq1}. For instance, when time equals zero (initial conditions), we have:
 \begin{equation}
   \begin{aligned}
     &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \\ 
@@ -64,15 +65,15 @@ assumed to be a $\mathcal{C}_\infty$ function.
 {\bf Actuation Constraints.}
 The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_u$.
 The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see Equation~\eqref{eq:forces}). Since the rope cannot push the robot 
-(assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent. What is more, the force has an upper bound $F_r^{\text{max}}$ due to the actuators constraints. Therefore, the
-constraints on $F_r$ can be expressed as :
+(assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent. What is more, the force is limited in with $F_r^{\text{max}}>0$, due to the actuators constraints. Therefore, the
+constraint on $F_r$ is expressed as :
 \[
-  0 \geq F_r \geq -F_r^{\text{max}} \quad .
+  -F_r^{\text{max}} \leq F_r \leq 0.
 \]
 As regards $\mathbf{F}_u$, since it acts in a very small time reaching high peaks, we model it through a Dirac impulse: $\mathbf{F}_u   (t) = \mathbf{F}_u \delta(t)$, where
 $\mathbf{F}_u$ is a vector with the two components $F_{u,t}$ and $F_{u,n}$.
-The Dirac delta is by its very nature a discontinuous function and cannot be handled by the optimal control frameworks. Therefore, a smooth approximations is needed.
-After different tests, our choice fell on a Gaussian function $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$. The duration of the impulse
+The Dirac delta is a generalised function and cannot be handled by the optimal control frameworks, therefore, a smooth approximations is needed.
+A natural approximation is to use a Gaussian function, that is $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$. The duration of the impulse
   is roughly given by $3 \sigma$. Given the nature of our actuation mechanism, a realistic choice is to have a duration in the order of tens of milliseconds, which obviously
   determines a remarkable height for the impulse. The maximum norm of $\mathbf{F}_n$ is obviously upper-bounded by the actuation limits:
   \[
@@ -85,18 +86,21 @@ F_{u,t}\leq \mu F_{u,n}
 where $\mu$ is a constant depending on the nature of the terrain. For our simulation scenarios below, we have chosen $\mu = 0.8$ and $F_n^{\text{max}}=200$N.
 
 \noindent
-{\bf Cost Function.}
-The cost function $l(\cdot)$ is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration fo the system.
-For our system, we are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because when the robot lands,
+{\bf Objective Function.}
+The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
+We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because when the robot lands,
 it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
-Therefore, we have:
+Therefore, we optimise
 \begin{align*}
-& l\left(\vect{x}(t),\vect{u}(t)\right)  = \lambda_1 \int_{t_0}^{t_f}dt + T(t_f)  \\
-                                        &= \lambda_1 (t_f - t_0) + \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
+&  w_t \int_{t_0}^{t_f}dt + w_E T(t_f)  \\
+                                        &= w_t (t_f - t_0) + w_E \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
                                          &\quad+ \frac{m }{2} x_6(t_f)^2 \quad.
 \end{align*}
+%%%
+with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution.
+
 We should observe that, in case of a difficult convergence, it is possible to "soften" some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
-slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or became part of the cost function.
+slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or became part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
 
 %%% Local Variables:
