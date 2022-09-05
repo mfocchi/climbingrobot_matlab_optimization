@@ -1,10 +1,51 @@
-This section presents simulation results that show that the planned impulses and retraction forces, 
+This section presents simulation results that show that the planned impulses and the pattern of retraction force, 
 result in of the optimization in Section \ref{sec:motionP} bring the robot to a desired target. 
-We compare the simulated trajectories for the simplified model (Matlab) and for the full 3D model (Gazebo).
-We set several targets for the simulation  
+In Fig. \ref{fig:validation} we validate  the results of the optimization comparing the trajectories for the \gls{com} 
+in the case of the  simplified model (Matlab) and of the full 3D model (Gazebo) for a jump to a target at $p_f = \mat{4 & 5 &-8}$ $[m]$.
+The discrepancy in the target position is mainly due to drift in the integration in the case of Matlab and to approximations in the model in case if Gazebo. 
+However in both cases the norm of the error is always below XX which shows the simplified model is a good approximation for the real system.
+The friction constraints are also fulfilled therefore initially the robot has to lift-off 
+with an angle limited by the friction cone. However, since the target location is out of the cone (with vertex at the initial position)
+the optimizer should "steer" the trajectory and therefore it dictates  an initial retraction of the rope to vary the time constant of the system, next it passivelt realeases the rope
+under the action of gravity.
+
+Additionally, we ran the optimization for  several targets on the wall (see Fig. \ref{fig:targets}) and we 
+validated the output of the optimization both  with the simplified and the detailed model. 
+Each optimoization provided the initial impulses ($Fun$, $Fut$), the pattern of the winding force $F_r$ and the jump duration $T_f$.
+We terminate each simulation after the jump time $T_f$ is elapsed and computed the norm of the error from the target. 
+The results are the reported in Table \ref{tab:sim_different_targets}. Note that, as expected, the error increases with the distance of the target.
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{figs/targets.png}
+	\caption{Simulation. The red line is  the trajectory of the \gls{com} computed by the optimization, 
+		the blue and black line is the simulated trajectory with Matlab and Gazebo, respectively.}
+	\label{fig:targets}
+\end{figure}
+
+
+
+\begin{table}[h!]
+	\caption{ Matlab simulations results}
+	%	\renewcommand{\arraystretch}{1.1}
+	\begin{center}
+		\begin{tabular}{@{} l l l l l l @{}} \hline\hline
+			\textbf{Test $\#$} \quad & \textbf{Target}           & \textbf{$T_f$} &  \textbf{$F_{un}$} & \textbf{$F_{ut}$} & \textbf{$\Vert e \Vert$ }\\ 
+					    1    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+					    2    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+					    3    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+					    4    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+					    5    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+					     6    		 & \mat{4.0  & 5.0 &  -8} &      1.       &                      &                 &                 \\
+			\hline\hline 					    					    					    
+		\end{tabular}
+		\label{tab:sim_different_targets}
+	\end{center}
+\end{table}
+
 
 \begin{figure}
 	\includegraphics[width=\columnwidth]{matlab/sim_results.pdf}
-	\caption{Simulation results}
-	\label{fig:}
+	\caption{Simulation. Validation of the optimization results. The red line is the  trajectory of the \gls{com} computed by the optimization. 
+		The blue and black lines are the simulated trajectory with Matlab and Gazebo, respectively.}
+	\label{fig:validation}
 \end{figure}

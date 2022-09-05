@@ -9,10 +9,10 @@ Fun_max = 1000;
 Fr_max = 200; % Fr in negative
 mu = 0.8;
 T_th = 0.025;
-FRICTION_CONE = 1;
+FRICTION_CONE = 1; %0
 TIME_OPTIMIZATION = 1;
 SUBSTEP_INTEGRATION = 1;
-int_steps = 10;
+int_steps = 10; %5
 %int_method = 'euler';
 int_method = 'rk4';
 
@@ -37,6 +37,7 @@ theta0 =atan2(0.38, l_0);
 phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
+pf = [4.0; 5.0; -8];
 % Marco Frego test: final state
 pf_matrix= [[4.0; 5.0; -8],[1.0; 1.0; -8], [4.0; 1.0; -8], [2.0; 2.0; -6], [1.0; 0.0; -6]];
 
@@ -83,7 +84,7 @@ fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_constr.final_error_discrete)
 
 %for Daniele
-save(strcat('test_matlab_',n_test,'.mat'),'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
+save(strcat('test_matlab_',num2str(n_test),'.mat'),'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 end
 

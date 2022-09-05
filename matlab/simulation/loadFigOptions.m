@@ -6,13 +6,14 @@ set(gcf, 'PaperPosition', [0 0 45  27]);
 
 xgraph = 0.15; %from left
 %coordinates  for 4 subplots
-four_y1 = 0.85;
-four_y2 = 0.68;%s2nd graph
-four_y3 = 0.42; %1st graph
-four_y4 = 0.15; %1st graph
+four_y1 = 0.80;
+four_y2 = 0.58;%s2nd graph
+four_y3 = 0.38; %1st graph
+four_y4 = 0.18; %1st graph
 four_w = 0.8; %width
-four_h = 0.22;
+four_h = 0.2;
 small_h = 0.13
+four_xgraph = 0.15;
 %coordinates  for 3 subplots
 three_y1 = 0.73;
 three_y2 = 0.435;%s2nd graph

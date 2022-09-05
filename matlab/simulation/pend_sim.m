@@ -148,35 +148,43 @@ end
 %%
 loadFigOptions
 figure(2)
-ha(1) = axes('position',[three_xgraph three_y1 three_w three_h]);
+ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
 plot( time, solution.p(1,:),'r');hold on;
 plot( time_sim, X,'b'); 
 plot( time_gazebo, traj_gazebo(1,:),'k');
 ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
 set(ha(1),'XtickLabel',[])
+xlim([0, time(end)])
 
 lgd=legend({'$\mathrm{opt}$', ...
     '$\mathrm{sim~mat}$', ...
     '$\mathrm{sim~gaz}$',},...
         'Location','northwest',...
         'interpreter','latex',...
-        'Orientation','vertical');
-lgd.FontSize = 35;
+        'Orientation','horizontal');
+lgd.FontSize = 25;
 
-ha(2) = axes('position',[three_xgraph three_y2 three_w three_h]);
-plot(ha(2), time, solution.p(2,:),'r');hold on;
-plot(ha(2),time_sim, Y,'b'); 
-plot(ha(2),time_gazebo, traj_gazebo(2,:),'k');
+ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
+plot(time, solution.p(2,:),'r');hold on;
+plot(time_sim, Y,'b'); 
+plot(time_gazebo, traj_gazebo(2,:),'k');
 ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
 set(ha(2),'XtickLabel',[])
+xlim([0, time(end)])
 
-ha(3) = axes('position',[three_xgraph three_y3 three_w three_h]);
-plot(ha(3), time, solution.p(3,:),'r');hold on;
-plot(ha(3),time_sim, Z,'b'); 
-plot(ha(3),time_gazebo, traj_gazebo(3,:),'k');
+ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
+plot( time, solution.p(3,:),'r');hold on;
+plot(time_sim, Z,'b'); 
+plot(time_gazebo, traj_gazebo(3,:),'k');
 ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
-xlabel('t $[\mathrm{s}]$','interpreter','latex')
+set(ha(3),'XtickLabel',[])
+xlim([0, time(end)])
 
+ha(4) = axes('position',[four_xgraph four_y4 four_w small_h]);
+plot(time, solution.Fr,'r');hold on;
+ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
+xlabel('t $[\mathrm{s}]$','interpreter','latex')
+xlim([0, time(end)])
 
 % save the plot
 set(gcf, 'Paperunits' , 'centimeters')
