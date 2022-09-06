@@ -10,8 +10,8 @@ MICHELE_APPROACH = true;
 DEBUG = false;
 
 if MICHELE_APPROACH
-    load ('test_gazebo.mat')
-    %load ('../optimal_control_fr/test_michele.mat')
+   load ('test_gazebo.mat')
+   %load ('../optimal_control_fr/test_matlab_1.mat')
 else    
     load ('test_marco.mat')
 end
@@ -188,9 +188,9 @@ xlim([0, time(end)])
 
 % save the plot
 set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [45 19]);
-set(gcf, 'PaperPosition', [0 0 45 19]);
-print(gcf, '-dpdf',strcat('../../paper/matlab/sim_results.pdf'),'-painters')
+set(gcf, 'PaperSize', [40 30]);
+set(gcf, 'PaperPosition', [0 0 40 30]);
+print(gcf, '-dpdf',strcat('../../paper/matlab/validation.pdf'),'-painters')
 
 
 % 

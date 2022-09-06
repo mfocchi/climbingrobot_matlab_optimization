@@ -66,12 +66,31 @@ the low control authority of this class of robots.
 
 %Providing a solution for second problem: locomotion technique, we can reach the target with jumps 
 Secondly, we also suggest using the jumping as a moving method to reach a desired location 
-on te wall. Indeed, rather than slowly taking steps to move, the robot can take one or multiple 
-jumps to reach the target on the wall. For each jump,  the winding/releasing mechanism can be 
+on te wall.
+Indeed, rather than slowly taking steps to move, the robot can take one or multiple 
+jumps to reach the target on the wall.
+ 
+ For each jump,  the winding/releasing mechanism can be 
 exploited to behave like a variable length pendulum (see Fig. \ref{fig:sp}). The jumping 
 locomotion is similar to the Salto-1P jumping robot shown in \cite{Haldane2017} but the key 
 feature of jumping with rope relies in the ability to address terrains of high inclination 
 (up to vertical). 
+
+%advantages of jumps
+Taking jumps is advantageous because it 
+enables to avoid dangerous features (e.g. cracks) where the robot can get trapped, 
+which is crucial in Search $\&$ Rescue missions (see Fig. \ref{fig:application}).  
+A jump can be also the preferred strategy in space applications with reduced gravity, 
+for planetary exploration applications \cite{space19} 
+in steep craters where rover have limited mobility. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\columnwidth]{figs/application.pdf}
+	\caption{Application: Search $\&$ Rescue mission the jump allows to  avoid dangerous cracks on the wall.}
+	\label{fig:application}
+\end{figure}
+
 
 %Difficulties in the jumping technique
 When taking a jump with a rope that can be released, the resulting motion of the robot (and 

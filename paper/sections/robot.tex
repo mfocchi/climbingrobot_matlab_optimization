@@ -1,5 +1,23 @@
 \subsection{Robot description}
 
+This section presents the kinematic model of the CLIO robot (see Fig. \ref{fig:3dmodel}). 
+We model the robot as a fixed base manipulator with $n=9$ \gls{dofs} represented by the configuration vector $q \in \Rnum^n$. 
+In the specific, we employ 2 \textit{passive} 
+(rotational) joints to represent the attachment between the anchor point (a fixed link) and the rope.
+The rope is modeled as an \textit{actuated} prismatic joint ($q_{R}$, followed by other 3 \textit{passive} rotational joints  to model 
+the connection between the rope and the \textit{base link} of the robot 
+\footnote{It would be equivalent to locate 3 joints	 at the anchor point and 2 at the base, 
+	to avoid redundancy in the representation, it is necessary  to have only one passive joint along the rope axis.}. 
+The propulsion mechanism that allows the robot to jump
+is represented by a 3 \gls{dofs} robotic leg with a point-like foot that enables to exert a pure Cartesian force (no moment) on the wall. 
+The leg has two \textit{subsequent} rotational joints, called  hip pitch ($q_{HP}$) and hip 
+roll ($q_{HR}$) about the Y axis (green) and the X axis (red), respectively. The joints are useful to align  the leg in the 
+direction of thrust impulse in order to avoid to generate centroidal moments that would initiate the pivoting of the robot around the Z axis (blue).
+Finally a prismatic knee (($q_{K}$) joint is used to generate the \textit{thrusting} impulse. 
+We built a Gazebo simulator based on the URDF  description of the robot.
+\footnote{With the actual design the robot will not be able to stabilize itself on the wall, 
+	however the design of a landing and stabilization mechanism is out of the scope of this work
+	where we focus mainly on the jump motion, and will be addressed in future works. }
 
 \begin{figure}
 	\centering
@@ -8,14 +26,17 @@
 	\label{fig:3dmodel}
 \end{figure}
 
+the full dynamics can be described by the equation of motion: 
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.8\columnwidth]{figs/jumpFromWall.png}
-	\caption{Application, search and Rescue.}
-	\label{fig:3dmodel1}
-\end{figure}
+\begin{align}
+M (q) \ddot{q} + h(q,\dot{q}) = \mat{0_{5 \times 1} \\ \tau_a} + J^T F 
+\end{align}
 
+where $M \in \Rnum^{n \times n}$ is the inertia matrix, $h \in \Rnum^n$ represents the bias terms (Coriolis, Centrifugal and Gravity) and 
+$J \in \Rnum^{3 \times n} $ is the Jacobian relative to the contact point mapping the contact force $F \in \Rnum^3$. 
+Unless specified all the vectors are expressed in an inertial $\mathcal{W}$ frame. 
+The under-actuation is captured by the vector $0_{5 \times 1}$ while 
+the efforts of the actuated joints are grouped in the vector $\tau_a \in \Rnum^4$.
 
 
 \subsection{Simplified Model}
