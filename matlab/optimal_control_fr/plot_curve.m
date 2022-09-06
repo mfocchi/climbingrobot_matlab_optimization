@@ -1,5 +1,4 @@
-function  plot_curve(solution, solution_constr, p0,pf,  plot_energy, color_input, full_update)
-global time
+function  plot_curve(solution, solution_constr, p0,pf,  mu, plot_energy, color_input, full_update)
 
 if full_update
     % Vertical line
@@ -34,6 +33,28 @@ if full_update
     Yw = [p1(2) p2(2) p3(2) p4(2)];
     Zw = [p1(3) p2(3) p3(3) p4(3)];
     h(3) = fill3(Xw, Yw, Zw, 'b', 'FaceAlpha',.5  );
+
+    % half cone
+    pcone1 = [0 0 max_z];
+    pcone2 = [mu*(max_y) max_y max_z];
+    pcone3 = [mu*(max_y) max_y min_z];
+    pcone4 = [0 0  min_z];
+    Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];
+    Yw = [pcone1(2) pcone2(2) pcone3(2) pcone4(2)];
+    Zw = [pcone1(3) pcone2(3) pcone3(3) pcone4(3)];
+    h(4) = fill3(Xw, Yw, Zw, 'r', 'FaceAlpha',.3  );
+    
+    % other half cone
+    pcone1 = [0 0 max_z];
+    pcone2 = [mu*(max_y) -max_y max_z];
+    pcone3 = [mu*(max_y) -max_y min_z];
+    pcone4 = [0 0  min_z];
+    Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];
+    Yw = [pcone1(2) pcone2(2) pcone3(2) pcone4(2)];
+    Zw = [pcone1(3) pcone2(3) pcone3(3) pcone4(3)];
+    h(5) = fill3(Xw, Yw, Zw, 'r', 'FaceAlpha',.3  );
+    
+    
 end
 
 % actual traj

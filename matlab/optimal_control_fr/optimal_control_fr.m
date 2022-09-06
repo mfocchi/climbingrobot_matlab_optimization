@@ -9,6 +9,8 @@ Fun_max = 1000;
 Fr_max = 200; % Fr in negative
 mu = 0.8;
 T_th = 0.025;
+
+
 FRICTION_CONE = 1; %0
 TIME_OPTIMIZATION = 1;
 SUBSTEP_INTEGRATION = 1;
@@ -37,9 +39,10 @@ theta0 =atan2(0.38, l_0);
 phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
-pf = [4.0; 5.0; -8];
+
 % Marco Frego test: final state
 pf_matrix= [[4.0; 5.0; -8],[1.0; 1.0; -8], [4.0; 1.0; -8], [2.0; 2.0; -6], [1.0; 0.0; -6]];
+%pf_matrix= [[4.0; 5.0; -8]];
 
 for n_test = 1: size(pf_matrix,2)
     pf = pf_matrix(:,n_test);
@@ -48,7 +51,7 @@ for n_test = 1: size(pf_matrix,2)
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 constr_tolerance = 1e-4;
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
 'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
 num_params = 3;    
@@ -67,12 +70,12 @@ problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
 % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
 
 if problem_solved
-    plot_curve( solution,solution_constr, p0, pf,  false, 'r', n_test==1);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', n_test==1);
 else 
     fprintf(2,"Problem didnt converge!\n")
-    plot_curve( solution,solution_constr, p0, pf,  false, 'k', n_test==1);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', n_test==1);
 end
-opt_Tf = solution.time(end);
+opt_Tf = solution.time(end)
  
 fprintf('Fun:  %f\n\n',solution.Fun)
 fprintf('Fut:  %f\n\n',solution.Fut)
@@ -87,6 +90,15 @@ fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_c
 save(strcat('test_matlab_',num2str(n_test),'.mat'),'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 end
+
+
+% save the plot
+set(gcf, 'Paperunits' , 'centimeters')
+set(gcf, 'PaperSize', [15 15]);
+set(gcf, 'PaperPosition', [0 0 15 15]);
+print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
+
+
 
 DEBUG = false;
 
@@ -150,6 +162,9 @@ if (DEBUG)
     plot(solution.time, solution.p(3,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(3,:),'ob') ; hold on;
     ylabel('Z')
+    
+    
+    
     
 end
 
