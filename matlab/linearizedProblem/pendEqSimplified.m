@@ -60,7 +60,7 @@ Y = l*sin(x(:,3)).*sin(x(:,1));
 Z = l*cos(x(:,1));
 
 
-%Solve differential equations
+%Solve differential equations (you need to pass x0!)
 [t,xl] = ode23(@(t,x) diffEqLin(t,x,x0, m,l), tspan, x0); 
 % xl1 = zeros(size(xl));
 % for i = 1:max(size(xl))
@@ -267,12 +267,15 @@ X = l*cos(phi)*sin(theta);
 %         %Take off dynamicx
 fprintf('Flying\n');
 
-ddtheta =  [cos(2*theta0)*(dphi0^2)-(g/l)*cos(theta0), 0, 0, sin(2*theta0)*dphi0]*[theta; dtheta; phi; dphi];
-ddphi = [(2/(sin(theta0)^2))*dtheta0*dphi0, -2*(cos(theta0)/sin(theta0))*dphi0, 0, -2*(cos(theta0)/sin(theta0))*dtheta0]*[theta; dtheta; phi; dphi];
+fx0_1 =  cos(theta0)*sin(theta0)*(dphi0^2)-(g/l)*sin(theta0);
+fx0_2 = -2*(cos(theta0)/sin(theta0))*dphi0*dtheta0;
+
+ddtheta = fx0_1 +  [cos(2*theta0)*(dphi0^2)-(g/l)*cos(theta0), 0, 0, sin(2*theta0)*dphi0]*([theta; dtheta; phi; dphi] - [theta0; dtheta0; phi0; dphi0] );
+ddphi = fx0_2 + [(2/(sin(theta0)^2))*dtheta0*dphi0, -2*(cos(theta0)/sin(theta0))*dphi0, 0, -2*(cos(theta0)/sin(theta0))*dtheta0]*([theta; dtheta; phi; dphi] - [theta0; dtheta0; phi0; dphi0]);
 
 %Another linearised equations : theta0 and l has to be different than zero! ( put dphi0 = 0 ) 
-        ddtheta =  -(g/l)*theta;
-        ddphi = 0;
+        %ddtheta =  -(g/l)*theta;
+        %ddphi = 0;
 
 
 %end
