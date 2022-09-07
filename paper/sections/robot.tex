@@ -26,22 +26,21 @@ We built a Gazebo simulator based on the URDF  description of the robot.
 	\label{fig:3dmodel}
 \end{figure}
 
-the full dynamics can be described by the equation of motion: 
+The full dynamic equation with n-joint can be generalized into the following matrix form:  
 
 \begin{align}
 M (q) \ddot{q} + h(q,\dot{q}) = \mat{0_{5 \times 1} \\ \tau_a} + J^T F 
 \end{align}
 
-where $M \in \Rnum^{n \times n}$ is the inertia matrix, $h \in \Rnum^n$ represents the bias terms (Coriolis, Centrifugal and Gravity) and 
+where $M \in \Rnum^{n \times n}$ is the inertia matrix; $h \in \Rnum^n$ represents the bias terms (Centrifugal, Coriolis and Gravity); and 
 $J \in \Rnum^{3 \times n} $ is the Jacobian relative to the contact point mapping the contact force $F \in \Rnum^3$. 
 Unless specified all the vectors are expressed in an inertial $\mathcal{W}$ frame. 
 The under-actuation is captured by the vector $0_{5 \times 1}$ while 
 the efforts of the actuated joints are grouped in the vector $\tau_a \in \Rnum^4$.
 
-
 \subsection{Simplified Model}
 We can define a simplified mathematical model by making the following assumptions: 1. The mass is entirely concentrated in the body attached to the wire, 2. We can unwind and rewind the wire but it is rigid and remains completely elongated (i.e., it cannot make bends), 3. The rewinder can pull the wire when winding it but cannot push it (i.e., it can only act as a brake during the unwinding phase).
-A geometric sketch of the system is shown in Figure \ref{fig:sp}. where the polar angle is $\theta$ [rad], the Azimuth angle $\phi$ [rad], and $l$ [m] is the length of the rigid rope. 
+A geometric sketch of the system is shown in Figure \ref{fig:sp}. where the polar angle is $\theta$ [rad], the Azimuth angle is $\phi$ [rad], and $l$ [m] is the length of the rigid rope. 
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{figs/spherical_pendulum}
@@ -53,16 +52,16 @@ braking action $\mathbf{F}_r$ oriented along the wire, 2. an impulsive
 push force $\mathbf{F}_u$ that the robot can generate when it is
 attached to the mountain wall. 
 
-Let $e$ be a frame attached to the mass
-and with axis oriented along the $x$ axis, and let $w$ be the world
+Let $e$ be a frame attached to the weight $m$ 
+with axis oriented along the $x$ axis, and let $w$ be the world
 frame attached to the suspension point of the pendulum.  If we
 consider the homogeneous transformation linking $e$ to $w$, we can
-write:
+write
 	\[
 	T_e^w = \begin{bmatrix} R_z(\phi) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} R_y(\pi/2 - \theta) &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} 0 &0 &0 \end{matrix} & 1\end{bmatrix}  \begin{bmatrix} I_{3,3} &\begin{matrix}0\\0\\0 \end{matrix}  \\ \begin{matrix} L &0 &0 \end{matrix} & 1\end{bmatrix}  
 	\]
 where $R_z(\phi)$ is the rotation matrix of $\phi$ around $z$ , and $R_y(\alpha)$ is the rotation matrix of $\alpha$ around $y$. 
-Simplifying $T_e^w$, gives :
+Simplifying $T_e^w$, gives 
 	\[
 	T_e^w = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
 		s_\phi s_\theta & c_\phi & c_\theta s_\phi & l s_\phi s_\theta\\
@@ -79,14 +78,14 @@ The position $\mathbf{p}$ of the mass can be extracted from the transformation m
 			-l c_\theta \end{bmatrix} \label{eq1}
     \end{align}
 %From equation \ref{eq1}, we can compute the velocities and the kinetic energy:   
-From equation \eqref{eq1}, the velocities along Cartesian axes are    
+From equation \eqref{eq1}, the velocities along Cartesian axes are 
 \begin{align*}
 	\dot{x} &= 
 	l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
 	\dot{y} &= l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
 	\dot{z} &= l s_\theta  \dot{\theta} - c_\theta \dot{l} 
 \end{align*}
-Next, the velocity squared of the mass 
+Next, the velocity of the mass squared
 \begin{align*}
 	v^2 &= \dot{x}^2 + \dot{y}^2 + \dot{z}^2 =  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2 		
 %	&=  l^2 \dot{\theta}^2 + l^2 s_\theta^2 \dot{\phi}^2 + \dot{l}^2\\
@@ -96,16 +95,17 @@ Thus, the kinetic energy $T$ and potential energy $V$
 	T &=\frac{ m }{2} v^2 =  \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2 \right) + \frac{m }{2} \dot{l}^2  \\
     V &= mgz = -mgl c_\theta   \label{eq3}
 \end{align*}
-which leading to the Lagrangian described as
+which leads to the Lagrangian function described as
 \begin{equation}
 	L = T - V = \frac{m}{2} l^2 \left(\dot{\theta}^2 + s_\theta^2 \dot{\phi}^2\right) + \frac{m}{2}\dot{l}^2 + mgl c_\theta
 \end{equation}
 The dynamics of the system will be obtained using the Euler-Lagrange equation:
 \[
-\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p ,
+\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p 
 \]
-where $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$ is the generalized force, 	
-	$\mathbf{F}_r$ is oriented along the rope, and $\mathbf{F}_u$ is generated so that it does not have any component along the rope.
+where $Q_i^p$ is the generalized force: 
+$Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\partial q_i}$ , \\
+$\mathbf{F}_r$ is oriented along the rope and $\mathbf{F}_u$ is generated so that it does not have any component along the rope:		
 	\begin{equation}
 	\begin{aligned}
 		\mathbf{F}_r  &= F_r \begin{bmatrix}
@@ -127,11 +127,11 @@ where $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\p
 	\end{equation}
 	Let the generalized coordinates $q_i$ be chosen as $q_1 = \theta$, $q_2 = \phi$ and $q_3 = l$ . The corresponding velocities are 
 	\begin{align*}
-		\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
+	\qquad	\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
 			l c_\phi c_\theta\\
 			l s_\phi c_\theta\\
 			l s_\theta
-		\end{bmatrix},  \quad \text{and} \quad 
+		\end{bmatrix},  \text{and} \quad 
 		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
 			- l s_\phi s_\theta\\
 			l c_\phi s_\theta\\
@@ -143,6 +143,7 @@ where $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\p
 			-c_\theta
 		\end{bmatrix} .
 	\end{align*}
+
 	Hence,
 \begin{align*}
 	Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
@@ -168,7 +169,7 @@ where $Q_i^p = (\mathbf{F}_r + \mathbf{F}_u) \cdot \frac{\partial \mathbf{p}}{\p
 	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
 	= F_{r} .
 \end{align*}
-With the defined generalized coordinates, The Euler-Lagrange equations gives us : 	
+The Euler-Lagrange equations gives us, with the defined generalized coordinates: 
 %% 	The first Euler-Lagrange equation yields
  	\begin{align*}
 %		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p  \rightarrow  \\
