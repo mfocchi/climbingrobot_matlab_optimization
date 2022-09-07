@@ -8,26 +8,29 @@ The physical parameters of the robot and environment and the optimizarion settin
 \begin{table}[h!]
 	\centering
 	\caption{ Simulations parameters}
-	\resizebox{\columnwidth}{!}{
 		\begin{tabular}{l c c  } \hline\hline
 			\textbf{Name} \quad & \textbf{Symbol}           & \textbf{Value}  \\ \hline
 					Robot mass            & m  & 5                 \\ 
 					Max. impulse  [N]	& $F_{u,max}$				& 1000   \\
-					Max. retraction force [N] & $F_{r,nax}$			& 200    \\
+					Max. retraction force [N] & $F_{r,max}$			& 200    \\
 					Friction coeff.		& $ \mu $ 					& 0.8   \\
-					Thrust impulse duration	& 	$T_{th}$  				& 0.025\\
+					Thrust impulse duration	[s]& 	$T_{th}$  				& 0.025\\
 					Discretization steps  & N & 40\\					        
 			\hline\hline 					    					    					    
-		\end{tabular}}
+		\end{tabular}
 		\label{tab:params}
 \end{table}
-
-For the Gazebo simulation we actuate the rope joint with the $F_r$ force pattern and map the contact force into the efforts at the leg joints 
+%
+For the Matlab simulation we simply integrate equations \ref{eq:nonlinearDyn} with a ode45 RK4 variable-step integration scheme.
+For the Gazebo simulation,  we employ the full model, therefore we need to find a mapping from the template model 
+to the more complex one. We can directly  actuate the rope joint with the $F_r$ force pattern, but we have to  
+map the contact force $F$ into efforts at the leg joints 
 as follows:
-
+%
 \begin{equation}
 \tau_{leg}= \mat{\tau_{HP} \\ \tau_{HR} \\ f_{K}} =  h_{leg} -J_{leg}^T \underbrace{\left({}_\mathcal{W} R_b \mat{F_{un} \\ F_{ut} \\ 0} \right) 	}_F
 \end{equation}
+%
 Where $J_{leg} \in \Rnum^{3 \times 3}$ is the sub-matrix of the Jacobian $J$ relative to the leg jonts, ${}_\mathcal{W}R_b$ is the rotation matrix 
 that represents the orientation of the base link w.r.t. the inertial frame $\mathcal{W}$ and $h_{leg} \in \Rnum ^3$
 represents the bias terms (Centripetal, Coriolis, gravity). Note that  we do
