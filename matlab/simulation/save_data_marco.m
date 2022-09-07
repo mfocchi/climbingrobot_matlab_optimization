@@ -17,18 +17,11 @@ l_0 = 3;
 theta0 =atan2(0.38, l_0);
 %theta0 = 0.05; 
 phi0 = 0 ;
-p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
-
+%p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 % Marco Frego test: final state
-pf = [0.001; 5.0; -8];
-%
-% additional data for plotting
+%pf = [0.3777; 1.5; -20]
 
-
-
-
-
-T = table2array(readtable('30_08_22_1ms','NumHeaderLines',20)); % 21
+T = table2array(readtable('07_09_2022','NumHeaderLines',20)); % 21
 
 zeta  = T(:, 2)';
 fFun   = T(:, 17)';
@@ -49,6 +42,11 @@ Fut = ForceFut(zeta,fFut,sigma_gauss,mu_gauss);
 
 
 p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
+
+
+p0 = p(:,1);
+pf = p(:,end);
+T_th = Tf(1)*0.05;
 
 % velocity (variable length)
 pd = [ld.*cos(phi).*sin(theta) - l.*phid.*sin(phi).*sin(theta) + l.*thetad.*cos(phi).*cos(theta);

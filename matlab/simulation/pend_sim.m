@@ -6,7 +6,7 @@ global delta_duration friction_coefficient Fun  Fut Fr l_0      time   MICHELE_A
 g = 9.81;
 
 
-MICHELE_APPROACH = true;
+MICHELE_APPROACH = false;
 DEBUG = false;
 
 if MICHELE_APPROACH
@@ -60,8 +60,10 @@ Y = l_sim.*sin(phi_sim).*sin(theta_sim);
 Z = -l_sim.*cos(theta_sim);
 
 fprintf('the touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
-fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
-fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
+if MICHELE_APPROACH
+    fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
+    fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
+end
 fprintf('original target     : [%3.2f, %3.2f, %3.2f] \n',pf );
 fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
 
@@ -151,7 +153,7 @@ figure(2)
 ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
 plot( time, solution.p(1,:),'r');hold on;
 plot( time_sim, X,'b'); 
-plot( time_gazebo, traj_gazebo(1,:),'k');
+if MICHELE_APPROACH; plot( time_gazebo, traj_gazebo(1,:),'k'); end;
 ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
 set(ha(1),'XtickLabel',[])
 xlim([0, time(end)])
@@ -167,7 +169,7 @@ lgd.FontSize = 25;
 ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
 plot(time, solution.p(2,:),'r');hold on;
 plot(time_sim, Y,'b'); 
-plot(time_gazebo, traj_gazebo(2,:),'k');
+if MICHELE_APPROACH; plot(time_gazebo, traj_gazebo(2,:),'k'); end;
 ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
 set(ha(2),'XtickLabel',[])
 xlim([0, time(end)])
@@ -175,7 +177,7 @@ xlim([0, time(end)])
 ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
 plot( time, solution.p(3,:),'r');hold on;
 plot(time_sim, Z,'b'); 
-plot(time_gazebo, traj_gazebo(3,:),'k');
+if MICHELE_APPROACH; plot(time_gazebo, traj_gazebo(3,:),'k'); end
 ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
 set(ha(3),'XtickLabel',[])
 xlim([0, time(end)])
