@@ -52,6 +52,26 @@ During the \textit{thrusting} phase the force $F$ is generated at the contact
 applying $\tau_{leg}$ for a time $T_{th} = 0.025 s$ then it starts the 
 flying phase where the optimized force is set to $\tau_R = F_r$ for the whole jump duration $T_f$.
 
+The computation time for the optimization and the integration error at the target $\Vert e_f \Vert$  are linearly  
+linked to the number of discretization points $N$. In Table \ref{tab:solve_time} we report 
+also the integration error normalized for the jump length $\Vert e_f \Vert / (l_f-l_0)$ 
+for  different numbers of discretization points. 
+
+\begin{table}[h!]
+\centering
+	%\caption{ Solve time}
+	\begin{tabular}{c c c c  } \hline\hline
+		\textbf{N} \quad & \textbf{Comp. time [s]}           & \textbf{$\Vert e_f \Vert$ [m]} &  \textbf{$\Vert e_f \Vert / (l_f-l_0)$ [m]} \\ \hline
+			250    &   3.             &  X & X \\
+			500    &   1.5            & X  & X \\
+			1000   &   0.5           & X   & X \\
+		\hline\hline 					    					    					    
+	\end{tabular}
+	\label{tab:solve_time}
+\end{table}
+
+
+
 In Fig. \ref{fig:validation}  we report the results of the validation. 
 The discrepancy in the target position is mainly due to drift in the integration in the case of Matlab and to approximations in the model in case if Gazebo. 
 However in both cases the norm of the error is always below XX which shows the simplified model is a good approximation for the real system.
