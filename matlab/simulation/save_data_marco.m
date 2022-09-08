@@ -8,7 +8,7 @@ g = 9.81;
 dt = 0.001;
 m = 5;
 Fun_max = 1000;
-Fr_max = 130; % Fr in negative
+Fr_max = 200; % Fr in negative
 mu = 0.8;
 sigma_gauss = T_th/6;
 mu_gauss    = T_th/2;
@@ -21,7 +21,7 @@ phi0 = 0 ;
 % Marco Frego test: final state
 %pf = [0.3777; 1.5; -20]
 
-T = table2array(readtable('07_09_2022','NumHeaderLines',20)); % 21
+T = table2array(readtable('08_09_2022_obstacle','NumHeaderLines',20)); % 21
 
 zeta  = T(:, 2)';
 fFun   = T(:, 17)';
@@ -46,7 +46,7 @@ p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
 
 p0 = p(:,1);
 pf = p(:,end);
-T_th = Tf(1)*0.05;
+T_th = Tf(1)*0.0646;
 
 % velocity (variable length)
 pd = [ld.*cos(phi).*sin(theta) - l.*phid.*sin(phi).*sin(theta) + l.*thetad.*cos(phi).*cos(theta);
@@ -102,10 +102,12 @@ solution.phid = phid;
 solution.ld = ld;
 solution.time = time;
 solution.zeta = zeta';
+solution.Tf = Tf(end);
 %evaluate inpulse ( the integral of the gaussian is 1) 
 solution.Fun = Fun;
 solution.Fut = Fut;
 solution.Fr = Fr;
+
 
 figure
 plot(time, Fun)
@@ -116,9 +118,12 @@ plot(time, Fut)
 ylabel('Fut')
 figure
 plot_curve(solution, p0, pf,  'r');
-save('test_marco.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 
+
+save('test_optim_marco.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
+%ad obstacle
+cone
 
 function res = ForceFun(zeta,Fun0,sigma,mu_gauss)
 

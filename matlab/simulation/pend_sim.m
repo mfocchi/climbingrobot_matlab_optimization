@@ -7,13 +7,14 @@ g = 9.81;
 
 
 MICHELE_APPROACH = false;
+OBSTACLE = true;
 DEBUG = false;
 
 if MICHELE_APPROACH
    load ('test_gazebo.mat')
    %load ('../optimal_control_fr/test_matlab_1.mat')
 else    
-    load ('test_marco.mat')
+    load ('test_optim_marco.mat')
 end
     
 m = 5;   % Mass [kg]
@@ -54,6 +55,7 @@ l_sim = x(:,5);
 ld_sim = x(:,6);
 
 
+
 %Coordinates
 X = l_sim.*cos(phi_sim).*sin(theta_sim);
 Y = l_sim.*sin(phi_sim).*sin(theta_sim);
@@ -66,7 +68,7 @@ if MICHELE_APPROACH
 end
 fprintf('original target     : [%3.2f, %3.2f, %3.2f] \n',pf );
 fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
-
+fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
 
 
 % eval total energy sim
@@ -126,6 +128,10 @@ h(6) = animatedline('color','r', 'linewidth',3);
 h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
 h(8) = plot3(pf(1),pf(2),pf(3),'Marker','.','Color','r','MarkerSize',50);
+if OBSTACLE 
+    cone
+end
+
 
  view(33,63);
 % Loop for animation
@@ -151,7 +157,7 @@ end
 loadFigOptions
 figure(2)
 ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
-plot( time, solution.p(1,:),'r');hold on;
+plot( time, solution.p(1,:),'r', 'linewidth', 4);hold on;
 plot( time_sim, X,'b'); 
 if MICHELE_APPROACH; plot( time_gazebo, traj_gazebo(1,:),'k'); end;
 ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
@@ -161,13 +167,13 @@ xlim([0, time(end)])
 lgd=legend({'$\mathrm{opt}$', ...
     '$\mathrm{sim~mat}$', ...
     '$\mathrm{sim~gaz}$',},...
-        'Location','northwest',...
+        'Location','southeast',...
         'interpreter','latex',...
         'Orientation','horizontal');
 lgd.FontSize = 25;
 
 ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
-plot(time, solution.p(2,:),'r');hold on;
+plot(time, solution.p(2,:),'r', 'linewidth', 4);hold on;
 plot(time_sim, Y,'b'); 
 if MICHELE_APPROACH; plot(time_gazebo, traj_gazebo(2,:),'k'); end;
 ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
@@ -175,7 +181,7 @@ set(ha(2),'XtickLabel',[])
 xlim([0, time(end)])
 
 ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
-plot( time, solution.p(3,:),'r');hold on;
+plot( time, solution.p(3,:),'r', 'linewidth', 4);hold on;
 plot(time_sim, Z,'b'); 
 if MICHELE_APPROACH; plot(time_gazebo, traj_gazebo(3,:),'k'); end
 ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
@@ -195,26 +201,28 @@ set(gcf, 'PaperPosition', [0 0 40 30]);
 print(gcf, '-dpdf',strcat('../../paper/matlab/validation.pdf'),'-painters')
 
 
-% 
-% figure(1)
-% subplot(3,1,1)
-% plot(time_sim, theta_sim,'b.'); hold on;grid on;
-% plot(time, solution.theta,'r');
-% ylabel('theta')
-% legend('sim', 'opt')
-% 
-% subplot(3,1,2)
-% plot(time_sim, phi_sim,'b.'); hold on;grid on;
-% plot(time, solution.phi,'r');
-% ylabel('phi')
-% legend('sim', 'opt')
-% 
-% 
-% subplot(3,1,3)
-% plot(time_sim, l_sim,'b.'); hold on;grid on;
-% plot(time, solution.l,'r');
-% ylabel('l')
-% legend('sim', 'opt')
+figure(1)
+subplot(3,1,1)
+plot(time, solution.theta,'ro');
+plot(time_sim, theta_sim,'b'); hold on;grid on;
+
+ylabel('theta')
+legend('sim', 'opt')
+
+subplot(3,1,2)
+plot(time, solution.phi,'ro');
+plot(time_sim, phi_sim,'b'); hold on;grid on;
+
+ylabel('phi')
+legend('sim', 'opt')
+
+
+subplot(3,1,3)
+plot(time, solution.l,'ro');
+plot(time_sim, l_sim,'b'); hold on;grid on;
+
+ylabel('l')
+legend('sim', 'opt')
 
 %derivatives
 % figure(1)

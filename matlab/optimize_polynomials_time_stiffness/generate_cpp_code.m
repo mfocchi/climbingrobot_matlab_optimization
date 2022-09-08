@@ -19,3 +19,4 @@ phi0 = 0 ;
 % Marco Frego test: final state
 pf = [0.001 5 -8];
 [number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf] = optimize_cpp_mex(l_0, theta0, phi0,  pf, Fun_max, Fr_max, mu) 
+[number_of_converged_solutions,  initial_kin_energy,  final_kin_energy,  opt_Fun, opt_Fut, opt_K, opt_Tf] = optimize_cpp(l_0, theta0, phi0,  pf, Fun_max, Fr_max, mu) 
