@@ -21,7 +21,9 @@ phi0 = 0 ;
 % Marco Frego test: final state
 %pf = [0.3777; 1.5; -20]
 
-T = table2array(readtable('08_09_2022_obstacle','NumHeaderLines',20)); % 21
+%T = table2array(readtable('08_09_2022_obstacle','NumHeaderLines',20)); % 21
+%T = table2array(readtable('09_09_2022mu07','NumHeaderLines',20)); % 21
+T = table2array(readtable('09_09_2022_3','NumHeaderLines',20)); % obstacle (0, 1.5)
 
 zeta  = T(:, 2)';
 fFun   = T(:, 17)';
@@ -44,8 +46,14 @@ Fut = ForceFut(zeta,fFut,sigma_gauss,mu_gauss);
 p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
 
 
+
 p0 = p(:,1);
 pf = p(:,end);
+
+% test if inside cone
+% p0 = [0.2240;         0;   -8.0000];
+% pf = [3;        3;   -20.0000];
+
 T_th = Tf(1)*0.0646;
 
 % velocity (variable length)
@@ -108,22 +116,25 @@ solution.Fun = Fun;
 solution.Fut = Fut;
 solution.Fr = Fr;
 
-
-figure
-plot(time, Fun)
-ylabel('Fun')
-
-figure
-plot(time, Fut)
-ylabel('Fut')
 figure
 plot_curve(solution, p0, pf,  'r');
+%ad obstacle
+cone(0,1.5,0)
 
-
+% 
+% figure
+% plot(time, Fun)
+% ylabel('Fun')
+% 
+% figure
+% plot(time, Fut)
+% ylabel('Fut')
+% 
+% figure
+% plot(time, fFut./fFun)
 
 save('test_optim_marco.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
-%ad obstacle
-cone
+
 
 function res = ForceFun(zeta,Fun0,sigma,mu_gauss)
 

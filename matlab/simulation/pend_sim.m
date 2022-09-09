@@ -129,7 +129,7 @@ h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',
 
 h(8) = plot3(pf(1),pf(2),pf(3),'Marker','.','Color','r','MarkerSize',50);
 if OBSTACLE 
-    cone
+    cone(0,0.5,0)
 end
 
 
@@ -207,14 +207,14 @@ plot(time, solution.theta,'ro');
 plot(time_sim, theta_sim,'b'); hold on;grid on;
 
 ylabel('theta')
-legend('sim', 'opt')
+%legend('sim', 'opt')
 
 subplot(3,1,2)
 plot(time, solution.phi,'ro');
 plot(time_sim, phi_sim,'b'); hold on;grid on;
 
 ylabel('phi')
-legend('sim', 'opt')
+%legend('sim', 'opt')
 
 
 subplot(3,1,3)
@@ -222,7 +222,7 @@ plot(time, solution.l,'ro');
 plot(time_sim, l_sim,'b'); hold on;grid on;
 
 ylabel('l')
-legend('sim', 'opt')
+%legend('sim', 'opt')
 
 %derivatives
 % figure(1)
