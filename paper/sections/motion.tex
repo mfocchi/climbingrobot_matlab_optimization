@@ -44,13 +44,13 @@ the state variables inverting~\eqref{eq1}. For instance, when time equals zero (
     &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \\ 
     &x_2(t_0) = \atandue(Y_0,X_0),\\
     &x_3(t_0) = \sqrt{X_0^2+Y_0^2+Z_0^2},\quad \\
-    &x_4(t_0) = \frac{1}{\Lambda}\left(c_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 +c_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0+s_{x_1(t_0)}\dot{Z}_0\right)\\
-    &x_5(t_0) = \frac{1}{\Lambda s_{x_1(t_0)}}\left(-s_{x_2(t_0)} \dot{X}_0) \right) + \\
-    &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 \\
-    &\quad + \frac{1}{2 \Lambda}\left(-c_{x_1(t_0)}\left(\sqrt{2}\sin\left(2 x_2(t_0)+\pi/4\right)-1 \right) \right) \dot{Z}_0 \\
-    &x_6(t_0) = \frac{x_3(0)}{\Lambda}\left(s_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 + s_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0\right)\\
-    & \quad + \frac{1}{2 \Lambda} c_{x_1(t_0)}\left(\sqrt{2} \cos\left(2 x_2(t_0)+\pi/4\right)-\frac{1}{2}\right) \dot{Z}_0 \\
-    &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right).
+  %  &x_4(t_0) = \frac{1}{\Lambda}\left(c_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 +c_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0+s_{x_1(t_0)}\dot{Z}_0\right)\\
+ %   &x_5(t_0) = \frac{1}{\Lambda s_{x_1(t_0)}}\left(-s_{x_2(t_0)} \dot{X}_0) \right) + \\
+ %   &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 \\
+%    &\quad + \frac{1}{2 \Lambda}\left(-c_{x_1(t_0)}\left(\sqrt{2}\sin\left(2 x_2(t_0)+\pi/4\right)-1 \right) \right) \dot{Z}_0 \\
+%    &x_6(t_0) = \frac{x_3(0)}{\Lambda}\left(s_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 + s_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0\right)\\
+%    & \quad + \frac{1}{2 \Lambda} c_{x_1(t_0)}\left(\sqrt{2} \cos\left(2 x_2(t_0)+\pi/4\right)-\frac{1}{2}\right) \dot{Z}_0 \\
+ %   &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right).
   \end{aligned}
 \end{equation}
 
@@ -58,13 +58,10 @@ the state variables inverting~\eqref{eq1}. For instance, when time equals zero (
 {\bf State Constraints.}
 State constraints are related to regions of the operation space that are not accessible. For instance, an irregular form of the walls
 could generate obstacles that the robot 
-has to overcome in order to reach its final destination. Generally speaking, the inaccessible area is modeled as
-a a region whose boundary is a  surface defined in the Cartesian space. We assume that this surface can be expressed by
-a differential 2D manifold expressed by $f(X,\,Y,\,Z) = 0$. Therefore the admissible region is generally given by
-$f(X,\,Y,\,Z) \geq 0$ and could be non-convex. By using Equation~\eqref{eq1} we can express the Cartesian constraint
-in terms of the state variables; therefore the constraint $\vect{x} \in \mathcal{X}$ can be expressed as $f_1(\vect{x}) \geq 0$, where $f_1$ is
-assumed to be a $\mathcal{C}_\infty$ function. In absence of obstacles this constraint it boils down to prevent the trajectory from penetrating the wall (i.e. $X >0$).
-We also want to set a limit on the fact the robot elevation should not go beyond the anchor level (i.e. $Z<0$).
+has to overcome in order to reach its final destination. Generally speaking, the inaccessible area is modelled as
+a a region whose boundary is a surface. We assume that this surface can be expressed by
+a differential 2D manifold expressed by $f(\vect{x}) = 0$. Therefore the admissible region is generally given by
+$f(\vect{x}) \geq 0$ and could be non-convex. By using Equation~\eqref{eq1}, we can express the constraint either in Cartesian coordinates or in terms of the state variables. Another constraint is added to prevent the trajectory from penetrating the wall (i.e. $X >0$) and we also want to set a limit on the fact the robot elevation should not go beyond the anchor level (i.e. $Z<0$).
 
 
 \noindent
@@ -73,7 +70,7 @@ The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_
 The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see Equation~\eqref{eq:forces}). Since the rope cannot push the robot 
 (assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent (under the action of gravity). 
 What is more, the force is limited in with $F_r^{\text{max}}>0$, due to the limit of the actuators (e,g, a hoist). Therefore, the
-constraint on $F_r$ is expressed as :
+constraint on $F_r$ is expressed as:
 \[
   -F_r^{\text{max}} \leq F_r \leq 0.
 \]
@@ -98,11 +95,11 @@ where $\mu$ is a constant depending on the nature of the terrain. For our simula
 The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
 We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because when the robot lands,
 it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
-Therefore, we optimise
+Therefore, assuming without loss of generality that $t_0=0$, we optimise
 \begin{align*}
-&  w_t \int_{t_0}^{t_f}dt + w_E T(t_f)  \\
-                                        &= w_t (t_f - t_0) + w_E \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
-                                         &\quad+ \frac{m }{2} x_6(t_f)^2 \quad.
+&  w_t \int_{0}^{t_f}dt + w_E T(t_f)  \\
+&= w_t t_f + w_E \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
+                                         &\quad+ \frac{m }{2} x_6(t_f)^2.
 \end{align*}
 %%%
 with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution.
