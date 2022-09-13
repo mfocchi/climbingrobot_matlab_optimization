@@ -1,7 +1,7 @@
 
 % Strong background references addresses "what is already known" 
 The idea of developing climbing robots was expected for years but only in 1986, 
-Nishi et al. presented, in their seminal paper \cite{Nishi1986}, 
+Nishi et al. presented in their seminal paper \cite{Nishi1986}, 
 the design of a robot that can walk on a vertical surface. During the last thirty years, many 
 prototypes of climbing robots were proposed for specific applications to replace 
 humans in dangerous and difficult tasks including inspection in nuclear power 
@@ -17,18 +17,18 @@ The research work done so far on climbing robots is reviewed and classified in
 adhesion method \cite{longo2008}, used to attach the robot to the wall and 
 locomotion \cite{Chu2010}, type of the walking mechanism. These are considered 
 as the two main problems to be solved in designing wall-climbing robots. Other 
-requirements may also be requested depending on the desired application, namely: (R1) to 
+requirements may also be requested depending on the desired application, like (R1) to 
 move safely, and (R2) fast in emergency situations, (R3) ability to carry a payload, 
-and (R4) to avoid obstacles \cite{Schmidt2013}.
+and (R4) avoid obstacles \cite{Schmidt2013}.
 
 % Summurizing what's coming in the introduction
 In this paper, we will present  a climbing robot for rescue missions that uses a rope/wire 
-as an attachment method, and jumping as an moving technique to reach  desired 
+as an attachment method, and jumping as an moving technique to reach the desired 
 locations on a mountain, overcoming obstacles.
 
 %% Solution for Attachment technique : USING A ROPE + main advantages   
 Firstly, humans inspired the technique of using a rope mainly for safety measures 
-to support the weight of persons during facade cleaning, fire fighting and rescue missions
+to support the weight of persons during facade cleaning, firefighting and rescue missions
 \cite{Nansai2016}. It is well known that legged robots as well as mobile robots cannot walk on slopes
 with very high inclinations \cite{Abdalla12020}, because they can create  tangential forces on the terrain 
 that surpasses the friction limit that is needed to prevent slippage and falling.
@@ -48,14 +48,15 @@ that require a prompt intervention such as Search $\&$ Rescue missions.
 %% Third advantage 
 Furthermore, the amount of payload that can be carried by sticky/adhesive based climbing 
 robots \cite{Kim2008,Riskin2009} is very limited due to the small tangential component of 
-the adhesive and leg actuation. Conversely a feature of rope is to be ideally inextensible\footnote{The maximum payload will be limited by the 
-maximum force deliverable by the winding mechanism, e.g. an hoist, which can be extended using
-a gearbox.} will allow the robot to carry a bigger payload (R3). 
+the adhesive and leg actuation. Conversely, a feature of rope to be ideally 
+inextensible\footnote{The maximum payload will be limited by the maximum force deliverable 
+by the winding mechanism, e.g. an hoist, which can be extended using a gearbox.} 
+will allow the robot to carry a bigger payload (R3). 
 
 %Difficulties due to the dynamics when using a rope
-However, having the robot attached to a rope poses some challenges: one, is the 
+However, having the robot attached to a rope poses some challenges: One is the 
 under-actuation where the robot cannot \textit{fully} control the position of its center of mass when 
-it not in contact with the wall and the other, is that a rope represents a \textit{unilateral} 
+it not in contact with the wall, and the other is that a rope represents a \textit{unilateral} 
 constraint (i.e. it can only pull and not push), which further complicates the already hybrid 
 dynamics and the low control authority of this class of robots. 
 
@@ -80,7 +81,7 @@ physical constraints, namely: the constrains posed by the rope, the actuator lim
 contact interaction (i.e. friction). 
 
 Numerical optimization is an attractive solution for this 
-planning problems \cite{Nguyen2019,Ding2020} because it allows to jointly cope with these 
+planning problems \cite{Nguyen2019,Ding2020}, since it allows to jointly cope with these 
 aspects following some optimality criteria,  while ensuring that the physical constraints 
 are satisfied in the planning horizon resulting in a \textit{feasible} 
 reference trajectory for the controller. 
@@ -90,7 +91,7 @@ allows one to represent high level tasks and system dynamics using cost function
 constraints. 
 In this framework, different goals can also be pursued. for instance, minimize energy 
 consumption or hoist effort. Also, the jump time can be minimized to achieve the target 
-in a shortest time in case of emergencies and rescue missions. 
+in a shortest time. 
 
 \subsection{Proposed Approach and Contribution}
 %
