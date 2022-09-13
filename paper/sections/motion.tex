@@ -22,9 +22,10 @@ $\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are 
 The state $\vect{x}$ of our problem is $\vect{x}^T = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
 given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
 \begin{equation}
+  \label{eq:NonLinStateSpace}
   \begin{aligned}
       \begin{bmatrix}
-        \dot{x_1}\\\dot{x_2} \\ \dot{x_3}\\ \dot{x_4}\\ \dot{x_5}\\ \dot{x_6}\end{bmatrix}
+        \dot{x}_1\\\dot{x}_2 \\ \dot{x}_3\\ \dot{x}_4\\ \dot{x}_5\\ \dot{x}_6\end{bmatrix}
      =
     \begin{bmatrix}
       x_4\\
