@@ -107,7 +107,7 @@ with $w_t$ and $w_E$ two weights to combine the temporal with the energetic cont
 We should observe that, in case of a difficult convergence, it is possible to "soften" some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
 slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or became part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
-\textbf{Initial guess}
+\textbf{Initial guess.}
 To speedup convergence  we should  initialize the optimization with a reasonable initial guess.
 Because time $t_f$ is an optimization parameter, we compute the time constant for the system  linearized  around the initial state:
 

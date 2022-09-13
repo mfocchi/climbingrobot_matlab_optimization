@@ -1,9 +1,133 @@
-
+clear all
 %l const
 syms l(t) theta(t) phi(t) t g f1 f2 g1 g2 g3
 
 
-% compute jacobian symblically
+
+theta = theta(t)
+phi = phi(t)
+thetad=diff(theta,t)
+phid = diff(phi,t)
+l = l(t)
+ld = diff(l,t)
+
+% ld = 0 
+f1 =  cos(theta)*sin(theta)*(phid^2)-(g/l)*sin(theta); % thetadd
+f2 = -2*(cos(theta)/sin(theta))*phid*thetad; % phidd
+
+df1_dtheta = diff(f1, theta)
+df1_dthetad = diff(f1, thetad)
+df1_dphi = diff(f1, phi)
+df1_dphid = diff(f1, phid)
+
+df2_dtheta = diff(f2, theta)
+df2_dthetad = diff(f2, thetad)
+df2_dphi = diff(f2, phi)
+df2_dphid = diff(f2, phid)
+
+% to linearize we need to do derivatives of f(x),g(x) and put in state space form 
+% x = [theta  thetad phi phid]
+
+A = [0                1              0    0 ;
+     df1_dtheta ,  df1_dthetad , df1_dphi, df1_dphid ;
+    0                0                    0            1 ;
+     df2_dtheta ,  df2_dthetad , df2_dphi, df2_dphid ]
+
+A =subs( A,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('thetad'),str2sym('phid')});
+A =subs( A, {str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('theta'),str2sym('phi')});
+
+
+% by hand
+% As = [0 1 0 0 ;
+%       a  0 0 b;
+%         0 0 0 1;
+%         c  d  e  f]
+% 
+% D= simplify(eig(As))
+% simplify(imag(D(4)))
+
+%small oscillations 
+A = [ 0    1     0     0;
+     phid^2 + g/l  0   0    0;
+     0    0    0     1;
+     2*phid*thetad/theta^2 -2*phid/theta  0   -2*thetad/theta];
+A =subs( A,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('thetad'),str2sym('phid')});
+A =subs( A, {str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('theta'),str2sym('phi')});
+
+% small oscill simple pendulum
+A=[ 0 1; -g/l 0] 
+%T = 2*pi*sqrt(l/g)
+
+% big oscill lin pendulum
+A=[ 0 1; -g/l*cos(theta)  0] 
+%T = 2*pi*sqrt(l/(g*cos(theta)))
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% l non const 
+f =  cos(theta)*sin(theta)*(phid^2)  - 2/l* thetad*ld -(g/l)*sin(theta); % thetadd
+g = -2*(cos(theta)/sin(theta))*phid*thetad - 2/l*phid*ld; % phidd
+h = l*thetad^2 + l*sin(theta)^2*phid^2 + g*cos(theta);
+
+df_dtheta = diff(f, theta)
+df_dthetad = diff(f, thetad)
+df_dphi = diff(f, phi)
+df_dphid = diff(f, phid)
+df_dl = diff(f, l)
+df_dld = diff(f, ld)
+
+df2_dtheta = diff(g, theta)
+df2_dthetad = diff(g, thetad)
+dg_dphi = diff(g, phi)
+dg_dphid = diff(g, phid)
+dg_dl = diff(g, l)
+dg_dld = diff(g, ld)
+
+dh_dtheta = diff(h, theta)
+dh_dthetad = diff(h, thetad)
+dh_dphi = diff(h, phi)
+dh_dphid = diff(h, phid)
+dh_dl = diff(h, l)
+dh_dld = diff(h, ld)
+
+A = [0                1              0               0            0                  0;
+     df_dtheta ,  df_dthetad ,       0,       df_dphid,           df_dl,       df_dld  ;
+     0                0              0               1            0                  0;
+     df2_dtheta ,  df2_dthetad , dg_dphi, dg_dphid     ,          dg_dl,        dg_dld  ;                      
+     0                0              0               0            0                  1;
+      dh_dtheta ,  dh_dthetad , dh_dphi, dh_dphid     ,          dh_dl,        dh_dld  ];
+A =subs( A,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)'), str2sym('diff(l(t), t)')}, {str2sym('thetad'),str2sym('phid'),str2sym('ld')});
+A =subs( A, {str2sym('theta(t)'),str2sym('phi(t)'),str2sym('l(t)')}, {str2sym('theta'),str2sym('phi'),str2sym('l')}); 
+  
+A_= simplify(A);
+
+% check gain 
+fun = matlabFunction(A) % g,l,ld,phid,theta,thetad
+theta0 = 0.1
+for i =1: 10 
+x1(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[1; 0; 0; 0;0;0])
+x2(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 1; 0; 0;0;0])
+x3(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 0; 1; 0;0;0])
+x4(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 0; 0; 1;0;0])
+x5(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 0; 0; 0;1;0])
+x6(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 0; 0; 0;0;1])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% compute COM velocity  symblically for pathlength computation
 p = [l* sin(theta)*cos(phi); 
     l* sin(theta)*sin(phi); 
     - l*cos(theta)]
@@ -12,55 +136,40 @@ pd =subs( pd,  {str2sym( 'diff(l(t), t)') , str2sym( 'diff(theta(t), t)'), str2s
 pd =subs( pd, {str2sym('l(t)') , str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('l'), str2sym('theta'),str2sym('phi')});
 pd
 
-theta = theta(t)
-phi = phi(t)
-thetad=diff(theta,t)
-phid = diff(phi,t)
-f =  cos(theta)*sin(theta)*(phid^2)-(g/l)*sin(theta);
-g = -2*(cos(theta)/sin(theta))*phid*thetad;
 
-df_dtheta = diff(f, theta)
-df_dthetad = diff(f, thetad)
-df_dphi = diff(f, phi)
-df_dphid = diff(f, phid)
-
-
-dg_dtheta = diff(g, theta)
-dg_dthetad = diff(g, thetad)
-dg_dphi = diff(g, phi)
-dg_dphid = diff(g, phid)
-
-
-A = [0                1              0    0 ;
-     df_dtheta ,  df_dthetad , df_dphi, df_dphid ;
-    0                0                    0            1 ;
-     dg_dtheta ,  dg_dthetad , dg_dphi, dg_dphid ]
-
-A =subs( A,  {str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('thetad'),str2sym('phid')});
-A =subs( A, {str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('theta'),str2sym('phi')});
-
-
-As = [0 1 0 0 ;
-      f1  0 0 f2;
-        0 0 0 1;
-        g1 g2 0 g3]
-
-D= simplify(eig(As))
-simplify(imag(D(4)))
-
-% l non const 
-
-
-
-
-
-
-% compute target for mutiple jumps symbolically
-syms th1 th2 th3  l1p l2p l3p
-% rotation about X axis
+% compute dynamics simbolically
+syms phi theta l  
 Rx=@(angle) [1       0        0
             0       cos(angle) -sin(angle)
             0       sin(angle)  cos(angle)]
+    
+
+Ry=@(angle)[cos(angle)  0      sin(angle)
+            0           1      0
+         -sin(angle) 0      cos(angle)]
+
+Rz=@(angle)[cos(angle)    -sin(angle) 0
+            sin(angle)   cos(angle)   0
+            0           0             1]
+
+H0_T_1 = [Rz(phi) , [0;0;0]
+          zeros(1, 3), 1]
+
+H1_T_2 = [Ry(-theta) , [0;0;0]
+          zeros(1, 3), 1]      
+      
+H1_T_2 = [Ry(pi/2-theta) , [0;0;0]
+          zeros(1, 3), 1]      
+   
+H2_T_b = [ eye(3), [l;0;0]
+          zeros(1, 3), 1]      
+      
+H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_b)     
+
+      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% compute target for mutiple jumps symbolically
     
 
 % we need to use hom transofrms wrt to FIXED axes
@@ -103,8 +212,4 @@ H0_Tcheck = subs(H0_T_6,{'th1', 'th2', 'th3','l1p', 'l2p','l3p'},{pi/2,pi/4,pi/4
 eval(H0_Tcheck(1:3,1:3)) -Rx(pi/2+pi/4+pi/4)
 eval(H0_Tcheck(1:3,4)) -[0;2;0]
 
-% comupute l1 l2 l3 with law of cosines
-% l1 = l1p
-% l2 = l1^2+l2p^2 -2*l1*l2p*cos(pi - th1)
-% l3 = l2^2+l3p^2 -2*l2*l3p*cos(pi - th2)
 

@@ -3,9 +3,9 @@ result in of the optimization in Section \ref{sec:motionP} bring the robot to a 
 
 We validate  the results of the optimization comparing the trajectories for the \gls{com} 
 in the case of the  simplified model (Matlab) and of the full 3D model (Gazebo) for a jump to a target at $p_f = \mat{3 & 3 &-20}^T$ $[m]$
-starting from an initial position $p_0 = \mat{0.024, 0, -8}^T$. During the jump the robot has to avoid 
-a rock pillar (see the accompanying video) that is laying  the wall, that we model 
-as a 20 $m$ high come with a base  radius 2.5 $m$.
+starting from an initial position $p_0 = \mat{0.024& 0& -8}^T$. During the jump the robot has to avoid 
+a rock pillar (see the accompanying video~ \footnote{\footnote{\url{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4?dl=0}}}) that is laying  the wall, that we model 
+as a 20 $m$ high cone with a base  radius 2.5 $m$.
 
 The physical parameters of the robot and environment and the optimization settings are reported in Table \ref{tab:params}:
 \begin{table}[h!]
@@ -31,13 +31,13 @@ map the contact force $F$ into efforts at the leg joints
 as follows:
 %
 \begin{equation}
-\tau_{leg}= \mat{\tau_{HP} \\ \tau_{HR} \\ f_{K}} =  h_{leg} -J_{leg}^T \underbrace{\left({}_\mathcal{W} R_b \mat{F_{un} \\ F_{ut} \\ 0} \right) 	}_F
+\tau_{leg}= \mat{\tau_{HP} \\ \tau_{HR} \\ f_{K}} =  h_{\text{leg}} -J_{\text{leg}}^T \underbrace{\left(R_b^\mathcal{W}  \mat{F_{un} \\ F_{ut} \\ 0} \right) 	}_F
 \end{equation}
 %
 Where $J_{leg} \in \Rnum^{3 \times 3}$ is the sub-matrix of the Jacobian $J$ relative to the leg jonts, ${}_\mathcal{W}R_b$ is the rotation matrix 
 that represents the orientation of the base link w.r.t. the inertial frame $\mathcal{W}$ and $h_{leg} \in \Rnum ^3$
 represents the bias terms (Centripetal, Coriolis, gravity). Note that  we do
-no generate any impulse along the rope direction (base link Z direction) in 
+no generate any impulse along the rope direction (base link $Z$ direction) in 
 order to avoid to accidentally create  any slack on the rope. 
 We set a virtual damper to keep the passive joints at the 
 in a fixed position to avoid the motion of the base passive joints, since the optimization is performed 
