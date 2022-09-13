@@ -128,6 +128,7 @@ x6(i) = norm(fun(9.81, 3, 0,0, theta0, 0)*[0; 0; 0; 0;0;1])
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % compute COM velocity  symblically for pathlength computation
+syms l(t) theta(t) phi(t)
 p = [l* sin(theta)*cos(phi); 
     l* sin(theta)*sin(phi); 
     - l*cos(theta)]

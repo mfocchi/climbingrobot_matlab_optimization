@@ -203,39 +203,40 @@ Let the generalized coordinates $q_i$ be chosen as $q_1 = \theta$, $q_2 = \phi$ 
 	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
 	= F_{r} .
 \end{align*}
-The Euler-Lagrange equations gives us, with the defined generalized coordinates: 
-%% 	The first Euler-Lagrange equation yields
- 	\begin{align*}
+The Euler-Lagrange equations gives us, with the defined generalized coordinates, the non-linear dynamic equations of the system: 
+
+% 	\begin{align*}
 %		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p  \rightarrow  \\
 %%		& \frac{d}{dt}\left(m l^2 \dot{\theta}\right) - (m l^2 s_\theta c_\theta \dot{\phi}^2 - m g l s_\theta) = F_{u,n}  l \\ 
- 		  &m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
+ %		  &m l^2 \ddot{\theta} + 2 m l \dot{\theta} \dot{l} - m l^2 s_\theta c_\theta \dot{\phi}^2 + m g l s_\theta = F_{u,n} . l\\
 %% 		& \ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{F_{u,n}  }{ml}    
 %% 	\end{align*}
 %% 	The second Euler-Lagrange equation yields
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\phi}} \right) - \frac{\partial L}{\partial \phi} = Q_2^p    \\
 %% 		&\frac{d}{dt}\left(m l^2 s_\theta^2 \dot{\phi}\right) = F_{u,t}  l  s_\theta\\
- 		 &\ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
+% 		 &\ddot{\phi} ml^2 s^2_\theta + 2 m l \dot{l} s_\theta^2 \dot{\phi} + 2 m l^2 s_\theta c_\theta \dot{\theta} \dot{\phi}  = F_{u,t}  l  s_\theta\\
 %%		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{F_{u,t}}{ml s_\theta}
 %% 	\end{align*}
 %% 	The third Euler-Lagrange equation is as follows:
 %% 	\begin{align*}
 %% 		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{l}} \right) - \frac{\partial L}{\partial l} = Q_3^p    \\
 %% 		&\frac{d}{dt}\left(m\dot{l}\right) - (m l \dot{\theta}^2 + m l s^2_\theta \dot{\phi}^2 + m g c_\theta) = F_r ,
- 		&m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r 
+% 		&m \ddot{l} - m l \dot{\theta}^2 - m l s^2_\theta \dot{\phi}^2 - m g c_\theta = F_r 
 %% 		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{F_r}{m} 
- 	\end{align*}
+ %	\end{align*}
            %%
-        Overall, the non-linear dynamic equations of the system 
-%        Overall, the nonlinear equations of the system are:
-        \begin{equation}
-        \begin{aligned}
+        
+%Overall, the non-linear dynamic equations of the system 
+\begin{equation}
+\begin{aligned}
 		&\ddot{\theta} + \frac{2}{l} \dot{\theta} \dot{l} - c_\theta s_\theta  \dot{\phi}^2 + \frac{g}{l}  s_\theta =  \frac{1}{ml}F_{u,n} \\
 		&\ddot{\phi} + 2 \frac{c_\theta}{s_\theta} \dot{\theta} \dot{\phi} + \frac{2}{l} \dot{\phi} \dot{l} = \frac{1}{ml s_\theta} F_{u,t} \\
 		&\ddot{l} - l \dot{\theta}^2 - l s^2_\theta \dot{\phi}^2 - g c_\theta = \frac{1}{m} F_r .
-	\end{aligned}
-        \label{eq:nonlinearDyn}
-        \end{equation}
+\end{aligned}
+\label{eq:nonlinearDyn}
+\end{equation}
+
         Clearly, in this derivation of the model, we have heavily
         relied on the point-mass nature of the body.  A possible issue
         could be the rotational dynamics of the body around its axis,
