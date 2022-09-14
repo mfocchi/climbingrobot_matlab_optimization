@@ -40,7 +40,7 @@ given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equa
 \noindent
 {\bf Boundary Conditions.}
 The terminal constraints are usually expressed in Cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$ and they can be expressed as a function of
-the state variables inverting~\eqref{eq1}. For instance, when time equals zero (initial conditions), we have:
+the state variables inverting~\eqref{eq1}. \ADP{Agreed, but that's not necessary. You can express the constraints directly in Cartesian space using \eqref{eq1}, without inverting it.} For instance, when time equals zero \ADP{Why does time need to be zero for these equations to be valid? Eq.~\eqref{eq1} is time invariant} (initial conditions), we have:
 \begin{equation}
   \begin{aligned}
     &x_1(t_0)= \atandue\left(-Z_0,\sqrt{X_0^2+Y_0^2}\right), \\ 
@@ -63,25 +63,27 @@ could generate obstacles that the robot
 has to overcome in order to reach its final destination. Generally speaking, the inaccessible area is modelled as
 a a region whose boundary is a surface. We assume that this surface can be expressed by
 a differential 2D manifold expressed by $f(\vect{x}) = 0$. Therefore the admissible region is generally given by
-$f(\vect{x}) \geq 0$ and could be non-convex. By using Equation~\eqref{eq1}, we can express the constraint either in Cartesian coordinates or in terms of the state variables. Another constraint is added to prevent the trajectory from penetrating the wall (i.e. $X >0$) and we also want to set a limit on the fact the robot elevation should not go beyond the anchor level (i.e. $Z<0$).
+$f(\vect{x}) \geq 0$ and could be non-convex. 
+%By using~\eqref{eq1}, we can express the constraint either in Cartesian coordinates or in terms of the state variables. 
+Another constraint is added to prevent collision with the wall (i.e. $X >0$) and to ensure the robot elevation does not exceed the anchor level (i.e. $Z<0$).
 
 
 \noindent
 {\bf Actuation Constraints.}
 The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_u$.
-The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see Equation~\eqref{eq:forces}). Since the rope cannot push the robot 
+The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see~\eqref{eq:forces}). Since the rope cannot push the robot 
 (assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent (under the action of gravity). 
-What is more, the force is limited in with $F_r^{\text{max}}>0$, due to the limit of the actuators (e,g, a hoist). Therefore, the
-constraint on $F_r$ is expressed as:
+Moreover, the force is bounded by the limits of the actuators (e.g. a hoist). Therefore, the
+constraint on $F_r$ is:
 \[
   -F_r^{\text{max}} \leq F_r \leq 0.
 \]
 As regards $\mathbf{F}_u$, since it acts in a very small time reaching high peaks, we model it through a Dirac impulse: $\mathbf{F}_u   (t) = \mathbf{F}_u \delta(t)$, where
 $\mathbf{F}_u$ is a vector with the two components $F_{u,t}$ and $F_{u,n}$.
 The Dirac delta is a generalised function and cannot be handled by the optimal control frameworks, therefore, a smooth approximations is needed.
-A natural approximation is to use a Gaussian function, that is $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$. The duration $T_{th}$ of the impulse 
+A natural approximation is a Gaussian function, that is $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$. The duration $T_{th}$ of the impulse 
   is roughly given by $6 \sigma$. Given the nature of our actuation mechanism, a realistic choice is to have a duration in the order of tens of milliseconds, which obviously
-  determines a remarkable height for the impulse. The maximum norm of $\mathbf{F}_n$ is obviously upper-bounded by the actuation limits:
+  determines a remarkable height \ADP{Not clear what is meant here with "obviously determine a remarkable height". What height are you talking about? You mean the intensity of the impulse must be large because the duration is small?} for the impulse. The maximum norm of $\mathbf{F}_n$ \ADP{Should this be $F_u$?} is upper-bounded by the actuation limits:
   \[
     \sqrt{F_{u,n}^2 + F_{u,t}^2} \leq F_{u}^{\text{max}} \quad .
   \]
@@ -90,11 +92,11 @@ A natural approximation is to use a Gaussian function, that is $\delta(t-t_0) \a
 \begin{align*}
 \vert F_{u,t} \vert \leq \mu F_{u,n}
 \end{align*} 
-where $\mu$ is a constant depending on the nature of the terrain. For our simulation scenarios below, we have chosen $\mu = 0.8$ and $F_n^{\text{max}}=1000$N.
+where $\mu$ is a constant depending on the nature of the terrain. For our simulation scenarios below, we have chosen $\mu = 0.8$ and \ADP{$F_u$?} $F_n^{\text{max}}=1000$ N. \ADP{These are both unrealistic values, but I guess you knew it already! :)}
 
 \noindent
 {\bf Objective Function.}
-The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
+%The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
 We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $T(t_f)$ at the final instant. The reason for $T(t_f)$ is because when the robot lands,
 it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
 Therefore, assuming without loss of generality that $t_0=0$, we optimise
@@ -103,19 +105,18 @@ Therefore, assuming without loss of generality that $t_0=0$, we optimise
 &= w_t t_f + w_E \frac{m}{2} x_3(t_f)^2 \left(x_4(t_f)^2 + s^2_{x_1(t_f)}+ x_5(t_f)^2 \right) \\
                                          &\quad+ \frac{m }{2} x_6(t_f)^2.
 \end{align*}
+\ADP{Shouldn't $w_E$ multiply also the last term?}
 %%%
 with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution.
 
 We should observe that, in case of a difficult convergence, it is possible to "soften" some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
-slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or became part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
+slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
+\noindent
 \textbf{Initial guess.}
-To speedup convergence  we should  initialize the optimization with a reasonable initial guess.
-Because time $t_f$ is an optimization parameter, we compute the time constant for the system  linearized  around the initial state:
-
-
-
-We have to remark that the linearized system becomse also a good approximation when the jump length is small with respect to the rope elongation. 
+To speedup convergence we can initialize the optimization with a reasonable initial guess.
+Because time $t_f$ is an optimization parameter, we compute the time constant for the system linearized around the initial state. \ADP{Ok, but what about the other variables? You only provide the initial guess for the time. It's not clear from the text.}
+The linearized system become also a good approximation when the jump length is small with respect to the rope elongation. 
 
 %%% Local Variables:
 %%% mode: latex
