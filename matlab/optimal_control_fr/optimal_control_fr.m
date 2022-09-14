@@ -29,7 +29,7 @@ N_dyn = 20; %dynamic constraints (discretization)
 dt=0.001; % to evaluate solution
 
 if FRICTION_CONE
-    N_dyn = 40;
+    N_dyn = 20;
 end
 
 % Marco Frego test: initial state
@@ -68,6 +68,7 @@ solution.cost = final_cost;
 problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
 % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
 % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
+%EXITFLAG == 0 max number of iterations
 
 if problem_solved
     plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', n_test==1);
