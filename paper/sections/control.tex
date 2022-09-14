@@ -1,9 +1,9 @@
 As anticipated in the system description above, one of the most
-complex aspect of this system is that part of the control, the
+complex aspects of this system is that part of the control, the
 $\vect{F}_u$ force, has an impulsive nature.  Its effect can be
-modeled as an isntantaneous reset of the velocities $\dot{\theta}$ and
+modeled as an instantaneous reset of the velocities $\dot{\theta}$ and
 $\dot{\phi}$, i.e., $x_4$ and $x_5$, respectively.  More precisely,
-this effect is modelled using known state of the art
+this effect is modelled using known state-of-the-art
 results~\cite{dim17}, i.e.
 \begin{equation}
   \label{eq:Reset}
@@ -14,21 +14,21 @@ results~\cite{dim17}, i.e.
 \end{equation}
 Due to the imprecisions in the actuators and to the lack of knowledge
 on the terrain characteristics, the velocities after the reset could
-differ from the exepcted values hence perturbing the whole trajectory.
+differ from the expected values hence perturbing the whole trajectory.
 The only possibility for fixing the deviation is to rely on the only
 control variable available during the flight, i.e., the traction force
 $F_r$, and use it within a feedback control law.  In this
-section, we will first address the controllability problem, i.e., if
-such a feedback law can be found for an underactuated system like the
-one one in question. Second, we will show how such a feedback control
-law can be designed.
+section, we first address the controllability problem, i.e., if
+such a feedback law can be found for an under-actuated system like ours. 
+Second, we show how to design such a feedback control law.
 
 \noindent
-{\bf Local Reachability. }
+{\bf Local Reachability. } \ADP{Why don't you like subsubsections?}
 
 Let us consider the system canonical form~\eqref{eq:NonLinStateSpace},
 with the availability of the input $F_r$, while
-$F_{u,n} = F_{u,t} = 0$ by means of~\eqref{eq:Reset}. By recalling the
+$F_{u,n} = F_{u,t} = 0$ by means of~\eqref{eq:Reset}. \ADP{Not clear what \eqref{eq:Reset} has to do with the assumption that $F_u=0$} 
+By recalling the
 results in~\cite{isidori1985nonlinear}, we can compute the involutive
 distribution $\Delta_n(\vect{x})$ and conclude for local reachability
 iff $\Delta_n(\vect{x})$ is nonsingular. As such, consider the system
@@ -63,7 +63,7 @@ It is then possible to derive in a recursive manner
 where, with a slight abuse of notation,
 $[f(\vect{x}),\Delta_n(\vect{x})]$ is intended as the Lie brackets of
 $f(\vect{x})$ with respect to all the vector fields of
-$\Delta_n(\vect{x})$. It turns then out that
+$\Delta_n(\vect{x})$. After carrying out all the computations, it turns out that
 $\dim\{\mbox{span}\{\Delta_5\}\} = 6$, i.e., the distribution is
 nonsingular and, hence, the system is locally reachable.
 
@@ -83,6 +83,7 @@ and whose time derivative is simply given by
   \dot V_1(x_1, x_2, l) = (x_1 - \overline x_1) \omega +
   (x_2 - \overline x_2) \psi + (l - \overline x_3) r . 
 \]
+\ADP{Why did you replace $x_3$ with $l$ in this equation? It seems inconsistent with the previous one.}
 Hence, assuming the proportional control laws (with
 $k_{x_1}, k_{x_2}, k_{x_3} > 0$)
 \begin{equation}
