@@ -12,19 +12,18 @@ there are still ways to climb walls not yet studied or reported \cite{bio_inspir
 
 % Introduction of the problem 
 The research work done so far on climbing robots is reviewed and classified in 
-\cite{Fang2022} and \cite{A.Hajeeretall2020}, respectively, according to the 
-adhesion method \cite{longo2008} used to attach the robot to the wall, 
-locomotion \cite{Chu2010}, and type of the walking mechanism. These \ADP{I cannot understand what `these` refers to here} 
-are considered as the two main problems to be solved in designing wall-climbing robots. Other 
-requirements may also be requested depending on the desired application, like (R1) to 
-move safely, and (R2) fast in emergency situations, (R3) ability to carry a payload, 
-and (R4) avoid obstacles \cite{Schmidt2013}.
+\cite{Fang2022} and \cite{A.Hajeeretall2020}, respectively, according to the
+adhesion technique \cite{longo2008} used to attach the robot to the wall surface, 
+and locomotion mechanism \cite{Chu2010}, utilized for climbing.
+These attachment and moving methods are basically considered as the main problems 
+to be solved in designing climbing robots. Other requirements may also be requested 
+depending on the desired application, like (R1) to move safely, and (R2) fast in emergency 
+situations, (R3) ability to carry a payload, and (R4) avoid obstacles \cite{Schmidt2013}.
 
 % Summarizing what's coming in the introduction
-In this paper, we present a climbing robot for rescue missions that uses a rope/wire 
-as an attachment method, and jumping as moving technique to reach desired 
-locations on a mountain, overcoming obstacles.
-%
+%In the coming two paragraphs, we give the reasons behind using a rope/wire 
+%as an attachment method. After that, we suggest the jumping as moving technique.
+
 %% Solution for Attachment technique : USING A ROPE + main advantages   
 Humans inspired the technique of using a rope mainly for safety measures (R1)
 to support the weight of people during facade cleaning, firefighting and rescue missions
@@ -43,14 +42,12 @@ that require a prompt intervention such as Search $\&$ Rescue missions.
 %  
 %% Third advantage 
 Furthermore, ropes can supper much heavier payloads (R3) than robots relying on sticky/adhesive approaches~\cite{Kim2008,Riskin2009}, because of the limited tangential component of the adhesive and leg actuation.
-\ADP{I have removed the sentence on the rope being inextensible because I don't see the connection between the rope being inextensible and the payload. The payload is large because gravity is compensated through the rope force instead of the contact force with the wall.}
 %the amount of payload that can be carried by sticky/adhesive based climbing 
 %robots \cite{Kim2008,Riskin2009} is very limited due to the small tangential component of 
 %the adhesive and leg actuation. Conversely, a feature of rope to be ideally 
 %inextensible\footnote{The maximum payload will be limited by the maximum force deliverable 
 %by the winding mechanism, e.g. a hoist, which can be extended using a gearbox.} \ADP{I don't see the connection between the rope being inextensible and the payload. The payload is large because gravity is compensated through the rope force instead of the contact force with the wall.}
 %will allow the robot to carry a heavier payload (R3). 
-
 %Difficulties due to the dynamics when using a rope
 However, having the robot attached to a rope poses some challenges.
 First, the robot is under-actuated because it cannot \textit{fully} control the position of its center of mass when 
@@ -59,9 +56,9 @@ constraint (i.e. it can only pull and not push), which further complicates the a
 dynamics and the low control authority of this class of robots. 
 
 % Providing a solution for second problem: locomotion technique, we can reach the target with jumps 
-\ADP{This sentence seems disconnected from the previous part} An example of a rapid jumping locomotion is shown in \cite{Haldane2017}, so 
-rather than slowly taking steps as a walking technique, the robot can take one or multiple 
-jumps to reach the desired location.
+Finally, rather than slowly taking steps as walking mechanism, the robot can take one or multiple 
+jumps like the rapid jumping Salto-1P shown in \cite{Haldane2017} to reach the desired locations, 
+and overcoming obstacles.
 
 %Difficulties in the jumping technique
 To summarize, the key features of jumping with a rope that can be released, 
