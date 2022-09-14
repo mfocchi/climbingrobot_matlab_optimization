@@ -127,7 +127,7 @@ end
 
 
 % final point  fixed slack 
-fixed_slack = 0.02*norm(p0 - pf); 
+fixed_slack = 0.02;%*norm(p0 - pf); 
 ineq= [ineq norm(p_f - pf) - fixed_slack];
 
 
