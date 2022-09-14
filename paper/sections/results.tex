@@ -1,64 +1,71 @@
-This section presents simulation results that show that the planned impulses and the pattern of retraction force, 
-result in of the optimization in Section \ref{sec:motionP} bring the robot to a desired target. 
+This section presents simulation results that show how the  the planned impulses and the pattern of retraction force, 
+obtained running  the optimization of Section \ref{sec:motionP}, are able to bring the robot to a desired target. 
+The OCP solver used is PINS~\cite{pins:1,pins:2,pins:3}, which uses the indirect approach based on the Pontryagin Maximum Principle.
 
-We validate  the results of the optimization comparing the trajectories for the \gls{com} 
-in the case of the  simplified model (Matlab) and of the full 3D model (Gazebo) for a jump to a target at $p_f = \mat{3 & 3 &-20}^T$ $[m]$
-starting from an initial position $p_0 = \mat{0.024& 0& -8}^T$. During the jump the robot has to avoid 
-a rock pillar (see the accompanying video\footnote{ \href{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4}{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4} }) that is laying  the wall, that we model 
-as a 20 $m$ high cone with a base  radius 2.5 $m$.
-
-The physical parameters of the robot and environment and the optimization settings are reported in Table \ref{tab:params}:
-\begin{table}[h!]
+% 1st experiment: validation of optimization with 2 models, with obstacle
+In a first experiment, we run the optimization to perform  a 12 $m$ jump starting from an initial 
+position $p_0 = \mat{0.024& 0& -8}^T$ up to a target at $p_f = \mat{3 & 3 &-20}^T$ $[m]$. As additional constraint,
+during the jump, the robot has to avoid a rock pillar (see the accompanying 
+video\footnote{ \href{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4}
+{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4} }) that is laying  the wall, that we model as a 20 $m$ high cone with a base of radius 2.5 $m$.
+We validate the result of the optimization in the case of the simplified model (in a Matlab environment)
+and for the full 3D model. In this case we built a Gazebo simulator based on the URDF  description \cite{urdf} of the robot.
+The physical parameters of the robot and of the environment together with the 
+optimization settings, are reported in Table \ref{tab:params}:
+%
+\begin{table}[H]
 	\centering
 	\caption{ Simulations parameters}
 		\begin{tabular}{l c c  } \hline\hline
-			\textbf{Name} \quad & \textbf{Symbol}           & \textbf{Value}  \\ \hline
-					Robot mass            & m  & 5                 \\ 
-					Max. impulse  [N]	& $F_{u}^{\text{max}}$				& 1000   \\
-					Max. retraction force [N] & $F_r^{\text{max}} $			& 200    \\
-					Friction coeff.		& $ \mu $ 					& 0.8   \\
-					Thrust impulse duration	[s]& 	$T_{th}$  				& 0.025\\
-					Discretization steps  & N & 40\\					        
+			\textbf{Name} \quad                  & \textbf{Symbol}                     & \textbf{Value}  \\ \hline
+					Robot mass                   & m  & 5                 \\ 
+					Max. impulse  [N]       	 & $F_{u}^{\text{max}}$				& 1000   \\
+					Max. retraction force [N]    & $F_r^{\text{max}} $			& 200    \\
+					Friction coeff.				 & $ \mu $ 					        & 0.8   \\
+					Thrust impulse duration	[s]  & 	$T_{th}$  				& 0.025\\
+					Discretization steps         & N 						& 20\\					        
 			\hline\hline 					    					    					    
 		\end{tabular}
 		\label{tab:params}
 \end{table}
 %
-For the Matlab simulation we simply integrate equation \eqref{eq:nonlinearDyn} with a ode45 Runge Kutta variable-step integration scheme.
-For the Gazebo simulation,  we employ the full model, therefore we need to find a mapping from the template model 
-to the more complex one. We can directly  actuate the rope joint with the $F_r$ force pattern, but we have to  
-map the contact force $F_c$ into efforts at the leg joints 
-as follows:
+For the Matlab simulation we simply integrate equation \eqref{eq:nonlinearDyn} 
+with a ode45 Runge Kutta variable-step integration scheme.
+For the Gazebo simulation, we assume to apply the push impulse as a force $F_c$ at the contact point.
+Therefore we employ the leg dynamics to define the mapping between the contact force $F_c$ and the torques $\tau_{\text{leg}}$ at the leg joints:
 %
 \begin{equation}
-\tau_{\text{leg}}= \mat{\tau_{HP} \\ \tau_{HR} \\ f_{K}} =  h_{\text{leg}} -J_{\text{leg}}^T \underbrace{\left(R_b^\mathcal{W}  \mat{F_{u,n} \\ F_{u,t} \\ 0} \right) 	}_{F_c}
+\tau_{\text{leg}}^d= \mat{\tau_{HP} \\ \tau_{HR} \\ f_{K}} =  h_{\text{leg}} -J_{\text{leg}}^T \underbrace{\left(R_e^\mathcal{W}  \mat{F_{u,n} \\ F_{u,t} \\ 0} \right) 	}_{F_c}
 \end{equation}
 %
 Where $J_{\text{leg}} \in \Rnum^{3 \times 3}$ is the sub-matrix of the Jacobian $J$ relative to the leg jonts, $R_b^\mathcal{W}$ is the rotation matrix 
 that represents the orientation of the base link w.r.t. the inertial frame $\mathcal{W}$ (different from $R_e^\mathcal{W}$) and $h_{\text{leg}} \in \Rnum ^3$
 represents the bias terms (Centripetal, Coriolis, gravity). Note that  we do
 no generate any impulse along the rope direction (base link $Z$ direction) in 
-order to avoid to accidentally create  any slack on the rope. 
-We set a virtual damper to keep the passive joints at the 
-in a fixed position to avoid the motion of the base passive joints, since the optimization is performed 
+order to avoid to accidentally create  any slack on the rope.
+Additionally, to avoid complexity, we implement  virtual dampers to keep the passive joints at the 
+base in a fixed position in order to avoid the angular motions, since the optimization is performed 
 considering the simplified model that neglects the angular dynamics. 
 
 We set the initial configuration to $q_0= \mat{ \atandue(r_{\text{leg}}, l_0) & 0 &0  & l_0 & 0 &  0 & 0  & -1.57  & 0 & 0}^T$ 
-where $l_0$ is the initial rope length and $r_{leg}=0.38$ $m$ is the leg length in the default configuration. 
-At $q_0$  the foot is touching the wall in $p_0$ that is the starting point for the optimized trajectory.
-A state machine coordinates the 3 phases of the jump: leg orientation, thrusting and flying. In the leg orientation phase, 
- the hip roll joint is commanded
-to have the leg aligned with the impulse direction 
-by setting the reference for a position PD controller to $q_{HR}^d = \atandue(\text{max}(F_{u,t}), \text{max}(F_{u,n}))$. 
-Note that $q_{0, HP} = -1.57$ in order to have the leg lying on the base frame X-Y axes.
+where $l_0$ is the initial rope length and $r_{leg}=0.38$ $m$ is the leg length at the startup configuration. 
+At $q_0$  the foot is meant to touch the wall in $p_0$, the starting point of the optimized trajectory.
+A state machine coordinates the 3 phases of the jump: leg orientation, thrusting and flying. 
+In the leg orientation phase,  the hip roll joint set-point $q_{HR}^d$ is commanded
+to have the leg aligned with the impulse direction, $q_{HR}^d = \atandue(\text{max}(F_{u,t}), \text{max}(F_{u,n}))$. 
+Note that the hip-pitch joint set-point is $q_{0, HP}^d = -1.57$ in order to 
+have the leg lying on the X-Y plane of the base frame. A low level PD controller 
+runs in parallel with the  feed-forward actions $\tau_{\text{leg}}^d$ to drive the joints.  
 During the \textit{thrusting} phase the force $F$ is generated at the contact 
-applying $\tau_{\text{leg}}$ for a time $T_{th} = 0.05 s$ then it starts the 
-flying phase where the optimized force is set to $\tau_R = F_r$ for the whole jump duration $T_f$.
+applying $\tau_{\text{leg}}$ for a time $T_{th} = 0.025 s$, while the PD gains are 
+switched off to avoid conflicts. Then  it follows  the 
+flying phase, where   the rope winding joint is actuated with the optimized force pattern $\tau_R = F_r(t)$ for the whole jump duration $T_f$.
 
+% computation time and number of nodes
 The computation time for the optimization and the integration error at the target $\Vert e_f \Vert$  are linearly  
 linked to the number of discretization points $N$. In Table~\ref{tab:solve_time} we report 
 also the integration error normalized for the jump length $\Vert e_f \Vert / (l_f-l_0)$ 
-for  different numbers of discretization points. The OCP solver used is PINS~\cite{pins:1,pins:2,pins:3}, which uses the indirect approach based on the Pontryagin Maximum Principle.
+for  different numbers of discretization points. 
 %%%
 \begin{table}[h!]
 \centering
@@ -71,12 +78,10 @@ for  different numbers of discretization points. The OCP solver used is PINS~\ci
 			1000   &   2.648          &  0.0238 & 0.00191 \\
 			2000   &   5.063          &  0.0180 & 0.00145 \\
 		\hline\hline 					    
-	\end{tabular}
-	
+	\end{tabular}	
 \end{table}
 
 
-% validation
 In Fig. \ref{fig:validation}  we report the results of the validation. 
 The discrepancy in the target position is mainly due to drift in the integration in the case of Matlab and to the approximation
 of the simplified model with respect to the real one in the  case of Gazebo simulation. 

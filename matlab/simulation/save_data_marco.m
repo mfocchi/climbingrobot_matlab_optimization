@@ -24,8 +24,8 @@ phi0 = 0 ;
 %T = table2array(readtable('08_09_2022_obstacle','NumHeaderLines',20)); % 21
 %T = table2array(readtable('09_09_2022mu07','NumHeaderLines',20)); % 21
 %T = table2array(readtable('09_09_2022_3','NumHeaderLines',20)); % obstacle (0, 1.5)
-%T = table2array(readtable('first_jump_0224_0_8_to_3_3_20','NumHeaderLines',20)); % obstacle (0, 1.5) , pf = [3,3,-20] 1st jump
-T = table2array(readtable('second_jump_3_3_20_to_0224_5_25','NumHeaderLines',20)); % obstacle (0, 1.5) , p0 = [0.,3,-20] 2nd jump
+T = table2array(readtable('first_jump_0224_0_8_to_3_3_20','NumHeaderLines',20)); % obstacle (0, 1.5) , pf = [3,3,-20] 1st jump
+%T = table2array(readtable('second_jump_3_3_20_to_0224_5_25','NumHeaderLines',20)); % obstacle (0, 1.5) , p0 = [0.,3,-20] 2nd jump
 
 
 
