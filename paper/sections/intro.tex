@@ -1,10 +1,15 @@
 
 % Strong background references addresses "what is already known" 
-The idea of developing climbing robots was expected for years but only in 1986, 
-Nishi et al. presented in their seminal paper \cite{Nishi1986} 
-the design of a robot that can walk on a vertical surface. During the last thirty years, many 
-prototypes of climbing robots have been proposed for specific applications to replace 
-humans in dangerous and difficult tasks, including inspection of nuclear power 
+A climbing robot is a robot that moves on a vertical surfaces.
+The idea was first suggested in a seminal work by Nishi et al.\cite{Nishi1986}
+and has been revisited throughout for different application domains, 
+including
+%% The idea of developing climbing robots was expected for years but only in 1986, 
+%% Nishi et al. presented in their seminal paper \cite{Nishi1986} 
+%% the design of a robot that can walk on a vertical surface. During the last thirty years, many 
+%% prototypes of climbing robots have been proposed for specific applications to replace 
+%% humans in dangerous and difficult tasks, including inspection of
+nuclear power 
 plants \cite{Briones1994}, high-rise building cleaning \cite{Nansai2016}, bridges 
 maintenance \cite{Wang2016}, search and rescue missions \cite{Eich2008}. 
 However, % Mention a Gap in knowledge
@@ -13,21 +18,27 @@ there are still ways to climb walls not yet studied or reported \cite{bio_inspir
 % Introduction of the problem 
 The research work done so far on climbing robots is reviewed and classified in 
 \cite{Fang2022} and \cite{A.Hajeeretall2020}, respectively, according to the
-adhesion technique \cite{longo2008} used to attach the robot to the wall surface, 
-and locomotion mechanism \cite{Chu2010}, utilized for climbing.
-These attachment and moving methods are basically considered as the main problems 
-to be solved in designing climbing robots. Other requirements may also be requested 
-depending on the desired application, like (R1) to move safely, and (R2) fast in emergency 
-situations, (R3) ability to carry a payload, and (R4) avoid obstacles \cite{Schmidt2013}.
+adhesion technique \cite{longo2008} used to attach the robot to the
+wall surface, and locomotion mechanism \cite{Chu2010}, utilized for
+climbing.  The attachment and motion mechanisms are basically
+considered as the main problems when designing climbing
+robots. Additional requirements of equal importance come from the
+application and include (R1) safety, and (R2) quickness in emergency
+situations, (R3) carrying payloads, and (R4) avoiding
+obstacles \cite{Schmidt2013}.
 
 % Summarizing what's coming in the introduction
 %In the coming two paragraphs, we give the reasons behind using a rope/wire 
 %as an attachment method. After that, we suggest the jumping as moving technique.
 
 %% Solution for Attachment technique : USING A ROPE + main advantages   
-Humans inspired the technique of using a rope mainly for safety measures (R1)
+Human climbers inspired the use of a rope mainly for safety measures (R1)
 to support the weight of people during facade cleaning, firefighting and rescue missions
-\cite{Nansai2016}. 
+\cite{Nansai2016}.
+In this paper, we combine the use of a rope with a leg, which can be retracted and extended
+very quickly. This allows the robot to jump away from the mountain wall, while the rope
+can be used to control its motion.
+
 %Legged robots---as well as mobile robots---cannot walk on slopes with too high inclinations \cite{Abdalla12020} because limited friction results in slippage and falling.
 %Instead, using a rope introduces an external force to compensate 
 %for gravity (along the rope direction) and 
@@ -35,13 +46,13 @@ to support the weight of people during facade cleaning, firefighting and rescue 
 %the middle of the friction cones) which ensures inherent safety (R1).
 %
 %% second advantage of using a rope : increase speed of movment 
-In addition, similarly to the recent work of Wang et al. \cite{Wang2014} on dragline 
+Additionally, as shown by Wang et al. \cite{Wang2014} on dragline 
 locomotion bio-inspired from spiders, the aid of rope can dramatically increase the locomotion speed (R2) 
 by a winding and releasing mechanism, therefore being a preferable solution in applications
 that require a prompt intervention such as Search $\&$ Rescue missions.  
 %  
 %% Third advantage 
-Furthermore, ropes can supper much heavier payloads (R3) than robots relying on sticky/adhesive approaches~\cite{Kim2008,Riskin2009}, because of the limited tangential component of the adhesive and leg actuation.
+Furthermore, ropes can support much heavier payloads (R3) than robots relying on sticky/adhesive approaches~\cite{Kim2008,Riskin2009}, because of the limited tangential component of the adhesive and leg actuation.
 %the amount of payload that can be carried by sticky/adhesive based climbing 
 %robots \cite{Kim2008,Riskin2009} is very limited due to the small tangential component of 
 %the adhesive and leg actuation. Conversely, a feature of rope to be ideally 
@@ -61,7 +72,7 @@ jumps like the rapid jumping Salto-1P shown in \cite{Haldane2017} to reach the d
 and overcoming obstacles.
 
 %Difficulties in the jumping technique
-To summarize, the key features of jumping with a rope that can be released, 
+To summarise, the key features of jumping with a rope that can be released, 
 are related to the locomotion speed and the 
 ability to address up to \textit{vertical} inclinations. 
 However, the resulting motion of the 
@@ -71,24 +82,24 @@ impulse exerted on the wall at lift-off, 2) the winding/unwinding of the rope.
 %Optimization for plannig 
 Therefore, a planning strategy for this kind of motions should take 
 into account both these factors, besides the under-actuation, 
-the constrains posed by the rope, the actuator limits and the 
+the constraints posed by the rope, the actuator limits and the 
 contact interaction (i.e. friction). 
 
-Numerical optimization is an attractive solution for these 
-planning problems \cite{Nguyen2019,Ding2020}, since it allows to minimize some optimality criteria, 
+Numerical optimisation is an attractive solution for these 
+planning problems \cite{Nguyen2019,Ding2020}, since it allows to minimise some optimality criteria, 
 while ensuring that the physical constraints are satisfied along the planning horizon. 
 %
 %Indeed, casting locomotion planning as an optimization problem
 %allows one to represent high-level tasks and system dynamics using cost functions and 
 %constraints. 
-In this framework, different goals can also be pursued, such as minimizing energy 
+In this framework, different goals can also be pursued, such as minimising energy 
 consumption or reaching the target in minimum time. 
 
 \subsection{Proposed Approach and Contribution}
 %
 In this work, we present a novel robotic platform called CLIO  (CLImbing rObot) that is able to 
 reach desired targets on a vertical (or slanted) wall with different frictional properties. 
-We propose a planning approach, based on numerical optimization, 
+We also propose a planning approach, based on numerical optimisation, 
 to solve the jumping problem employing a simplified model of the dynamics.
 To summarize, the contributions of the paper are:
 \begin{itemize}
