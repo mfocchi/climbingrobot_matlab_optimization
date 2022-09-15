@@ -58,7 +58,7 @@ pf = p(:,end);
 % p0 = [0.2240;         0;   -8.0000];
 % pf = [3;        3;   -20.0000];
 
-T_th = Tf(1)*0.0646;
+T_th = Tf(1)*0.05;
 
 % velocity (variable length)
 pd = [ld.*cos(phi).*sin(theta) - l.*phid.*sin(phi).*sin(theta) + l.*thetad.*cos(phi).*cos(theta);
@@ -124,17 +124,17 @@ plot_curve( solution, p0, pf, mu,  'r');
 %ad obstacle
 cone(0,1.5,0);
 %cone(0,5,-4)
-% 
-% figure
-% plot(time, Fun)
-% ylabel('Fun')
-% 
-% figure
-% plot(time, Fut)
-% ylabel('Fut')
-% 
-% figure
-% plot(time, fFut./fFun)
+
+figure
+plot(time, Fun)
+ylabel('Fun')
+
+figure
+plot(time, Fut)
+ylabel('Fut')
+
+figure
+plot(time, fFut./fFun)
 
 
 % test of the leg displacement 

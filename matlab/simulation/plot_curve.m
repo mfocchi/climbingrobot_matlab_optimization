@@ -16,13 +16,13 @@ if full_update
     max_y = max(max(solution.p(2,:)), pf(2)) +1;
     min_z = min(pf(3,:));
     max_z = 0;
+    max_z_cone = p0(3);
     
-    
-    hold on ; grid on ; axis equal
-    set(gca,'XLim',[min_x max_x])
-    set(gca,'YLim',[min_y max_y])
-    set(gca,'ZLim',[min_z max_z]) 
-    
+    hold on ; grid on ; axis equal;
+    set(gca,'XLim',[min_x max_x]);
+    set(gca,'YLim',[min_y max_y]);
+    set(gca,'ZLim',[min_z max_z]); 
+    set(gca,'FontSize',25);
     
     %     drawing a wall at X = 0
     p1 = [0 min_y min_z];
@@ -36,8 +36,8 @@ if full_update
 
     if mu~= 0
     % half cone
-        pcone1 = [0 0 max_z];
-        pcone2 = [mu*(max_y) max_y max_z];
+        pcone1 = [0 0 max_z_cone];
+        pcone2 = [mu*(max_y) max_y max_z_cone];
         pcone3 = [mu*(max_y) max_y min_z];
         pcone4 = [0 0  min_z];
         Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];
@@ -46,8 +46,8 @@ if full_update
         h(4) = fill3(Xw, Yw, Zw, 'r', 'FaceAlpha',.3  );
 
         % other half cone
-        pcone1 = [0 0 max_z];
-        pcone2 = [mu*(max_y) -max_y max_z];
+        pcone1 = [0 0 max_z_cone];
+        pcone2 = [mu*(max_y) -max_y max_z_cone];
         pcone3 = [mu*(max_y) -max_y min_z];
         pcone4 = [0 0  min_z];
         Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];

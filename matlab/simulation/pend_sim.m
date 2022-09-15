@@ -200,8 +200,8 @@ xlim([0, time(end)])
 
 % save the plot
 set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [40 30]);
-set(gcf, 'PaperPosition', [0 0 40 30]);
+set(gcf, 'PaperSize', [30 20]);
+set(gcf, 'PaperPosition', [0 0 30 20]);
 print(gcf, '-dpdf',strcat('../../paper/matlab/validation.pdf'),'-painters')
 
 % 

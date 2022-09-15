@@ -35,11 +35,12 @@ max_x = max(x_vec);
 min_y = min(y_vec);
 max_y = max(y_vec);
 max_z = 0;
+max_z_cone = p0(3);
 min_z = min(z_vec);
 
 % half cone
-pcone1 = [0 0 max_z];
-pcone2 = [max_x max_x*mu max_z];
+pcone1 = [0 0 max_z_cone];
+pcone2 = [max_x max_x*mu max_z_cone];
 pcone3 = [max_x max_x*mu min_z];
 pcone4 = [0 0  min_z];
 Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];
@@ -48,8 +49,8 @@ Zw = [pcone1(3) pcone2(3) pcone3(3) pcone4(3)];
 h(4) = fill3(Xw, Yw, Zw, 'r', 'linewidth',4,'FaceAlpha',.3 , 'EdgeColor','r' );
 
 % other half cone
-pcone1 = [0 0 max_z];
-pcone2 = [mu*(max_y) -max_y max_z];
+pcone1 = [0 0 max_z_cone];
+pcone2 = [mu*(max_y) -max_y max_z_cone];
 pcone3 = [mu*(max_y) -max_y min_z];
 pcone4 = [0 0  min_z];
 Xw = [pcone1(1) pcone2(1) pcone3(1) pcone4(1)];
