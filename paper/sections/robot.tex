@@ -63,7 +63,7 @@ attached to the mountain wall.
 
 Let $e$ be a frame attached to the point mass $m$, and let $\mathcal{W}$ be the world
 frame attached to the anchor point of the pendulum.  If we
-consider the homogeneous transformation from $e$ to $\mathcal{W}$, we can write: \ADP{I am not sure showing all the derivation of the dynamics is useful, also considering the strict page limit}
+consider the homogeneous transformation from $e$ to $\mathcal{W}$, we can write: 
 	\[
 T_e^\mathcal{W} = \begin{bmatrix} R_z(\phi) & \mathbf{0}_{3 \times 1}  \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  \begin{bmatrix} R_y( \frac{\pi}{2} - \theta) & \mathbf{0}_{3 \times 1}   \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
 \begin{bmatrix} I_{3,3} &    \begin{matrix} l \\0 \\0 \end{matrix}    \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
@@ -129,82 +129,87 @@ which leads to the Lagrangian function described as:
 \end{equation}
 %
 The dynamics of the system will be obtained using the Euler-Lagrange equation:
-%
-\[
-\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p 
-\]
-where $Q_i^p$ is the generalized force along the $q_i$ generalized coordinate: 
-$Q_i^p = (\mathbf{F}_r + \mathbf{F}_u)  \frac{\partial \mathbf{p}}{\partial q_i}$ , \\
-$\mathbf{F}_r$ is oriented along the rope ($\mathbf{e}_r$) and $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
-%		
-\begin{equation}
-	\begin{aligned}
-		\mathbf{F}_r  &= F_r \mathbf{e}_r= F_r \begin{bmatrix}
-			c_\phi s_\theta\\
-			s_\phi s_\theta\\
-			-c_\theta
-		\end{bmatrix}  \\	
-		\mathbf{F}_u &= F_{u,t}\mathbf{e}_t + F_{u,n} \mathbf{e}_n = F_{u,t}
-		\begin{bmatrix}
-			-s_\phi\\
-			c_\phi\\
-			0
-		\end{bmatrix} + 
-		F_{u,n} \begin{bmatrix}
-			c_\phi c_\theta \\
-			s_\phi c_\theta\\
-			s_\theta
-		\end{bmatrix} 
-	\end{aligned}
-	\label{eq:forces}
-\end{equation}
-%
-Let the generalized coordinates $q_i$ be chosen as $q_1 = \theta$, $q_2 = \phi$ and $q_3 = l$. The corresponding velocities are:
-%
-\begin{align*}
-	\qquad	\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
-			l c_\phi c_\theta\\
-			l s_\phi c_\theta\\
-			l s_\theta
-		\end{bmatrix},  \text{and} \quad 
-		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
-			- l s_\phi s_\theta\\
-			l c_\phi s_\theta\\
-			0
-		\end{bmatrix}, \\
-		\frac{\partial \mathbf{p}}{\partial q_3} = \frac{\partial \mathbf{p}}{\partial l} &= \begin{bmatrix}
-			c_\phi s_\theta\\
-			s_\phi s_\theta\\
-			-c_\theta
-		\end{bmatrix} .
-	\end{align*}
 
-	Hence,
-\begin{align*}
-	Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
-	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
-	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
-	%% 		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
-	= F_{u,n} l , \\
-	% 	\end{align*}
-% 	\begin{align*}
-	Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}
-	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
-	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
-	%% 		&= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
-	= F_{u,t} l s_\theta,\\
-	%% 	\end{align*}
+
+
+
+%%%%%%%%
+%%
+%\[
+%\frac{d}{dt}\frac{\partial L}{\partial \dot{q}_i} - \frac{\partial L}{\partial q_i} = Q_i^p 
+%\]
+%where $Q_i^p$ is the generalized force along the $q_i$ generalized coordinate: 
+%$Q_i^p = (\mathbf{F}_r + \mathbf{F}_u)  \frac{\partial \mathbf{p}}{\partial q_i}$ , \\
+%$\mathbf{F}_r$ is oriented along the rope ($\mathbf{e}_r$) and $\mathbf{F}_u$ is generated so that it does not have any component along the rope:
+%%		
+%\begin{equation}
+%	\begin{aligned}
+%		\mathbf{F}_r  &= F_r \mathbf{e}_r= F_r \begin{bmatrix}
+%			c_\phi s_\theta\\
+%			s_\phi s_\theta\\
+%			-c_\theta
+%		\end{bmatrix}  \\	
+%		\mathbf{F}_u &= F_{u,t}\mathbf{e}_t + F_{u,n} \mathbf{e}_n = F_{u,t}
+%		\begin{bmatrix}
+%			-s_\phi\\
+%			c_\phi\\
+%			0
+%		\end{bmatrix} + 
+%		F_{u,n} \begin{bmatrix}
+%			c_\phi c_\theta \\
+%			s_\phi c_\theta\\
+%			s_\theta
+%		\end{bmatrix} 
+%	\end{aligned}
+%	\label{eq:forces}
+%\end{equation}
+%%
+%Let the generalized coordinates $q_i$ be chosen as $q_1 = \theta$, $q_2 = \phi$ and $q_3 = l$. The corresponding velocities are:
+%%
+%\begin{align*}
+%	\qquad	\frac{\partial \mathbf{p}}{\partial q_1} = \frac{\partial \mathbf{p}}{\partial \theta} &= \begin{bmatrix}
+%			l c_\phi c_\theta\\
+%			l s_\phi c_\theta\\
+%			l s_\theta
+%		\end{bmatrix},  \text{and} \quad 
+%		\frac{\partial \mathbf{p}}{\partial q_2} = \frac{\partial \mathbf{p}}{\partial \phi} &= \begin{bmatrix}
+%			- l s_\phi s_\theta\\
+%			l c_\phi s_\theta\\
+%			0
+%		\end{bmatrix}, \\
+%		\frac{\partial \mathbf{p}}{\partial q_3} = \frac{\partial \mathbf{p}}{\partial l} &= \begin{bmatrix}
+%			c_\phi s_\theta\\
+%			s_\phi s_\theta\\
+%			-c_\theta
+%		\end{bmatrix} .
+%	\end{align*}
+%
+%	Hence,
+%\begin{align*}
+%	Q_1^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_1} 
+%	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+%	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} + \\
+%	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta}  =  \\
+%	%% 		&= F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \theta} = \\
+%	= F_{u,n} l , \\
+%	% 	\end{align*}
 %% 	\begin{align*}
-	Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}
-	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
-	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
-	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
-	= F_{r} .
-\end{align*}
-The Euler-Lagrange equations gives us, with the defined generalized coordinates, the non-linear dynamic equations of the system: 
+%	Q_2^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_2}
+%	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+%	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} + \\
+%	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial \phi}   = \\
+%	%% 		&= F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial \phi} =\\
+%	= F_{u,t} l s_\theta,\\
+%	%% 	\end{align*}
+%%% 	\begin{align*}
+%	Q_3^p &= \left(\mathbf{F}_r + \mathbf{F}_u\right)   \frac{\partial \mathbf{p}}{\partial q_3}
+%	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+%	%% 		&+ F_{u,t} \mathbf{f}_{u,t} \cdot  \frac{\partial \mathbf{p}}{\partial l} + \\
+%	%% 		&+ F_{u,n} \mathbf{f}_{u,n} \cdot  \frac{\partial \mathbf{p}}{\partial l}   = \\
+%	%% 		&= F_r \mathbf{f}_r \cdot  \frac{\partial \mathbf{p}}{\partial l} =\\
+%	= F_{r} .
+%\end{align*}
+%The Euler-Lagrange equations gives us, with the defined generalized coordinates, the non-linear dynamic equations of the system: 
 
 % 	\begin{align*}
 %		&\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{\theta}} \right) - \frac{\partial L}{\partial \theta} = Q_1^p  \rightarrow  \\

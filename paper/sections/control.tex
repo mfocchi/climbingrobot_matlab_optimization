@@ -22,167 +22,167 @@ section, we first address the controllability problem, i.e., if
 such a feedback law can be found for an under-actuated system like ours. 
 Second, we show how to design such a feedback control law.
 
-\subsection{Local Reachability}
-
-Let us consider the system canonical form~\eqref{eq:NonLinStateSpace},
-with the availability of the input $F_r$, while
-$F_{u,n} = F_{u,t} = 0$ assuming resets and impulsive forces as
-in~\eqref{eq:Reset}. By recalling the results
-in~\cite{isidori1985nonlinear}, we can compute the involutive
-distribution $\Delta_n(\vect{x})$ and conclude for local reachability
-iff $\Delta_n(\vect{x})$ is nonsingular. As such, consider the system
-state $\vect{x}$ and the dynamic in~\eqref{eq:NonLinStateSpace},
-rewritten as
-\begin{equation}
-  \label{eq:VecFields}
-  \dot {\vect{x}} = f(\vect{x}) + g_r(\vect{x}) F_{r} ,
-\end{equation}
-hence the initial distribution is given by the column
-\[
-  \Delta_0(\vect{x}) = \{g_r(\vect{x})\} .
-\]
-It is then possible to derive
-\[
-  \Delta_1(\vect{x}) = \{\Delta_0(\vect{x}),
-  [f(\vect{x}),g_r(\vect{x})]\} = \{\Delta_0(\vect{x}), [f(\vect{x}),
-  \Delta_0(\vect{x})]\} ,
-\]
-where $[\cdot,\cdot]$ are the usual Lie bracket
-operators~\cite{isidori1985nonlinear}, i.e.
-\[
-  [f(\vect{x}),g_r(\vect{x})] = \frac{\partial g_r(\vect{x})}{\partial
-    \vect{x}}f(\vect{x}) - \frac{\partial f(\vect{x})}{\partial
-    \vect{x}}g_r(\vect{x}) .
-\]
-It is then possible to derive in a recursive manner
-\[
-  \Delta_{n+1}(\vect{x}) = \{\Delta_n(\vect{x}),
-  [f(\vect{x}),\Delta_n(\vect{x})]\} ,
-\]
-where, with a slight abuse of notation,
-$[f(\vect{x}),\Delta_n(\vect{x})]$ is intended as the Lie brackets of
-$f(\vect{x})$ with respect to all the vector fields of
-$\Delta_n(\vect{x})$. After carrying out all the computations, it turns out that
-$\dim\{\mbox{span}\{\Delta_5\}\} = 6$, i.e., the distribution is
-nonsingular and, hence, the system is locally reachable.
-
-\subsection{Lyapunov-based control design}
-
-One possible path to design a state-feedback, Lyapunov-based
-controller for the system~\eqref{eq:NonLinStateSpace} is to use the
-backstepping technique~\cite{krstic1995nonlinear}. Let us define the
-following Lyapunov function candidate on the position subsystem
-\[
-  V_1(x_1, x_2, x_3) = \frac{1}{2} [(x_1 - \overline x_1)^2 +
-  (x_2 - \overline x_2)^2 + (x_3 - \overline x_3)^2] ,
-\]
-where the quantities $\overline \cdot$ are the desired, final values
-and whose time derivative is simply given by
-\[
-  \dot V_1(x_1, x_2, l) = (x_1 - \overline x_1) x_4 +
-  (x_2 - \overline x_2) x_5 + (x_3 - \overline x_3) x_6 . 
-\]
-Hence, assuming the proportional control laws (with
-$k_{x_1}, k_{x_2}, k_{x_3} > 0$)
-\begin{equation}
-  \label{eq:LyapBack}
-    x_4 = - k_{x_1}  (x_1 - \overline x_1), 
-    x_5 = - k_{x_2}  (x_2 - \overline x_2), 
-    x_6 = - k_{x_3} (x_3 - \overline x_3),
-\end{equation}
-we have immediately that
-$[\overline x_1, \overline x_2, \overline x_3]^T$ is an asymptotically
-stable equilibrium point for the subsystem. When the entire state
-$\vect{x}$ is considered, the quantities in~\eqref{eq:LyapBack} are
-treated as desired and then define the following Lyapunov function
-candidate
-\[
-  V(\vect{x}) = V_1(x_1, x_2, x_3) + \frac{1}{2} [(x_4 - \overline
-  x_4)^2 + (x_5 + \overline x_5)^2 + (x_6 + \overline x_6)^2] .
-\]
-The time derivative becomes
-\[
-  \begin{aligned}
-    \dot V(\vect{x}) = &(x_4 - \overline x_4) (f_4(\vect{x}) -
-    \dot{\overline x}_4) + (x_5 - \overline x_5)
-    (f_5(\vect{x}) - \dot{\overline x}_5) + \\
-    & + (x_6 - \overline x_6) \left (f_6(\vect{x}) + \frac{F_{r}}{m} -
-      \dot{\overline x}_6 \right ) + \dot V_1(x_1, x_2, x_3),
-  \end{aligned}
-\]
-where $f_i(\vect{x})$ is the $i$-th vector of the vector field
-$f(\vect{x})$ in~\eqref{eq:VecFields} and where we have
-from~\eqref{eq:LyapBack}
-\[
-  \begin{aligned}
-    \dot{\overline x_4} & = - k_{x_1}  x_4 , \\
-    \dot{\overline x_5} & = - k_{x_2} x_5 , \\
-    \dot{\overline x_6} & = - k_{x_3} r . 
-  \end{aligned}
-\]
-It is therefore immediate to notice that the Lyapunov candidate time
-derivative $\dot V(x)$ is negative definite with the following control
-laws (with $k_{x_4}, k_{x_5}, k_{x_6} > 0$)
-\[
-  \begin{aligned}
-    F_{u,n} & = -ml (f_4(x) + k_{x_4} (x_4 - \overline x_4) + k_{x_1}  x_4) , \\
-    F_{u,t} & = -ml s_{x_1} (f_5(x) + k_{x_5} (x_5 - \overline x_5) + k_{x_5}  x_5) , \\
-    F_{r} & = -m (f_6(x) + k_{x_6} (r - \overline x_6) + k_{x_3} r) , \\
-  \end{aligned}
-\]
-thus proving the asymptotic stability of the equilibrium
-$[\overline x_1, \overline x_2, \overline x_3, 0, 0, 0]^T$ for the
-system~\eqref{eq:CanonicalForm}.
-
-In a more realistic case, we can assume that $F_{u,n} = F_{u,t} = 0$
-right after the application of the impulsive inputs, thus we will
-study how a stabilising Lyapunov-based control law can be designed
-using only the input $F_{x_6}$. To this end, we first prove that the
-system remains locally reachable. To this end, we define the reduced
-version of~\eqref{eq:VecFields} as
-\[
-  \dot x = f(x) + g_{x_6}(x) F_{r} ,
-\]
-where the effect of the impulsive forces is supposed to be stored in
-the state $x$ right after their applications. Hence, the initial
-distribution is
-\[
-  \Delta_0 = \{g_{x_6}\} .
-\]
-It is then possible to derive in a recursive way
-\[
-  \Delta_{n+1} = \{\Delta_n, [f,\Delta_n]\} .
-\]
-It turns then out that $\mbox{span}\Delta_5 = 6$, i.e., the
-distribution is nonsingular and, hence, the system is locally
-reachable.
-
-In this case, we assume that a reference trajectory for the angles
-$x_1$ and $x_2$ is given, for example given by the first two
-of~\eqref{eq:LyapBack}, for which both the first and second derivative
-can be computed. We can then consider the following Lyapunov candidate
-\[
-  V(x) = \frac{1}{2} [(x_1 - \overline x_1)^2 + (x_2 -
-  \overline x_2)^2 + (l - \overline x_3)^2 + (x_4 -
-  \overline x_4)^2 + (x_5 + \overline x_5)^2 + r^2] ,
-\]
-whose time derivative is given by
-\[
-  \dot V(x) = (x_1 - \overline x_1) x_4 + (x_2 -
-  \overline x_2) x_5 + (l - \overline x_3) r + h_1(x_4) + h_2(x_5)
-  + r (f_6(x) + \frac{F_{r}}{m}),
-\]
-where
-\[
-  \begin{aligned}
-    h_1(x_4) = & (x_4 - \overline x_4) (f_4(x) -
-    \dot{\overline x_4}) , \\
-    h_2(x_5) = & (x_5 - \overline x_5) (f_5(x) -
-    \dot{\overline x_5}) . \\    
-  \end{aligned}
-\]
-We can then build a Lyapunov control law that locally controls the
-system dynamics.
+%\subsection{Local Reachability}
+%
+%Let us consider the system canonical form~\eqref{eq:NonLinStateSpace},
+%with the availability of the input $F_r$, while
+%$F_{u,n} = F_{u,t} = 0$ assuming resets and impulsive forces as
+%in~\eqref{eq:Reset}. By recalling the results
+%in~\cite{isidori1985nonlinear}, we can compute the involutive
+%distribution $\Delta_n(\vect{x})$ and conclude for local reachability
+%iff $\Delta_n(\vect{x})$ is nonsingular. As such, consider the system
+%state $\vect{x}$ and the dynamic in~\eqref{eq:NonLinStateSpace},
+%rewritten as
+%\begin{equation}
+%  \label{eq:VecFields}
+%  \dot {\vect{x}} = f(\vect{x}) + g_r(\vect{x}) F_{r} ,
+%\end{equation}
+%hence the initial distribution is given by the column
+%\[
+%  \Delta_0(\vect{x}) = \{g_r(\vect{x})\} .
+%\]
+%It is then possible to derive
+%\[
+%  \Delta_1(\vect{x}) = \{\Delta_0(\vect{x}),
+%  [f(\vect{x}),g_r(\vect{x})]\} = \{\Delta_0(\vect{x}), [f(\vect{x}),
+%  \Delta_0(\vect{x})]\} ,
+%\]
+%where $[\cdot,\cdot]$ are the usual Lie bracket
+%operators~\cite{isidori1985nonlinear}, i.e.
+%\[
+%  [f(\vect{x}),g_r(\vect{x})] = \frac{\partial g_r(\vect{x})}{\partial
+%    \vect{x}}f(\vect{x}) - \frac{\partial f(\vect{x})}{\partial
+%    \vect{x}}g_r(\vect{x}) .
+%\]
+%It is then possible to derive in a recursive manner
+%\[
+%  \Delta_{n+1}(\vect{x}) = \{\Delta_n(\vect{x}),
+%  [f(\vect{x}),\Delta_n(\vect{x})]\} ,
+%\]
+%where, with a slight abuse of notation,
+%$[f(\vect{x}),\Delta_n(\vect{x})]$ is intended as the Lie brackets of
+%$f(\vect{x})$ with respect to all the vector fields of
+%$\Delta_n(\vect{x})$. After carrying out all the computations, it turns out that
+%$\dim\{\mbox{span}\{\Delta_5\}\} = 6$, i.e., the distribution is
+%nonsingular and, hence, the system is locally reachable.
+%
+%\subsection{Lyapunov-based control design}
+%
+%One possible path to design a state-feedback, Lyapunov-based
+%controller for the system~\eqref{eq:NonLinStateSpace} is to use the
+%backstepping technique~\cite{krstic1995nonlinear}. Let us define the
+%following Lyapunov function candidate on the position subsystem
+%\[
+%  V_1(x_1, x_2, x_3) = \frac{1}{2} [(x_1 - \overline x_1)^2 +
+%  (x_2 - \overline x_2)^2 + (x_3 - \overline x_3)^2] ,
+%\]
+%where the quantities $\overline \cdot$ are the desired, final values
+%and whose time derivative is simply given by
+%\[
+%  \dot V_1(x_1, x_2, l) = (x_1 - \overline x_1) x_4 +
+%  (x_2 - \overline x_2) x_5 + (x_3 - \overline x_3) x_6 . 
+%\]
+%Hence, assuming the proportional control laws (with
+%$k_{x_1}, k_{x_2}, k_{x_3} > 0$)
+%\begin{equation}
+%  \label{eq:LyapBack}
+%    x_4 = - k_{x_1}  (x_1 - \overline x_1), 
+%    x_5 = - k_{x_2}  (x_2 - \overline x_2), 
+%    x_6 = - k_{x_3} (x_3 - \overline x_3),
+%\end{equation}
+%we have immediately that
+%$[\overline x_1, \overline x_2, \overline x_3]^T$ is an asymptotically
+%stable equilibrium point for the subsystem. When the entire state
+%$\vect{x}$ is considered, the quantities in~\eqref{eq:LyapBack} are
+%treated as desired and then define the following Lyapunov function
+%candidate
+%\[
+%  V(\vect{x}) = V_1(x_1, x_2, x_3) + \frac{1}{2} [(x_4 - \overline
+%  x_4)^2 + (x_5 + \overline x_5)^2 + (x_6 + \overline x_6)^2] .
+%\]
+%The time derivative becomes
+%\[
+%  \begin{aligned}
+%    \dot V(\vect{x}) = &(x_4 - \overline x_4) (f_4(\vect{x}) -
+%    \dot{\overline x}_4) + (x_5 - \overline x_5)
+%    (f_5(\vect{x}) - \dot{\overline x}_5) + \\
+%    & + (x_6 - \overline x_6) \left (f_6(\vect{x}) + \frac{F_{r}}{m} -
+%      \dot{\overline x}_6 \right ) + \dot V_1(x_1, x_2, x_3),
+%  \end{aligned}
+%\]
+%where $f_i(\vect{x})$ is the $i$-th vector of the vector field
+%$f(\vect{x})$ in~\eqref{eq:VecFields} and where we have
+%from~\eqref{eq:LyapBack}
+%\[
+%  \begin{aligned}
+%    \dot{\overline x_4} & = - k_{x_1}  x_4 , \\
+%    \dot{\overline x_5} & = - k_{x_2} x_5 , \\
+%    \dot{\overline x_6} & = - k_{x_3} r . 
+%  \end{aligned}
+%\]
+%It is therefore immediate to notice that the Lyapunov candidate time
+%derivative $\dot V(x)$ is negative definite with the following control
+%laws (with $k_{x_4}, k_{x_5}, k_{x_6} > 0$)
+%\[
+%  \begin{aligned}
+%    F_{u,n} & = -ml (f_4(x) + k_{x_4} (x_4 - \overline x_4) + k_{x_1}  x_4) , \\
+%    F_{u,t} & = -ml s_{x_1} (f_5(x) + k_{x_5} (x_5 - \overline x_5) + k_{x_5}  x_5) , \\
+%    F_{r} & = -m (f_6(x) + k_{x_6} (r - \overline x_6) + k_{x_3} r) , \\
+%  \end{aligned}
+%\]
+%thus proving the asymptotic stability of the equilibrium
+%$[\overline x_1, \overline x_2, \overline x_3, 0, 0, 0]^T$ for the
+%system~\eqref{eq:CanonicalForm}.
+%
+%In a more realistic case, we can assume that $F_{u,n} = F_{u,t} = 0$
+%right after the application of the impulsive inputs, thus we will
+%study how a stabilising Lyapunov-based control law can be designed
+%using only the input $F_{x_6}$. To this end, we first prove that the
+%system remains locally reachable. To this end, we define the reduced
+%version of~\eqref{eq:VecFields} as
+%\[
+%  \dot x = f(x) + g_{x_6}(x) F_{r} ,
+%\]
+%where the effect of the impulsive forces is supposed to be stored in
+%the state $x$ right after their applications. Hence, the initial
+%distribution is
+%\[
+%  \Delta_0 = \{g_{x_6}\} .
+%\]
+%It is then possible to derive in a recursive way
+%\[
+%  \Delta_{n+1} = \{\Delta_n, [f,\Delta_n]\} .
+%\]
+%It turns then out that $\mbox{span}\Delta_5 = 6$, i.e., the
+%distribution is nonsingular and, hence, the system is locally
+%reachable.
+%
+%In this case, we assume that a reference trajectory for the angles
+%$x_1$ and $x_2$ is given, for example given by the first two
+%of~\eqref{eq:LyapBack}, for which both the first and second derivative
+%can be computed. We can then consider the following Lyapunov candidate
+%\[
+%  V(x) = \frac{1}{2} [(x_1 - \overline x_1)^2 + (x_2 -
+%  \overline x_2)^2 + (l - \overline x_3)^2 + (x_4 -
+%  \overline x_4)^2 + (x_5 + \overline x_5)^2 + r^2] ,
+%\]
+%whose time derivative is given by
+%\[
+%  \dot V(x) = (x_1 - \overline x_1) x_4 + (x_2 -
+%  \overline x_2) x_5 + (l - \overline x_3) r + h_1(x_4) + h_2(x_5)
+%  + r (f_6(x) + \frac{F_{r}}{m}),
+%\]
+%where
+%\[
+%  \begin{aligned}
+%    h_1(x_4) = & (x_4 - \overline x_4) (f_4(x) -
+%    \dot{\overline x_4}) , \\
+%    h_2(x_5) = & (x_5 - \overline x_5) (f_5(x) -
+%    \dot{\overline x_5}) . \\    
+%  \end{aligned}
+%\]
+%We can then build a Lyapunov control law that locally controls the
+%system dynamics.
 
 
 %%% Local Variables:
