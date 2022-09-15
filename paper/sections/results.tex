@@ -65,7 +65,7 @@ flying phase, where   the rope winding joint is actuated with the optimized forc
 The computation time for the optimization and the integration error at the target $\Vert e_f \Vert$  are linearly  
 linked to the number of discretization points $N$. In Table~\ref{tab:solve_time} we report 
 also the integration error normalized for the jump length $\Vert e_f \Vert / (l_f-l_0)$ 
-for  different numbers of discretization points. 
+for  a different number of discretization points. 
 %%%
 \begin{table}[h!]
 \centering
@@ -81,9 +81,9 @@ for  different numbers of discretization points.
 	\end{tabular}	
 \end{table}
 
-
+The Table shows that a  good trade-off can be found between accuracy and computation time that enables real-time implementations.
 In Fig. \ref{fig:validation}  we report the results of the validation. 
-The discrepancy in the target position is mainly due to drift in the integration in the case of Matlab and to the approximation
+The matching is almost perfect   (apart form drifts in the integration) in the case of Matlab and inside to the approximation
 of the simplified model with respect to the real one in the  case of Gazebo simulation. 
 These results in errors in the generation of the impulse that require 
 However in both cases the norm of the error is always below XX which shows the simplified model is a good approximation for the real system.
@@ -150,7 +150,7 @@ We selected this quite large value for $\mu$ because it is reasonable to assume 
 robot will  exploit the asperities present on a rocky wall  perform the push, which provide a reasonable amount of tangential impulse. 
 
 \begin{figure}[H]
-%	\includegraphics[width=\columnwidth]{matlab/reachable.pdf}
-	\caption{\small Simulation. Plot of the region of reachable targets for a friction coefficient $\mu$.}
+	\includegraphics[width=\columnwidth]{matlab/reachable.pdf}
+	\caption{\small Simulation. Plot of the region of reachable targets for a friction coefficient $\mu =0.7$.}
 	\label{fig:reachable_region}
 \end{figure}
