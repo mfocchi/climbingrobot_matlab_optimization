@@ -126,7 +126,7 @@ Tth_index = min(find(time>=T_th));
 Fun(floor(Tth_index/2))
 Fut(floor(Tth_index/2))
 solution.energy.Ekinf
-
+norm(p0-pf)
 end
 
 view(113,61); 

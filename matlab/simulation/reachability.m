@@ -60,7 +60,7 @@ for i=1:n
     end
 end
 
-plot_reachable_region(p0, x_vec, y_vec, z_vec, mu, Ehoist_vec, '$\int \Vert F_r dp \Vert^2$', [500, 1000]);
+plot_reachable_region(p0, x_vec, y_vec, z_vec, mu, sqrt(Ehoist_vec), '$\int \Vert F_r dp \Vert [J]$', [5, 45]);
 view (90,90);
 set(gcf, 'Paperunits' , 'centimeters')
 set(gcf, 'PaperSize', [40 25]);
