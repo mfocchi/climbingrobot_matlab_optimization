@@ -96,17 +96,27 @@ where $\mu$ is a constant depending on the nature of the terrain. For our simula
 \noindent
 {\bf Objective Function.}
 %The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
-We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $K(t_f)$ at the final instant. The reason for $K(t_f)$ is because when the robot lands,
-it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
-Therefore, assuming without loss of generality that $t_0=0$, we optimise
+The cost is composed of three terms. 
+First, we minimise the time $t_f$ to complete the mission (assuming without loss of generality that $t_0=0$). 
+Second, we minimise the final kinetic energy $K(t_f)$ because when the robot lands, it has to dissipate the energy through a damper (we are not considering to reuse the accumulated energy to re-bounce after landing).
+Third, we minimise the work performed by the winding mechanism.
+Therefore, the cost is:
 \begin{align*}
 &J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
 & K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
 \end{align*}
 %%%
-
-with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution while $w_{F_r}$ is the weight 
-associated to a term proportional to the work performed by the winding mechanism.
+with $w_t$, $w_E$ and $w_{F_r}$ being the weights associated to the three cost components.
+%We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $K(t_f)$ at the final instant. The reason for $K(t_f)$ is because when the robot lands,
+%it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
+%Therefore, assuming without loss of generality that $t_0=0$, we optimise
+%\begin{align*}
+%&J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
+%& K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
+%\end{align*}
+%%%%
+%with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution while $w_{F_r}$ is the weight 
+%associated to a term proportional to the work performed by the winding mechanism.
 We should observe that, in case of a difficult convergence, it is possible to ``soften'' some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
 slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
