@@ -12,7 +12,7 @@ four_y3 = 0.38; %1st graph
 four_y4 = 0.18; %1st graph
 four_w = 0.8; %width
 four_h = 0.2;
-small_h = 0.13
+small_h = 0.13;
 four_xgraph = 0.15;
 %coordinates  for 3 subplots
 three_y1 = 0.73;
@@ -31,7 +31,7 @@ two_h = 0.4;
 one_y1 = 0.2;
 one_w = 0.8;
 one_h = 0.7;
-one_xgraph = 0.15
+one_xgraph = 0.15;
 
 %% Set grids on all axis.
 set(0,'defaultAxesXGrid','on');
@@ -47,5 +47,5 @@ set(0, 'defaultpatchlinewidth',1);set(0, 'DefaultFigureWindowStyle', 'normal');
 set(0, 'DefaultAxesBox', 'on');set(0, 'DefaultTextFontSize', 40);
 set(0, 'DefaultAxesFontSize', 40);set(0, 'DefaultUicontrolFontSize', 40);
 set(0, 'Defaulttextinterpreter','latex')
-label_size=50
+
 

@@ -62,14 +62,17 @@ X = l_sim.*cos(phi_sim).*sin(theta_sim);
 Y = l_sim.*sin(phi_sim).*sin(theta_sim);
 Z = -l_sim.*cos(theta_sim);
 
-fprintf('the touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
+fprintf('original target is  : [%3.2f, %3.2f, %3.2f] \n',pf );
+fprintf('the Matlab touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
 if MICHELE_APPROACH
     fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
     fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
 end
-fprintf('original target     : [%3.2f, %3.2f, %3.2f] \n',pf );
 fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
-fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
+%fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
+[Tf_gazebo, end_gazebo_index] = max(time_gazebo); % there are nans in the log
+fprintf('the Gazebo touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n', traj_gazebo(1,end_gazebo_index),  traj_gazebo(2,end_gazebo_index), traj_gazebo(3,end_gazebo_index),Tf_gazebo);
+fprintf('with error : %3.2f\n',norm(pf - [traj_gazebo(1,end_gazebo_index);  traj_gazebo(2,end_gazebo_index); traj_gazebo(3,end_gazebo_index)]));
 
 
 % eval total energy sim

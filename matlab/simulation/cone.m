@@ -26,7 +26,7 @@ function cone(x_vertex, y_vertex, z_vertex)
     
 
     %%%%%
-    surf(XCone,YCone,ZCone);
+    surf(XCone,YCone,ZCone,'FaceAlpha', 1.0, 'EdgeAlpha', 0.1 ,'EdgeColor','none');hold on;
     axis equal
     
     

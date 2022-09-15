@@ -13,20 +13,19 @@ mu = 0.8;
 sigma_gauss = T_th/6;
 mu_gauss    = T_th/2;
 %%%%%%%%%%%%%%
-l_0 = 3;
-theta0 =atan2(0.38, l_0);
-%theta0 = 0.05; 
-phi0 = 0 ;
-%p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
-% Marco Frego test: final state
-%pf = [0.3777; 1.5; -20]
 
-%T = table2array(readtable('08_09_2022_obstacle','NumHeaderLines',20)); % 21
-%T = table2array(readtable('09_09_2022mu07','NumHeaderLines',20)); % 21
-%T = table2array(readtable('09_09_2022_3','NumHeaderLines',20)); % obstacle (0, 1.5)
-T = table2array(readtable('first_jump_0224_0_8_to_3_3_20','NumHeaderLines',20)); % obstacle (0, 1.5) , pf = [3,3,-20] 1st jump
-%T = table2array(readtable('second_jump_3_3_20_to_0224_5_25','NumHeaderLines',20)); % obstacle (0, 1.5) , p0 = [0.,3,-20] 2nd jump
 
+exp_name = {'exp2';'exp3';'exp5';'exp6_slanted'};
+
+%exp 2          p0 = [ 0; 0 ; -8]           pf =[2.60  2.73  -20.46]
+%exp3           p0 = [ 0; 0 ; -8]            pf =[ 2.50  0.05   -20.46]
+%exp5           p0 = [ 0; 0 ; -8]           pf = [0.55;  -0.8;  -17.76]
+%exp 6 slanted  p0 = [0.63 , 2.35; -7.5],	pf = [1.734, 3.8, -20.46]
+
+for n_test =1:size(exp_name,1)
+
+    
+T = table2array(readtable(exp_name{n_test},'NumHeaderLines',20)); 
 
 
 zeta  = T(:, 2)';
@@ -45,19 +44,9 @@ time  = (zeta.*Tf);
 Fun = ForceFun(zeta,fFun,sigma_gauss,mu_gauss);
 Fut = ForceFut(zeta,fFut,sigma_gauss,mu_gauss);
 
-
-
 p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
-
-
-
 p0 = p(:,1);
 pf = p(:,end);
-
-% test if inside cone
-% p0 = [0.2240;         0;   -8.0000];
-% pf = [3;        3;   -20.0000];
-
 T_th = Tf(1)*0.0646;
 
 % velocity (variable length)
@@ -119,35 +108,25 @@ solution.Fun = Fun;
 solution.Fut = Fut;
 solution.Fr = Fr;
 
-figure
-plot_curve( solution, p0, pf, mu,  'r');
+
+
+plot_curve( solution, p0, pf, mu,  'r', n_test==1);
+
 %ad obstacle
 cone(0,1.5,0);
-%cone(0,5,-4)
-% 
-% figure
-% plot(time, Fun)
-% ylabel('Fun')
-% 
-% figure
-% plot(time, Fut)
-% ylabel('Fut')
-% 
-% figure
-% plot(time, fFut./fFun)
+
+save(exp_name{n_test},'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 
-% test of the leg displacement 
-% r_leg= 0.32;
-% p0_real = p0 + computeNormalRope(r_leg,[0;0;0], p0)*r_leg;
-% pf_real = pf + computeNormalRope(r_leg,[0;0;0], pf)*r_leg;
-% plot3(p0_real(1), p0_real(2), p0_real(3), 'Marker', '.', 'Color','g', 'MarkerSize',60) ;
-% plot3(pf_real(1), pf_real(2), pf_real(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
-% arrow3d_points(p0, p0_real, 'stemWidth',0.02,'color','r')   ;
-% arrow3d_points(pf,  pf_real, 'stemWidth',0.02,'color','r')  ;                                       
+end
 
+view(123,65); 
+% save the plot
+set(gcf, 'Paperunits' , 'centimeters')
+set(gcf, 'PaperSize', [15 15]);
+set(gcf, 'PaperPosition', [0 0 15 15]);
+print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
 
-save('test_optim_marco.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 
 function res = ForceFun(zeta,Fun0,sigma,mu_gauss)
