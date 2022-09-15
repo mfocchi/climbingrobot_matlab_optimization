@@ -100,55 +100,52 @@ and shows that the simplified model is a good approximation for the real system.
  
 % 2nd experiment multiple targets, an one starting from slanted
 Additionally, we ran the optimization to jump on different 3 targets on the rock pillar 
-(see Fig. \ref{fig:targets}), starting from a point on the wall $p_0 = \mat{0,0,-8}$.
-To show that the approach is valid also for a jump from a non vertical (i.e. slanted ) surface, 
-we started from a location $p_0 $ that is already on the pillar itself which has an inclination around 80 $deg$.
+(see Fig. \ref{fig:targets}), starting from a point on the wall $p_0 = \mat{0,0,-8}$ (Experiment 1,2,3).
+To demonstrate that the approach is valid also for  jumps from a \textit{non vertical} (i.e. slanted ) surface, 
+Experiment 4 is a jump from  a location $p_0=\mat{0.63 & 2.35& -7.5}$ that is already on the pillar itself which has an inclination around 80 $deg$.
+Each optimization provided the max values of the initial impulses ($F_{u,n}$, $F_{u,t}$)\footnote{The value of these forces are related to the selected impulse duration $T_{th}$  [s], they can be strongly reduced by taking longer durations (i.e. in accordance to the actuator  response time).}, the pattern of the winding force $F_r$ and the jump duration $T_f$.
+For the first 3 targets we also plot the  friction boundaries in the tangential direction (red shaded  area).
 
-
-Each optimization provided the initial impulses ($Fun$, $Fut$), the pattern of the winding force $F_r$ and the jump duration $T_f$.
-
-
-%We selected the target points inside the shaded red area that represents the friction boundaries in the tangential direction.
-
-The results are the reported in Table \ref{tab:sim_different_targets} and also 
-shown in the accompanying video\footnote{ \href{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4}
+The results are the reported in Table \ref{tab:sim_different_targets} 
+and in the accompanying video\footnote{ \href{https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4}
 {https://www.dropbox.com/s/b0fuyiewyp3jkg7/icra23climb.mp4} }. 
 Note that, as expected, the final kinetic energy (that will be lost at the impact) is higher  for longer jumps, as well as the jump duration and the 
- 
-
 
 \begin{table}[h!]
 	\centering
-	\caption{ Matlab simulations results}
+	\caption{Multiple Targets Simulations Results}
 	%	\renewcommand{\arraystretch}{1.1}
 	\resizebox{\columnwidth}{!}{
-		\begin{tabular}{c l  l c c c c  c } \hline\hline
-			\textbf{Exp.}  & \textbf{$p_0$ [m]}  & \textbf{$p_f$ [m]}           & \textbf{$T_f$ [s]} &  \textbf{$F_{un}$ [N]} & \textbf{$F_{ut}$ [N]} 
-			\footnote{The value of these forces are related to the selected impulse duration $T_{th}$  [s], they can be strongly reduced by taking longer durations (i.e. in accordance to the actuator  response time).} 
-			&\textbf{ $E_{k,f}$ [J]}\\ \hline % & \textbf{$\Vert e \Vert$ [m]}
-			1   &$ \mat{0 & 0 &-8}$            & $\mat{2.60 & 2.73 & -20.46} $    &      2.16      &         780             &      624           &    408    \\ % exp2
-			2   &$ \mat{0 & 0 &-8}$            & $\mat{ 2.50 &  0.05 &   -20.46}$ &      1.57        &         241             &      192           &    6.5               \\ % exp3
-			3   &$ \mat{0 & 0 &-8}$            & $\mat{0.55 & -0.8 &  -17.76} $   &      1.2         &       746                  &   200              & 11.8               \\ % exp5
-			4   &$ \mat{0.63 & 2.35& -7.5}$   & $\mat{1.73 & 3.8 &  -20.46} $     &      1.54       &        504              &     403         &      22    &                 \\ % exp6_slanted		
+		\begin{tabular}{c   l c c c c  c } \hline\hline
+			\textbf{Exp.}   & \textbf{$p_f$ [m]}           & \textbf{$T_f$ [s]} &  \textbf{$F_{u,n}$ [N]} & \textbf{$F_{u,t}$ [N]} &\textbf{ $K_f$ [J]}\\ \hline % & \textbf{$\Vert e \Vert$ [m]}
+			1               & $\mat{2.60, 2.73, -20.46} $    &      3.12       &    306                 &      214           &  578       \\ % exp2
+			2               & $\mat{ 2.50,  0.05,   -20.46}$ &      1.62       &     236                 &       5.11           &   596                \\ % exp3
+			3               & $\mat{0.55, -0.8,  -17.76} $   &     3.18         &   217                       & -151         &        422        \\ % exp5
+			4   			& $\mat{1.73, 3.8,  -20.46} $     &     1.69         &       168                &     -64          &      619     &                 \\ % exp6_slanted		
 			\hline\hline 					    					    					    
 	\end{tabular}}
 	\label{tab:sim_different_targets}
 \end{table}
 
 \begin{figure}
-	\includegraphics[width=\columnwidth]{matlab/targets.pdf}
+	\centering
+	\includegraphics[width=0.8\columnwidth]{matlab/targets.pdf}
 	\caption{\small Simulation. The black star is the anchor point, the green dot is the starting point $p_0$ the red dot the target location $p_f$.
 			The blue shaded are is the rock face,  while the red	shaded  area  represents 
-			the friction boundaries ($\mu = 0.7$) in the tangential direction. The  cone represents the rock pillar obstacle to avoid.}
+			the friction boundaries ($\mu = 0.7$) in the tangential direction. The  cone represents an obstacle (rock pillar) to be avoided.}
 	\label{fig:targets}
 \end{figure}
 
-Inspecting the red trajectories in  \ref{fig:validation}, one can see that 
+Inspecting the red trajectories in  \ref{fig:validation}, one can see that, for the targets close to the friction boundaries, 
+to "steer" the trajectory more laterally, the optimizer  it dictates  an \textit{initial} 
+retraction of the rope. This strategy is meaningful, because, due to the limits on the tangential force the lateral pushes are limited,
+it vary the time constant of the "pendulum" (i.e.  reducing  inertia moment about the anchor point).  
+TODOOOO---------------after this
+%The friction constraints are also fulfilled therefore initially the robot has to lift-off 
+%with an angle limited by the friction cone. 
 
-The friction constraints are also fulfilled therefore initially the robot has to lift-off 
-with an angle limited by the friction cone. However, since the target location is out of the cone (with vertex at the initial position)
-the optimizer should "steer" the trajectory and therefore it dictates  an \textit{initial} 
-retraction of the rope to vary the time constant of the "pendulum", 
+However, since the target location is out of the cone (with vertex at the initial position)
+
 then the rope passively unwinds  under the action of gravity.
 An interesting outcome of this analysis is that despite the system is fully controllable (locally) 
 the reachable targets, when jumping  from the anchor line, are limited to the area inside the cone, 
