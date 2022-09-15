@@ -69,7 +69,8 @@ Another constraint is added to prevent collision with the wall (i.e. $X >0$) and
 \noindent
 {\bf Actuation Constraints.}
 The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_u$.
-The $\mathbf{F}_r$ force acts along the direction of the rope $\vect{f}_r$ (see~\eqref{eq:forces}). Since the rope cannot push the robot 
+The $\mathbf{F}_r$ force acts along the direction of the rope ($e_R$ axis). % \vect{f}_r$ (see~\eqref{eq:forces}) this is for journal
+Since the rope cannot push the robot 
 (assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent (under the action of gravity). 
 Moreover, the force is bounded by the limits of the actuators (e.g. a hoist). Therefore, the
 constraint on $F_r$ is:
@@ -99,23 +100,18 @@ We are interested in minimizing the interval of time $t_f - t_0$ needed to compl
 it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
 Therefore, assuming without loss of generality that $t_0=0$, we optimise
 \begin{align*}
-&J = w_tt_f + w_E K(t_f) + \int_{0}^{t_f} w_{F_r}(F_r\cdot x_6(t))^2 dt ,  \\
+&J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
 & K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
 \end{align*}
 %%%
-\ADP{What about the third term and the third weight $w_{F_r}$???}
-with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution.
 
+with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution while $w_{F_r}$ is the weight 
+associated to a term proportional to the work performed by the winding mechanism.
 We should observe that, in case of a difficult convergence, it is possible to ``soften'' some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
 slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
 \noindent
 \textbf{Initial guess.}
 To speed-up convergence, we initialized the optimization with a reasonable initial guess.
-Because time $t_f$ is an optimization parameter, we compute the time constant for the system linearized around the initial state. The other variables were initialised \ADP{finish this sentence?} 
+Because time $t_f$ is an optimization parameter, we compute the time constant for the system linearized around the initial state. %The other variables were initialised ...
 The linearized system become also a good approximation when the jump length is small with respect to the rope elongation. 
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "../icra22climb"
-%%% End:
