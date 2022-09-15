@@ -1,4 +1,4 @@
-The motion plan for the robot is decided solving an optimal control problem \emph{à la} Pontryagin.
+The motion plan for the robot is decided solving an optimal control problem \emph{\`a la} Pontryagin.
 Generally speaking, we can set up the problem in the following way:
 
 
@@ -14,12 +14,12 @@ Generally speaking, we can set up the problem in the following way:
 \end{equation}
 
 where $\vect{x}$ is the vector of state variables, $\vect{u}$ is the control input constrained in the convex set $\mathcal{U}$, $f$ is the dynamic equation of the system,
-$\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are the boundary conditions, $t_0$ and $t_f$ are the initial and final time (that is an optimisation variable), which can be part of the optimisation. The OCP~\eqref{eq:OCP} is in the standard Bolza form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
+$\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are the boundary conditions, $t_0$ and $t_f$ are the initial and final time (that is an optimisation variable), which can be part of the optimisation. The OCP~\eqref{eq:OCP} is in the standard form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
 
 \noindent
 {\bf Dynamical System.}
-The state $\vect{x}$ of our problem is $\vect{x}^T = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
-given by $\vect{u}^T = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
+The state $\vect{x}$ of our problem is $\vect{x} = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
+given by $\vect{u} = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
 \begin{equation}
   \label{eq:NonLinStateSpace}
   \begin{aligned}
@@ -91,7 +91,8 @@ A natural approximation is a Gaussian function, that is $\delta(t-t_0) \approx \
 \begin{align*}
 \vert F_{u,t} \vert \leq \mu F_{u,n}
 \end{align*} 
-where $\mu$ is a constant depending on the nature of the terrain. For our simulation scenarios below, we have chosen $\mu = 0.8$ and $F_u^{\text{max}}=1000$ N. 
+where $\mu$ is the \textit{friction coefficient}, a constant depending on the nature of the terrain. 
+%For our simulation scenarios below, we have chosen $\mu = 0.8$ and $F_u^{\text{max}}=1000$ N. 
 
 \noindent
 {\bf Objective Function.}
@@ -118,7 +119,7 @@ with $w_t$, $w_E$ and $w_{F_r}$ being the weights associated to the three cost c
 %with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution while $w_{F_r}$ is the weight 
 %associated to a term proportional to the work performed by the winding mechanism.
 We should observe that, in case of a difficult convergence, it is possible to ``soften'' some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
-slack variable $\Delta$ and have a constraint $\left\|\vect{x}(t_f) - \vect{X}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
+slack variable $\Delta$ and have a constraint $\left\|\vect{p}(t_f) - \vect{p}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
 \noindent
 \textbf{Initial guess.}
