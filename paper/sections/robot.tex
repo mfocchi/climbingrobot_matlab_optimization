@@ -1,14 +1,14 @@
 \subsection{Full robot description}
 %
 This section presents the kinematic model of the CLIO robot (see Fig. \ref{fig:3dmodel}). 
-We model the robot as a serial kinematic chain with $n=9$ \gls{dofs} represented by the configuration vector $q \in \Rnum^n$. 
+We model the robot as a serial kinematic chain with $n=9$ \gls{dofs} represented by the configuration vector $\vect{q} \in \Rnum^n$. 
 We model the attachment between the anchor point (a fixed link) and the rope with 2 \textit{passive} (rotational) joints.
 The rope is modeled as an \textit{actuated} prismatic joint ($q_{R}$), 
 followed by 3 \textit{passive} rotational joints to model 
 the connection between the rope and the \textit{base link} of the robot\footnote{It would be equivalent to allocate 3 joints at the anchor point and 2 at the base. 
 To avoid redundancy in the representation, it is necessary  to have only one passive joint along the rope axis.}. 
 
-The propulsion mechanism that allows the robot to jump is a 3-DoF
+The propulsion mechanism that allows the robot to jump is a 3-DoFs
 robotic leg with a point-like foot that enables to exert a \textit{pure} Cartesian force (no moment) on the wall. 
 The leg has two \textit{subsequent} rotational joints, called  hip pitch ($q_{HP}$ about the Y axis (green)) and hip 
 roll ($q_{HR}$ about the X axis (red)). These joints are useful to align the leg to the thrusting impulse. 
@@ -30,15 +30,16 @@ Finally a prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusti
 The dynamics equation can be written as:  
 
 \begin{align}
-M (q) \ddot{q} + h(q,\dot{q}) = \mat{0_{5 \times 1} \\ \tau_a} + J^T F 
+\vect{M} (\vect{q}) \vect{\ddot{q}} + \vect{h}(\vect{q},\vect{\dot{q}}) = \mat{\vect{0}_{5 \times 1} \\ \boldsymbol{\tau}_a} + \vect{J}^T \vect{F}_c 
 \end{align}
 
-where $M \in \Rnum^{n \times n}$ is the inertia matrix; $h \in \Rnum^n$ represents the bias terms (Centrifugal, Coriolis and Gravity); and 
-$J \in \Rnum^{3 \times n} $ is the Jacobian relative to the contact point mapping the contact force $F \in \Rnum^3$. 
+where $\vect{M} \in \Rnum^{n \times n}$ is the inertia matrix; $\vect{h} \in \Rnum^n$ represents the bias terms (Centrifugal, Coriolis and Gravity); and 
+$\vect{J} \in \Rnum^{3 \times n} $ is the Jacobian relative to the contact point mapping the contact force $\vect{F}_c \in \Rnum^3$. 
 Unless specified, all  vectors are expressed in an inertial $\mathcal{W}$ frame (attached to the anchor). 
-The under-actuation is captured by the vector $0_{5 \times 1}$, while 
-the efforts of the actuated joints are grouped into the vector $\tau_a = \mat{\tau_R & \tau_{\text{leg}}}^T \in \Rnum^4$.
+The under-actuation is captured by the vector $\vect{0}_{5 \times 1}$, while 
+the efforts of the actuated joints are grouped into the vector $\boldsymbol{\tau}_a = \mat{ \boldsymbol{\tau}_R & \boldsymbol{\tau}_{\text{leg}}}^T \in \Rnum^4$.
 
+\vspace{0.3cm}
 \subsection{Simplified Model}
 Dealing with the full dynamics of the robot can be time consuming, due to the 
 high number of states and constraints involved. Therefore, in this section, we derive a lower dimensional model 
@@ -52,6 +53,7 @@ and $l$ is the length of the rope.
 \centering
 \includegraphics[width=0.75\columnwidth]{figs/simplifiedModel.pdf}
 \caption{\small Logical scheme of the simplified model}
+\vspace{-0.3cm}
 \label{fig:sp}
 \end{figure}
 
@@ -64,18 +66,18 @@ Let $e$ be a frame attached to the point mass $m$, and let $\mathcal{W}$ be the 
 frame attached to the anchor point of the pendulum.  If we
 consider the homogeneous transformation from $e$ to $\mathcal{W}$, we can write: 
 	\[
-T_e^\mathcal{W} = \begin{bmatrix} R_z(\phi) & \mathbf{0}_{3 \times 1}  \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  \begin{bmatrix} R_y( \frac{\pi}{2} - \theta) & \mathbf{0}_{3 \times 1}   \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
-\begin{bmatrix} I_{3,3} &    \begin{matrix} l \\0 \\0 \end{matrix}    \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
+\vect{T}_e^\mathcal{W} = \begin{bmatrix}\vect{R}_z(\phi) & \mathbf{0}_{3 \times 1}  \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  \begin{bmatrix} \vect{R}_y( \frac{\pi}{2} - \theta) & \mathbf{0}_{3 \times 1}   \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
+\begin{bmatrix} \vect{I}_{3 \times3} &    \begin{matrix} l \\0 \\0 \end{matrix}    \\ \mathbf{0}_{1 \times 3}  & 1\end{bmatrix}  
 	\]
-Simplifying $T_e^\mathcal{W}$, gives 
+Simplifying $\vect{T}_e^\mathcal{W}$, gives 
 	\[
-	T_e^\mathcal{W} = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
+	\vect{T}_e^\mathcal{W} = \begin{bmatrix} c_\phi s_\theta & -s_\phi & c_\phi c_\theta & l c_\phi s_\theta\\
 		s_\phi s_\theta & c_\phi & c_\theta s_\phi & l s_\phi s_\theta\\
 		-c_\theta & 0 & s_\theta &-l c_\theta\\
 		0 & 0 &0 &1\end{bmatrix} 
 	\]		
 where $c_x$ is a shorthand for $\cos x$ , and $s_x$ is a shorthand for $\sin x$.
-The position $\mathbf{p}$ of the mass  can be extracted from the transformation matrix $T_\mathcal{B}^\mathcal{W}$ as: 
+The position $\mathbf{p}$ of the mass  can be extracted from the transformation matrix $\vect{T}_\mathcal{B}^\mathcal{W}$ as: 
 %
 \begin{align}  
 		\mathbf{p} &= \begin{bmatrix} X\\ Y\\ Z \end{bmatrix} =
@@ -85,7 +87,7 @@ The position $\mathbf{p}$ of the mass  can be extracted from the transformation 
 			-l c_\theta \end{bmatrix} \label{eq1}						
 \end{align}
 
-and the axes $e_r$, $e_t$, $e_n$ are the columns of 	the top-left sub-matrix of $T_e^\mathcal{W}$, respectively.
+and the axes $\vect{e}_r$, $\vect{e}_t$, $\vect{e}_n$ are the columns of 	the top-left sub-matrix of $\vect{T}_e^\mathcal{W}$, respectively.
 %\begin{align}
 %	\mathbf{e}_r &= \mat{	c_\phi s_\theta\\
 %		s_\phi s_\theta\\

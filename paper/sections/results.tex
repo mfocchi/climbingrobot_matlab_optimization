@@ -32,13 +32,13 @@ For the Gazebo simulation, we assume to apply the push impulse as a force $F_c$ 
 Therefore we employ the leg dynamics to define the mapping between the contact force $F_c$ and the torques $\tau_{\text{leg}}$ at the leg joints:
 %
 \begin{equation}
-\boldsymbol{\tau}_{\text{leg}}^d= \mat{\boldsymbol{\tau}_{HP} \\ \boldsymbol{\tau}_{HR} \\ \vect{f}_{K}} =  \vect{h}_{\text{leg}} -J_{\text{leg}}^T \underbrace{\left(R_e^\mathcal{W}  \mat{F_{u,n} \\ F_{u,t} \\ 0} \right) 	}_{\vect{F}_c}
+\boldsymbol{\tau}_{\text{leg}}^d= \mat{\tau_{HP} \\ \tau_{HR} \\ \tau_{K}} =  \vect{h}_{\text{leg}} -\vect{J}_{\text{leg}}^T \underbrace{\left(R_e^\mathcal{W}  \mat{F_{u,n} \\ F_{u,t} \\ 0} \right) 	}_{\vect{F}_c}
 \end{equation}
 %
-Where $J_{\text{leg}} \in \Rnum^{3 \times 3}$ is the sub-matrix of the Jacobian $J$ relative to the leg jonts, 
+Where $\vect{J}_{\text{leg}} \in \Rnum^{3 \times 3}$ is the sub-matrix of the Jacobian $\vect{J}$ relative to the leg jonts, 
 %$R_e^\mathcal{W}$ is the rotation matrix that represents the orientation of the base link w.r.t. the inertial frame $\mathcal{W}$ (different from $R_e^\mathcal{W}$) 
 and $\vect{h}_{\text{leg}} \in \Rnum ^3$ represents the bias terms. We do
-not generate any impulse along the rope direction ($e_R$ axis) in 
+not generate any impulse along the rope direction ($\vect{e}_R$ axis) in 
 order to avoid to accidentally create any slack on the rope.
 Additionally, to avoid angular motions, we implement virtual dampers to keep the passive joints at the 
 base in a fixed position, since the optimization is performed 
@@ -52,16 +52,16 @@ In the leg orientation phase,  the hip roll joint set-point $q_{HR}^d$ is comman
 to have the leg aligned with the impulse direction, $q_{HR}^d = \atandue(\text{max}(F_{u,t}), \text{max}(F_{u,n}))$. 
 Note that the hip-pitch joint set-point is $q_{0, HP}^d = -1.57$ in order to 
 have the leg lying on the X-Y plane of the base frame. A low level PD controller 
-runs in parallel with the  feed-forward actions $\tau_{\text{leg}}^d$ to drive the joints.  
+runs in parallel with the  feed-forward actions $\boldsymbol{\tau}_{\text{leg}}^d$ to drive the joints.  
 During the \textit{thrusting} phase the force $\vect{F}_c$ is generated at the contact 
-applying $\boldsymbol{\tau}_{\text{leg}}$ for the thrust duration $T_{th} = 0.025 s$, while the PD gains are 
+applying $\boldsymbol{\tau}_{\text{leg}}^d$ for the thrust duration $T_{th} = 0.025 s$, while the PD gains are 
 switched off to avoid conflicts. Then  it follows  the 
 flying phase, where   the rope winding joint is actuated with the optimized force pattern $\tau_R = F_r(t)$ for the whole jump duration $t_f$.
-
+%
 % computation time and number of nodes
 The computation time for the optimization and the integration error at the target $\Vert e_f \Vert$ are linearly  
 linked to the number of discretization points $N$. Table~\ref{tab:solve_time} reports 
-the integration error normalized for the jump length $\Vert e_f \Vert / (l_f-l_0)$ 
+the integration error normalized for the jump length $\Vert \vect{e}_f \Vert / (l_f-l_0)$ 
 for different numbers of discretization points. 
 %%%
 \begin{table}[!tbp]
@@ -69,7 +69,7 @@ for different numbers of discretization points.
 	\caption{ Results of the numerical OCP for different discretisations}
 	\label{tab:solve_time}
 	\begin{tabular}{c c c c  } \hline\hline
-		\textbf{N} \quad & \textbf{Comp. time [s]}           & \textbf{$\Vert e_f \Vert$ [m]} &  \textbf{$\Vert e_f \Vert / (l_f-l_0)$ [\%]} \\ \hline
+		\textbf{N} \quad & \textbf{Comp. time [s]}           & \textbf{$\Vert \vect{e}_f \Vert$ [m]} &  \textbf{$\Vert \vect{e}_f \Vert / (l_f-l_0)$ [\%]} \\ \hline
 			250    &   0.850          &  0.0937 & 0.76 \\
 			500    &   1.472          &  0.0525 & 0.42 \\
 			1000   &   2.648          &  0.0238 & 0.19 \\
@@ -78,7 +78,7 @@ for different numbers of discretization points.
 	\end{tabular}	
 \end{table}
 The Table shows that a  good trade-off can be found between accuracy and computation time that enables fast computation.
-
+%
 Fig. \ref{fig:validation} reports the results for $N=500$. 
 Simulating the simplified model, the matching is almost perfect (apart from integration drifts), while in the 
 full-model simulation the norm of the final error is around 0.75 $m$ for a 12 $m$ jump (0.6\%). This is due to a number of reasons: 
@@ -94,9 +94,10 @@ and shows that the simplified model is a good approximation for the real system.
 		The blue and black lines are the simulated trajectory with Matlab and Gazebo, respectively. 
 		The bottom plot is the rope retraction force $F_r(t)$.}
 	\label{fig:validation}
+		\vspace{-0.65cm}
 \end{figure}
-
- 
+%
+%
 % 2nd experiment multiple targets, an one starting from slanted
 Additionally, we run the optimization to jump on 3 different targets on the rock pillar 
 (see Fig. \ref{fig:targets}), starting from a point on the wall $\vect{p}_0 = \mat{0.24,0,-8}$ (Experiment 1,2,3).
@@ -123,6 +124,7 @@ As expected, the final kinetic energy (that will be lost at the impact) is highe
 			4   			& $\mat{1.73, 3.8,  -20.46} $     &     1.69         &       168                &     -64          &      619     &                 \\ % exp6_slanted		
 			\hline\hline 					    					    					    
 	\end{tabular}}
+		\vspace{-0.4cm}
 	\label{tab:sim_different_targets}
 \end{table}
 %
@@ -149,7 +151,7 @@ This  decreases the deceleration on the $\phi$ variable due to the gravity compo
 %because the gravity component (always pointing toward the anchor line) can be exploited. 
 %
 %
-To  visualize this fact and better assess the capabilities of the system, we perform a reachability analysis, plotting a top view (X-Y plane) of the region  of reachable jump targets (see Fig. \ref{fig:reachable_region}) lifting-off from the same point $\vect{p}_0$.  We run a number of optimizations for a grid of targets below $\vect{p}_0$, in the positive $Y$ half-space (the solutions are symmetric in the negative one). We plot a marker for the targets where the optimization convergence is successful to state that they are \textit{reachable}. We also  associate a color code to the of energy consumed by the winding mechanism for each target. The friction boundary is marked as a red line. We notice that there are a few reachable targets  out of the area limited by the friction cone and that they  are associated with a very high consumption in terms of energy from the winding mechanism, because they involve a big initial retraction, corroborating the insights got in Fig. \ref{fig:targets}. 
+To  visualize this fact and better assess the capabilities of the system, we perform a reachability analysis, plotting a top view (X-Y plane) of the region  of reachable jump targets (see Fig. \ref{fig:reachable_region}) lifting-off from the same point $\vect{p}_0$.  We run a number of optimizations for a grid of targets below $\vect{p}_0$, in the positive $Y$ half-space (the solutions are symmetric in the negative one). We plot a marker for the targets where the optimization convergence is successful to state that they are \textit{reachable}. We also  associate a color code to the of energy consumed by the winding mechanism for each target. The friction boundary is marked as a red line. We notice that there are a few reachable targets  out of the area limited by the friction cone and that they  are associated with a very high consumption in terms of energy from the winding mechanism, because they involve a big initial retraction, corroborating the insights got in Fig. \ref{fig:targets}. On the other hand, with a fixed rope,  lateral jumps would be very limited. Indeed, the fact of performing small lateral jumps to move laterally, is also what experienced climbers do to realize a big pendulum swing on a rock face \cite{kingswing}.
 %We noticed that, due to the physics of the system, in order to reach lateral targets the optimization tried to rewind the rope 
 %to steer the trajectory that would be otherwise limited to an area linked to the value of the friction coefficient.
 %We selected this quite large value for $\mu$ because it is reasonable to assume that the 
@@ -160,4 +162,5 @@ To  visualize this fact and better assess the capabilities of the system, we per
 	\caption{\small Simulation. Top view (X-Y plane) of the region of reachable targets for a friction coefficient $\mu =0.7$.
 		The black star is the anchor point, the big green dot is the common lift-off point $\vect{p}_0$. The color bar indicates the energy consumed by the winding mechanism to reach the target.}
 	\label{fig:reachable_region}
+			\vspace{-0.5cm}
 \end{figure}
