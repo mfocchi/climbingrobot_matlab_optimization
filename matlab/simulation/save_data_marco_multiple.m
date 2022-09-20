@@ -2,6 +2,8 @@ clc;
 clear all;
 close all;
 
+PAPER  = false;
+
 % additional data for plotting
 T_th   = 0.05; %on zeta variable
 g = 9.81;
@@ -17,10 +19,10 @@ mu_gauss    = T_th/2;
 pf_vec = [];
 exp_name = {'exp1';'exp2';'exp3';'exp4'};
 
-%exp 2          p0 = [ 0; 0 ; -8]           pf =[2.60  2.73  -20.46]
-%exp3           p0 = [ 0; 0 ; -8]            pf =[ 2.50  0.05   -20.46]
-%exp5           p0 = [ 0; 0 ; -8]           pf = [0.55;  -0.8;  -17.76]
-%exp 6 slanted  p0 = [0.63 , 2.35; -7.5],	pf = [1.734, 3.8, -20.46]
+%exp 1          p0 = [ 0; 0 ; -8]           pf =[2.60  2.73  -20.46]
+%exp 2           p0 = [ 0; 0 ; -8]            pf =[ 2.50  0.05   -20.46]
+%exp 3          p0 = [ 0; 0 ; -8]           pf = [0.55;  -0.8;  -17.76]
+%exp 4 (slanted)  %p0 = [1.04; 1.71; -7.54] %pf = [2.7; 2.52  ; -20.46]
 
 for n_test =1:size(exp_name,1)
 
@@ -47,6 +49,8 @@ Fut = ForceFut(zeta,fFut,sigma_gauss,mu_gauss);
 p = [l.*sin(theta).*cos(phi); l.*sin(theta).*sin(phi); -l.*cos(theta)]  ;
 p0 = p(:,1);
 pf = p(:,end);
+
+
 
 %0.04198*2/1.698444
 T_th = Tf(1)*0.05;
@@ -117,6 +121,8 @@ pf_vec = [pf_vec; pf'];
 
 %ad obstacle
 cone(0,1.5,0);
+% check rope interference with trarget
+line ([0,pf(1)], [0,pf(2)], [0, pf(3)], 'LineWidth', 4);
 
 save(exp_name{n_test},'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
@@ -130,20 +136,21 @@ norm(p0-pf)
 end
 
 view(113,61); 
-text(pf_vec(1,1)+1,pf_vec(1,2)-1,pf_vec(1,3), 'Exp.1','FontSize',20)
-text(pf_vec(2,1),pf_vec(2,2)-2,pf_vec(2,3), 'Exp.2','FontSize',20)
-text(pf_vec(3,1)+1,pf_vec(3,2)-2,pf_vec(3,3), 'Exp.3','FontSize',20)
-text(pf_vec(4,1)+1,pf_vec(4,2)-0.5,pf_vec(4,3), 'Exp.4','FontSize',20)
 
+if PAPER
 
+    text(pf_vec(1,1)+1,pf_vec(1,2)-1,pf_vec(1,3), 'Exp.1','FontSize',20)
+    text(pf_vec(2,1),pf_vec(2,2)-2,pf_vec(2,3), 'Exp.2','FontSize',20)
+    text(pf_vec(3,1)+1,pf_vec(3,2)-2,pf_vec(3,3), 'Exp.3','FontSize',20)
+    text(pf_vec(4,1)+1,pf_vec(4,2)-0.5,pf_vec(4,3), 'Exp.4','FontSize',20)
 
-%save the plot
-set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [20 27]);
-set(gcf, 'PaperPosition', [0 0 20 27]);
-print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
+    %save the plot
+    set(gcf, 'Paperunits' , 'centimeters')
+    set(gcf, 'PaperSize', [20 27]);
+    set(gcf, 'PaperPosition', [0 0 20 27]);
+    print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
 
-
+end
 
 function res = ForceFun(zeta,Fun0,sigma,mu_gauss)
 

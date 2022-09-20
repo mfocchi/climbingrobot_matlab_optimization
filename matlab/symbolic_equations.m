@@ -138,7 +138,7 @@ pd =subs( pd, {str2sym('l(t)') , str2sym('theta(t)'),str2sym('phi(t)')}, {str2sy
 pd
 
 
-% compute dynamics simbolically
+% compute kinematic simbolically for the simplifie model
 syms phi theta l  
 Rx=@(angle) [1       0        0
             0       cos(angle) -sin(angle)
@@ -167,11 +167,56 @@ H2_T_b = [ eye(3), [l;0;0]
       
 H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_b)     
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
+% computeJointVariables from cartesian in Gazebo
+% in gazebo you first rotate pitch about -Y then roll about X then you
+% translate rope along -Z
+
+syms pitch roll rope real
+Rsym_x = @(angle)[	1   ,    0     	  ,  	  0,
+                0   ,    cos(angle) ,  -sin(angle),
+                0   ,    sin(angle) ,  cos(angle)];
+Rsym_y = @(angle)[cos(angle) ,	 0  ,   sin(angle),
+          0       ,    1  ,   0,
+          -sin(angle) 	,	 0  ,  cos(angle)];
+
+Rsym_z = @(angle)[cos(angle), -sin(angle), 0,
+                 sin(angle), cos(angle), 0,
+                    0, 0, 1];
+
+% the rotation about -Y is given by the transposed
+H0_T_1 = [Rsym_y(pitch)', [0;0;0]
+          zeros(1, 3), 1];
+
+H1_T_2 = [Rsym_x(roll) , [0;0;0]
+          zeros(1, 3), 1] ;     
       
+H2_T_3 = [eye(3) , [0;0;-rope]
+          zeros(1, 3), 1];            
+      
+H0_T_3 =  simplify(H0_T_1 *H1_T_2*H2_T_3)     
+
+p = H0_T_3(1:3, 4)
+joint_l = simplify(norm(p))
+joint_pitch = simplify(atan2(p(1), -p(3)))
+joint_roll = simplify(asin(p(2)/joint_l))
+
+
+
+
+
+
+
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % compute target for mutiple jumps symbolically
     
+
 
 % we need to use hom transofrms wrt to FIXED axes
 % translate l1 along -Z
