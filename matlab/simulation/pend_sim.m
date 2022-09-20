@@ -90,7 +90,7 @@ Ekin_sim=   (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m
 % 3D plot Animation
 figure(1)
 
-title('3D Plot Animation');
+title('Matlab Animation - simplified model');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
 
 % Min-max axis
@@ -110,7 +110,7 @@ set(gca,'YLim',[min_y max_y])
 set(gca,'ZLim',[min_z max_z])
 
 %     Vertical line
-h(1) = plot3([0 p0(1)],[0 p0(2)],[0 p0(3)],'k--');
+h(1) = plot3([0 p0(1)],[0 p0(2)],[0 p0(3)],'k-');
 %     Point fix
 h(2) = plot3(0,0,0,'Marker','*','Color','k','MarkerSize',10);
 
@@ -133,7 +133,7 @@ h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',
 
 h(8) = plot3(pf(1),pf(2),pf(3),'Marker','.','Color','r','MarkerSize',50);
 if OBSTACLE 
-    cone(0,0.5,0)
+    cone(0,1.5,0);
 end
 
 
@@ -152,8 +152,9 @@ for i = 1:length(X)
       
     drawnow limitrate;
     pause(0.001);
-
+ 
 end
+
 
 
 %%%%PLOTS for paper
