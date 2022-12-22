@@ -27,6 +27,9 @@ phi0 = 0 ;
 T = table2array(readtable('first_jump_0224_0_8_to_3_3_20','NumHeaderLines',20)); % obstacle (0, 1.5) , pf = [3,3,-20] 1st jump
 %T = table2array(readtable('second_jump_3_3_20_to_0224_5_25','NumHeaderLines',20)); % obstacle (0, 1.5) , p0 = [0.,3,-20] 2nd jump
 
+% prin jump up from target
+%T = table2array(readtable('up_jump_3_3_20_to_0224_0_8','NumHeaderLines',20)); % obstacle (0, 1.5) , p0 = [3,3,-20] pf = [0.0224 0, -8] 
+
 
 
 zeta  = T(:, 2)';
@@ -119,12 +122,27 @@ solution.Fun = Fun;
 solution.Fut = Fut;
 solution.Fr = Fr;
 
+
+%%Energy consumption
+J_TO_Wh = 0.000277
+impulse_end_idx = max(find(time<=T_th))
+impulse_work =   m/2*pd(:,impulse_end_idx)'*pd(:,impulse_end_idx);
+hoist_work = 0;
+for i=1:length(time)
+    hoist_work = hoist_work + abs(Fr(impulse_end_idx).*ld(impulse_end_idx))* dt;  %assume the motor is not regenreating
+end
+impulse_workWh = J_TO_Wh*impulse_work
+hoist_workWh=J_TO_Wh*hoist_work
+
+
+
+
 figure
 plot_curve( solution, p0, pf, mu,  'r');
 %ad obstacle
 cone(0,1.5,0);
 %cone(0,5,-4)
-
+% 
 figure
 plot(time, Fun)
 ylabel('Fun')
@@ -134,7 +152,12 @@ plot(time, Fut)
 ylabel('Fut')
 
 figure
-plot(time, fFut./fFun)
+plot(time, Fr)
+ylabel('Fr')
+
+% friction coeff
+% figure
+% plot(time, fFut./fFun)
 
 
 % test of the leg displacement 
