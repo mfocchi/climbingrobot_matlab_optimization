@@ -133,6 +133,16 @@ p = [l* sin(theta)*cos(phi);
     l* sin(theta)*sin(phi); 
     - l*cos(theta)]
 pd = diff(p, t);
+
+L = simplify(0.5*m*sum(pd.^2) + m*g*l*cos(theta),'Steps',50);
+
+
+L =subs(L,  {str2sym( 'diff(l(t), t)') , str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)'), str2sym('diff(sy(t), t)')}, ...
+                {str2sym('ld') , str2sym('thetad'),str2sym('phid'),str2sym('syd')});
+L =subs(L, {str2sym('l(t)') , str2sym('theta(t)'),str2sym('phi(t)'),str2sym('sy(t)')},... 
+                {str2sym('l'), str2sym('theta'),str2sym('phi'),str2sym('sy')});
+
+
 pd =subs( pd,  {str2sym( 'diff(l(t), t)') , str2sym( 'diff(theta(t), t)'), str2sym('diff(phi(t), t)')}, {str2sym('ld') , str2sym('thetad'),str2sym('phid')});
 pd =subs( pd, {str2sym('l(t)') , str2sym('theta(t)'),str2sym('phi(t)')}, {str2sym('l'), str2sym('theta'),str2sym('phi')});
 pd
@@ -200,6 +210,7 @@ p = H0_T_3(1:3, 4)
 joint_l = simplify(norm(p))
 joint_pitch = simplify(atan2(p(1), -p(3)))
 joint_roll = simplify(asin(p(2)/joint_l))
+
 
 
 

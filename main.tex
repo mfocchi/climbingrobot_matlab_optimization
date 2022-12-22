@@ -518,6 +518,79 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 	\label{fig:muti_jumps}
 \end{figure}
 
+\section{Slider model}
+
+Adding a slider introduces a prismatic joint whose axis is aligned with the y axis, we pre-pend to the state vector 
+the linear position $s_y$ of the slider and compute the position of the mass  is given by:
+
+\begin{align} \label{eq1slider}
+\mathbf{p} = \mat{ x\\ y\\ z} =
+			\mat{ l s_\theta c_\phi\\
+				  s_y + l s_\theta s_\phi\\
+					-l c_\theta}
+\end{align}
+
+
+From equation \ref{eq1slider}, the velocities along the axes are:  
+
+\begin{align*}
+\dot{p} &=  \mat{ \dot{x}\\ \dot{y}\\ \dot{z}} =
+\mat{   l c_\theta c_\phi \dot{\theta} - l s_\theta s_\phi \dot{\phi} + s_\theta c_\phi \dot{l} \\
+		\dot{s_y} + l c_\theta s_\phi \dot{\theta} + l s_\theta c_\phi \dot{\phi} + s_\theta s_\phi \dot{l} \\
+		l s_\theta  \dot{\theta} - c_\theta \dot{l} }
+\end{align*}
+
+The kinetic energy of the whole system is: 
+
+\begin{align*}
+T = T_s + T_m = \frac{1}{2}m_s v_s^2  + \frac{1}{2}m v^2 
+\end{align*}
+
+where
+\begin{align}
+v_s^2& = \mat{0 & \dot{s}_y & 0}\mat{0 & \dot{s}_y & 0}^T = \dot{s}_y^2 \\
+v^2 &=   \dot{l}^2 + \dot{s}_y^2 + l^2s_\theta^2\dot{\phi}^2 + l^2\dot{\theta}^2 +\\
+& \textcolor{blue}{
+			 2  \dot{l}\dot{s}_y s_\phi  s_\theta 
+			+ 2 l \dot{\phi} \dot{s}_y c_\phi s_\theta  +  2l\dot{s}_y \dot{\theta}c_{\theta} s_\phi}
+\end{align}
+
+
+From which the Lagrangian takes this form:
+\begin{align}
+L& =\textcolor{blue}{ \frac{1}{2} m_s\dot{s}_y^2} +\\
+&\frac{1}{2}m \left[ \dot{l}^2 + l^2\dot{\phi} s_{\theta}^2 + l^2 \dot{\theta}^2 + \textcolor{blue}{\dot{s}_y^2 + 2\dot{l}^2  \dot{s}_y s_\phi s_\theta + 
+	2l\dot{\phi} \dot{s}_y c_\phi s_\theta +
+	2l\dot{s}_y \dot{\theta} c_\theta s_\phi} \right]
+\end{align}
+
+where terms dependent on $\dot{s}_y$ appeared. We added a force $F_s$ applied along the slider direction(Y) to the mass of the slider $m_s$.
+From the Euler Lagrange equations we get the differential equations that describe the dynamics:
+
+
+\begin{align}
+& ( m +m_s) \ddot{s}_y  -lm s_\phi s_\theta \dot{phi}^2 + 2lmc_\phi c_\theta \dot{\phi}\theta + \\
+&2\dot{l}m c_\phi s_\theta \dot{\phi} -lm s_\phi s_\theta \dot{\theta}^2 + 
+2\dot{l} m c_\theta s_\phi \dot{\theta} + \ddot{l}m\\ 
+&s_\phi s_\theta + lm\ddot{\phi} c_\phi s_\theta + lm \ddot{\theta}c_\theta s_\phi = F_s + F_{ut} c_\phi + F_{un}c_\theta s_\phi + F_r s_\phi s_\theta
+\end{align}
+
+\begin{align}
+-lc_\theta s_\theta \dot{\phi}^2 + l\ddot{\theta} + 2\dot{l}\dot{\theta} + gs_\theta 
++ \ddot{s}_y c_\theta s_\phi = \frac{F_{un}}{m}
+\end{align}
+
+%
+\begin{equation}
+l\ddot{\phi} + 2\dot{l}\dot{\phi} - l\ddot{\phi}c_\theta^2 - 2\dot{l}\dot{\phi}c_\theta^2 + \ddot{s}_y c_\phi s_\theta + 2l\dot{\phi}\dot{\theta}c_\theta s_\theta= F_{ut} \frac{s_\theta}{m}
+\end{equation}
+
+\begin{equation}
+\ddot{l}  + l\dot{\phi}^2c_\theta^2 - l\dot{\phi}^2 - l\dot{\theta}^2 - gc_\theta   + \ddot{s}_y s_\phi s_\theta= \frac{F_r}{m}
+\end{equation}
+%!
+%
+
 \input{include/ContLyap}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
