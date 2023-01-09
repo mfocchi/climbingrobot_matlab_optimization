@@ -519,6 +519,13 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 \end{figure}
 
 \section{Slider model}
+In Fig. \ref{fig:sliderModel} we present the model of the robot where the anchor point is movable by means of a slider. 
+
+	\begin{figure}
+		\includegraphics[width=\columnwidth]{figs/simplifiedModelSlider.pdf}
+		\caption{Spherical pendulum with slider}
+		\label{fig:sliderModel}
+	\end{figure}
 
 Adding a slider introduces a prismatic joint whose axis is aligned with the y axis, we pre-pend to the state vector 
 the linear position $s_y$ of the slider and compute the position of the mass  is given by:
@@ -542,14 +549,15 @@ From equation \ref{eq1slider}, the velocities along the axes are:
 
 The kinetic energy of the whole system is: 
 
-\begin{align*}
+\begin{align}
 T = T_s + T_m = \frac{1}{2}m_s v_s^2  + \frac{1}{2}m v^2 
-\end{align*}
+\label{eq:ekinSlider}
+\end{align}
 
 where
 \begin{align}
-v_s^2& = \mat{0 & \dot{s}_y & 0}\mat{0 & \dot{s}_y & 0}^T = \dot{s}_y^2 \\
-v^2 &=   \dot{l}^2 + \dot{s}_y^2 + l^2s_\theta^2\dot{\phi}^2 + l^2\dot{\theta}^2 +\\
+v_s^2& = \mat{0 & \dot{s}_y & 0}\mat{0 & \dot{s}_y & 0}^T = \dot{s}_y^2  \nonumber \\
+v^2 &=   \dot{l}^2 + \dot{s}_y^2 + l^2s_\theta^2\dot{\phi}^2 + l^2\dot{\theta}^2 +  \nonumber\\
 & \textcolor{blue}{
 			 2  \dot{l}\dot{s}_y s_\phi  s_\theta 
 			+ 2 l \dot{\phi} \dot{s}_y c_\phi s_\theta  +  2l\dot{s}_y \dot{\theta}c_{\theta} s_\phi}
@@ -558,38 +566,51 @@ v^2 &=   \dot{l}^2 + \dot{s}_y^2 + l^2s_\theta^2\dot{\phi}^2 + l^2\dot{\theta}^2
 
 From which the Lagrangian takes this form:
 \begin{align}
-L& =\textcolor{blue}{ \frac{1}{2} m_s\dot{s}_y^2} +\\
-&\frac{1}{2}m \left[ \dot{l}^2 + l^2\dot{\phi} s_{\theta}^2 + l^2 \dot{\theta}^2 + \textcolor{blue}{\dot{s}_y^2 + 2\dot{l}^2  \dot{s}_y s_\phi s_\theta + 
+L& =\textcolor{blue}{ \frac{1}{2} m_s\dot{s}_y^2} +  
+\frac{1}{2}m \left[ \dot{l}^2 + l^2\dot{\phi} s_{\theta}^2 + l^2 \dot{\theta}^2\right] +   \nonumber \\
+& \textcolor{blue}{ \frac{1}{2}m \left[\dot{s}_y^2 + 2\dot{l}^2  \dot{s}_y s_\phi s_\theta + 
 	2l\dot{\phi} \dot{s}_y c_\phi s_\theta +
-	2l\dot{s}_y \dot{\theta} c_\theta s_\phi} \right]
+	2l\dot{s}_y \dot{\theta} c_\theta s_\phi \right]} 
+\label{eq:lagrSlider}
 \end{align}
 
-where terms dependent on $\dot{s}_y$ appeared. We added a force $F_s$ applied along the slider direction(Y) to the mass of the slider $m_s$.
+where all the additional terms with respect to the non slider case (in blue) appear to be dependent on $\dot{s}_y$, as expected. 
+We added a force $F_s$ applied along the slider direction ($Y$) to the point mass of the movable anchor $m_s$.
 From the Euler Lagrange equations we get the differential equations that describe the dynamics:
 
+The first equation, relative to the $s_y$ degree of freedom is:
 
 \begin{align}
-& ( m +m_s) \ddot{s}_y  -lm s_\phi s_\theta \dot{phi}^2 + 2lmc_\phi c_\theta \dot{\phi}\theta + \\
-&2\dot{l}m c_\phi s_\theta \dot{\phi} -lm s_\phi s_\theta \dot{\theta}^2 + 
-2\dot{l} m c_\theta s_\phi \dot{\theta} + \ddot{l}m\\ 
-&s_\phi s_\theta + lm\ddot{\phi} c_\phi s_\theta + lm \ddot{\theta}c_\theta s_\phi = F_s + F_{ut} c_\phi + F_{un}c_\theta s_\phi + F_r s_\phi s_\theta
+& ( m +m_s) \ddot{s}_y  + 2lmc_\phi c_\theta \dot{\phi} \dot{\theta} + \nonumber \\
+&2\dot{l}m c_\phi s_\theta \dot{\phi}   + s_\phi s_\theta ( \ddot{l}m - l m \dot{\theta}^2  -lm \dot{\phi}^2 )  + \nonumber \\ 
+& lm\ddot{\phi} c_\phi s_\theta + c_\theta s_\phi (lm \ddot{\theta} +2\dot{l} m  \dot{\theta}) = F_s + F_{ut} c_\phi + F_{un}c_\theta s_\phi + F_r s_\phi s_\theta
 \end{align}
 
+
+The second equation, relative to the $\theta$ degree of freedom is:
+
+
 \begin{align}
--lc_\theta s_\theta \dot{\phi}^2 + l\ddot{\theta} + 2\dot{l}\dot{\theta} + gs_\theta 
-+ \ddot{s}_y c_\theta s_\phi = \frac{F_{un}}{m}
+\ddot{\theta} + \frac{2}{l}\dot{\theta}\dot{l}  -c_\theta s_\theta \dot{\phi}^2 +  \frac{g}{l}s_\theta 
++ \textcolor{blue}{\frac{1}{l}\ddot{s}_y c_\theta s_\phi} = \frac{F_{un}}{ml}
 \end{align}
+
+
+The third equation, relative to the $\phi$ degree of freedom is:
 
 %
 \begin{equation}
-l\ddot{\phi} + 2\dot{l}\dot{\phi} - l\ddot{\phi}c_\theta^2 - 2\dot{l}\dot{\phi}c_\theta^2 + \ddot{s}_y c_\phi s_\theta + 2l\dot{\phi}\dot{\theta}c_\theta s_\theta= F_{ut} \frac{s_\theta}{m}
+ \ddot{\phi} +  2\dot{\phi}\dot{\theta} \frac{c_\theta}{s_\theta}  + \frac{2}{l} \dot{\phi} \dot{l}  +  \textcolor{blue}{\frac{1}{l s_\theta}  c_\phi \ddot{s}_y} =  \frac{ F_{ut}}{mls_\theta}
 \end{equation}
 
+The fourth equation, relative to the $l$ degree of freedom is:
+
+
 \begin{equation}
-\ddot{l}  + l\dot{\phi}^2c_\theta^2 - l\dot{\phi}^2 - l\dot{\theta}^2 - gc_\theta   + \ddot{s}_y s_\phi s_\theta= \frac{F_r}{m}
+\ddot{l}  - l\dot{\theta}^2 - l\dot{\phi}^2 s_\theta^2  - gc_\theta   + \textcolor{blue}{\ddot{s}_y s_\phi s_\theta} = \frac{F_r}{m}
 \end{equation}
-%!
-%
+
+where the additional terms due to the slider are depicted in blue.
 
 \input{include/ContLyap}
 
