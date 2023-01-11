@@ -166,8 +166,7 @@ Rz=@(angle)[cos(angle)    -sin(angle) 0
 H0_T_1 = [Rz(phi) , [0;0;0]
           zeros(1, 3), 1]
 
-H1_T_2 = [Ry(-theta) , [0;0;0]
-          zeros(1, 3), 1]      
+     
       
 H1_T_2 = [Ry(pi/2-theta) , [0;0;0]
           zeros(1, 3), 1]      
