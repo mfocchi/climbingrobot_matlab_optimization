@@ -146,7 +146,7 @@ for i = 1:length(X)
         addpoints(h(4), X(i),Y(i),Z(i)); 
 
     else 
-        addpoints(h(5)  ,X(i),Y(i),Z(i))
+        addpoints(h(5)  ,X(i),Y(i),Z(i));
        
     end
       
