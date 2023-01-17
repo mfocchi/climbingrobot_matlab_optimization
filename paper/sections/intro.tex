@@ -18,8 +18,8 @@ there are still ways to climb walls not yet studied or reported \cite{bio_inspir
 % Introduction of the problem 
 The research work done so far on climbing robots is reviewed and
 classified in \cite{Fang2022} and \cite{A.Hajeeretall2020},
-respectively, according to the adhesion technique \cite{longo2008}
-used to attach the robot to the wall surface, and locomotion mechanism
+respectively, according to the adhesion technique (electrostatic, magnetic, pneumatic, etc.) \cite{longo2008}
+used to attach the robot to the wall surface, and locomotion mechanism (i.e. wheel-Driven, tracked, legged, etc.)
 \cite{Chu2010}, utilized for climbing.  The attachment and motion
 mechanisms are basically considered as the main problems when
 designing climbing robots. Additional requirements of equal importance
@@ -33,16 +33,20 @@ obstacles \cite{Schmidt2013}.
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.6\columnwidth]{figs/3dmodel.pdf}
-	\caption{\small Kinematic model of the CLIO robot with  standard definitions. The anchor frame is aligned with an inertial ($\mathcal{W}$) frame.}
+	\includegraphics[width=0.45\columnwidth]{figs/3dmodel.pdf}
+		\includegraphics[width=0.52\columnwidth]{figs/gazeboSim.pdf}
+	\caption{\small (left) Kinematic model of the CLIO robot with  standard definitions. 
+		The anchor frame is aligned with an inertial ($\mathcal{W}$) frame. (right) Realistic Gazebo simulation of a jump.}
 	\label{fig:3dmodel}
 \end{figure}
+
+
 
 
 %% Solution for Attachment technique : USING A ROPE + main advantages   
 Human climbers inspired the use of a rope mainly for safety measures (R1)
 to support the weight of people during facade cleaning, firefighting and rescue missions
-\cite{Nansai2016}.
+\cite{Nansai2016}. 
 In this paper, we combine the use of a rope with a leg, which can be retracted and extended
 very quickly. This allows the robot to jump away from the mountain wall, while the rope
 can be used to control its motion.
@@ -77,7 +81,8 @@ dynamics and the low control authority of this class of robots.
 % can reach the target with jumps
 Finally, rather than slowly taking steps as walking mechanism, the robot can take one or multiple 
 jumps like the rapid jumping Salto-1P shown in \cite{Haldane2017} to reach the desired locations, 
-and overcoming obstacles.
+and overcoming obstacles. Some early work on planning jumping trajectories for a rope-aided  
+robot has been performed in \cite{mingo21} but no physical validation was reported.
 
 %Difficulties in the jumping technique
 To summarise, the key features of jumping with a rope %that can be
@@ -105,9 +110,8 @@ the physical constraints are satisfied along the planning horizon.
 In this framework, different goals can also be pursued, such as minimising energy 
 consumption or reaching the target in minimum time. 
 
-\subsection{Proposed Approach and Contribution}
 %
-In this work, we present a novel robotic platform called CLIO
+In this work, we present a robotic platform called CLIO
 (CLImbing rObot) that is able to reach desired targets on a vertical
 (or slanted) wall with different frictional properties.  We also
 propose a planning approach, based on numerical optimization, to solve
@@ -116,7 +120,7 @@ Hence, the contributions of the paper can be summarised in what
 follows:
 \begin{itemize}
 
-\item A novel design of a jumping robot platform CLIO;
+\item A conceptual design of a jumping robot platform CLIO;
 \item An optimal control formulation to generate a jump motion to
   reach a desired target while overcoming an obstacle, based on a
   simplified model of the system, which results in reduced computation

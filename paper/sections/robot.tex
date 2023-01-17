@@ -1,6 +1,6 @@
 \subsection{Full robot description}
 %
-This section presents the kinematic model of the CLIO robot (see Fig. \ref{fig:3dmodel}). 
+This section presents the kinematic model of the CLIO robot (see Fig. \ref{fig:3dmodel}(left)). 
 We model the robot as a serial kinematic chain with $n=9$ \gls{dofs} represented by the configuration vector $\vect{q} \in \Rnum^n$. 
 We model the attachment between the anchor point (a fixed link) and the rope with 2 \textit{passive} (rotational) joints.
 The rope is modeled as an \textit{actuated} prismatic joint ($q_{R}$), 
@@ -16,9 +16,9 @@ This enables to avoid \textit{centroidal} moments that
  would pivot the robot around the rope axis.
 % dealing with this is out of the scope of this paper (and part of future works). 
 Finally a prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusting} impulse.
-\footnote{With the actual design, the robot will not be able to stabilize itself on the wall, 
-	however the design of a landing and stabilization mechanism is out of the scope of this work,
-	where we focus on the jump. }
+With the actual design, the robot will not be able to stabilize itself on the wall, 
+however the design of a landing and stabilization mechanism is out of the scope of this work,
+where we focus on the jump. 
 
 %\begin{figure}
 %	\centering
@@ -39,7 +39,7 @@ Unless specified, all  vectors are expressed in an inertial $\mathcal{W}$ frame 
 The under-actuation is captured by the vector $\vect{0}_{5 \times 1}$, while 
 the efforts of the actuated joints are grouped into the vector $\boldsymbol{\tau}_a = \mat{ \boldsymbol{\tau}_R & \boldsymbol{\tau}_{\text{leg}}}^T \in \Rnum^4$.
 
-\vspace{0.3cm}
+\vspace{-0.8cm}
 \subsection{Simplified Model}
 Dealing with the full dynamics of the robot can be time consuming, due to the 
 high number of states and constraints involved. Therefore, in this section, we derive a lower dimensional model 
@@ -51,7 +51,7 @@ and $l$ is the length of the rope.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=0.75\columnwidth]{figs/simplifiedModel.pdf}
+\includegraphics[width=0.6\columnwidth]{figs/simplifiedModel.pdf}
 \caption{\small Logical scheme of the simplified model}
 \vspace{-0.3cm}
 \label{fig:sp}
@@ -258,8 +258,9 @@ The dynamics of the system will be obtained using the Euler-Lagrange equation:
 The problem of moving CLIO between two given configurations is not 
 easy.  First of all, even the simplified dynamics in~\eqref{eq:nonlinearDyn} is highly nonlinear.  Second, 
 the configurations the robot moves between can in general be 
-distant, and therefore it is not possible to
-use the linearized dynamics.  Third, one of our
+distant, and therefore, using a linearization of the dynamics equations \ref{eq:nonlinearDyn} 
+around a specific operating point would lead to 
+inaccurate results.  Third, one of our
 actuators, the thrusting force $\mathbf{F}_u$, has an impulsive nature
 and operates at discrete time instants. Therefore, it is not possible
 to use it in any feedback control scheme.
