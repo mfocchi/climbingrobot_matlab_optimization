@@ -60,6 +60,8 @@ pd = [ld.*cos(phi).*sin(theta) - l.*phid.*sin(phi).*sin(theta) + l.*thetad.*cos(
 ld.*sin(phi).*sin(theta) + l.*phid.*cos(phi).*sin(theta) + l.*thetad.*cos(theta).*sin(phi);
                                                l.*thetad.*sin(theta) - ld.*cos(theta)];
 
+                                     
+                                           
 solution.energy = struct;
 % init struct foc C++ code generation
 solution.energy.Etot = 0;
@@ -148,7 +150,7 @@ if PAPER
     set(gcf, 'Paperunits' , 'centimeters')
     set(gcf, 'PaperSize', [20 27]);
     set(gcf, 'PaperPosition', [0 0 20 27]);
-    print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
+    print(gcf, '-dpdf',strcat('targets.pdf'),'-painters')
 
 end
 

@@ -72,7 +72,8 @@ fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
 %fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
 [Tf_gazebo, end_gazebo_index] = max(time_gazebo); % there are nans in the log
 fprintf('the Gazebo touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n', traj_gazebo(1,end_gazebo_index),  traj_gazebo(2,end_gazebo_index), traj_gazebo(3,end_gazebo_index),Tf_gazebo);
-fprintf('with error : %3.2f\n',norm(pf - [traj_gazebo(1,end_gazebo_index);  traj_gazebo(2,end_gazebo_index); traj_gazebo(3,end_gazebo_index)]));
+gazebo_error = norm(pf - [traj_gazebo(1,end_gazebo_index);  traj_gazebo(2,end_gazebo_index); traj_gazebo(3,end_gazebo_index)]);
+fprintf('with error : %3.2f\n',gazebo_error);
 
 
 % eval total energy sim
@@ -137,6 +138,8 @@ if OBSTACLE
 end
 
 
+   
+
  view(33,63);
 % Loop for animation
 for i = 1:length(X)
@@ -155,55 +158,128 @@ for i = 1:length(X)
  
 end
 
+deltax = diff(solution.p(1,:));  % diff(X);
+deltay = diff(solution.p(2,:));   % diff(Y);
+deltaz = diff(solution.p(3,:));    % diff(Z);
+
+solution.path_length = sum(sqrt(deltax.^2 + deltay.^2 + deltaz.^2))
+fprintf('jump length is: %3.2f \n',solution.path_length );
+fprintf('gazebo perc. error is: %3.2f \n',gazebo_error/solution.path_length*100 );
 
 
 %%%%PLOTS for paper
 %%
 loadFigOptions
+% figure(2)
+% ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
+% plot( time, solution.p(1,:),'r', 'linewidth', 4);hold on;
+% plot( time_sim, X,'b'); 
+% plot( time_gazebo, traj_gazebo(1,:),'k'); 
+% ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
+% set(ha(1),'XtickLabel',[])
+% xlim([0, time(end)])
+% 
+% lgd=legend({'$\mathrm{opt}$', ...
+%     '$\mathrm{sim~mat}$', ...
+%     '$\mathrm{sim~gaz}$',},...
+%         'Location','southeast',...
+%         'interpreter','latex',...
+%         'Orientation','horizontal');
+% lgd.FontSize = 25;
+% 
+% ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
+% plot(time, solution.p(2,:),'r', 'linewidth', 4);hold on;
+% plot(time_sim, Y,'b'); 
+% plot(time_gazebo, traj_gazebo(2,:),'k'); 
+% ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
+% set(ha(2),'XtickLabel',[])
+% xlim([0, time(end)])
+% 
+% ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
+% plot( time, solution.p(3,:),'r', 'linewidth', 4);hold on;
+% plot(time_sim, Z,'b'); 
+% plot(time_gazebo, traj_gazebo(3,:),'k'); 
+% ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
+% set(ha(3),'XtickLabel',[])
+% xlim([0, time(end)])
+% 
+% ha(4) = axes('position',[four_xgraph four_y4 four_w small_h]);
+% plot(time, solution.Fr,'r');hold on;
+% ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
+% xlabel('t $[\mathrm{s}]$','interpreter','latex')
+% xlim([0, time(end)])
+
+%redone after reviewer comment: with retraction force
+% figure(2)
+% ha(1) = axes('position',[three_xgraph  three_y1 three_w three_h]);grid on;
+% plot( time, abs(solution.p(1,:) - X'),'r', 'linewidth', 4);hold on;
+% plot( time, abs(solution.p(2,:) - Y'),'g', 'linewidth', 4);hold on;
+% plot( time, abs(solution.p(3,:) - Z'),'b', 'linewidth', 4);hold on;
+% 
+% ylabel('$\vert e_i \vert$ $[\mathrm{m}]$','interpreter','latex')
+% set(ha(1),'XtickLabel',[])
+% xlim([0, time(end)])
+% lgd=legend({'$X$','$Y$','$Z$'},...
+%         'Location','southeast',...
+%         'interpreter','latex',...
+%         'Orientation','horizontal');
+% lgd.FontSize = 25;
+% 
+% ha(2) = axes('position',[three_xgraph  three_y2 three_w three_h]);
+% plot( time, abs(solution.p(1,:)-traj_gazebo(1,1:length(time))),'r', 'linewidth', 4);hold on;
+% plot( time, abs(solution.p(2,:)-traj_gazebo(2,1:length(time))),'g', 'linewidth', 4); 
+% plot( time, abs(solution.p(3,:)-traj_gazebo(3,1:length(time))),'b', 'linewidth', 4); 
+% 
+% ylabel('$\vert e_i \vert$ $[\mathrm{m}]$','interpreter','latex')
+% set(ha(2),'XtickLabel',[])
+% xlim([0, time(end)])
+% 
+% lgd=legend({'$X$','$Y$','$Z$'},...
+%         'Location','southeast',...
+%         'interpreter','latex',...
+%         'Orientation','horizontal');
+% lgd.FontSize = 25;
+% 
+% ha(3) = axes('position',[three_xgraph  three_y3 three_w three_h]);
+% plot(time, solution.Fr,'r');hold on;
+% ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
+% xlabel('t $[\mathrm{s}]$','interpreter','latex')
+% xlim([0, time(end)])
+% save the plot
+% set(gcf, 'Paperunits' , 'centimeters')
+% set(gcf, 'PaperSize', [40 25]);
+% set(gcf, 'PaperPosition', [0 0 40 25]);
+% print(gcf, '-dpdf',strcat('validation.pdf'),'-painters')
+
+%redone after reviewer comment: without retraction force
 figure(2)
-ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
-plot( time, solution.p(1,:),'r', 'linewidth', 4);hold on;
-plot( time_sim, X,'b'); 
-plot( time_gazebo, traj_gazebo(1,:),'k'); 
-ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
+ha(1) = axes('position',[two_xgraph  two_y1 two_w two_h]);grid on;
+plot( time, abs(solution.p(1,:) - X'),'r', 'linewidth', 4);hold on;
+plot( time, abs(solution.p(2,:) - Y'),'g', 'linewidth', 4);hold on;
+plot( time, abs(solution.p(3,:) - Z'),'b', 'linewidth', 4);hold on;
+
+ylabel('$\vert e_i \vert$ $[\mathrm{m}]$','interpreter','latex')
 set(ha(1),'XtickLabel',[])
 xlim([0, time(end)])
-
-lgd=legend({'$\mathrm{opt}$', ...
-    '$\mathrm{sim~mat}$', ...
-    '$\mathrm{sim~gaz}$',},...
+lgd=legend({'$X$','$Y$','$Z$'},...
         'Location','southeast',...
         'interpreter','latex',...
         'Orientation','horizontal');
 lgd.FontSize = 25;
 
-ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
-plot(time, solution.p(2,:),'r', 'linewidth', 4);hold on;
-plot(time_sim, Y,'b'); 
-plot(time_gazebo, traj_gazebo(2,:),'k'); 
-ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
-set(ha(2),'XtickLabel',[])
-xlim([0, time(end)])
-
-ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
-plot( time, solution.p(3,:),'r', 'linewidth', 4);hold on;
-plot(time_sim, Z,'b'); 
-plot(time_gazebo, traj_gazebo(3,:),'k'); 
-ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
-set(ha(3),'XtickLabel',[])
-xlim([0, time(end)])
-
-ha(4) = axes('position',[four_xgraph four_y4 four_w small_h]);
-plot(time, solution.Fr,'r');hold on;
-ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
+ha(2) = axes('position',[two_xgraph  two_y2 two_w two_h]);
+plot( time, abs(solution.p(1,:)-traj_gazebo(1,1:length(time))),'r', 'linewidth', 4);hold on;
+plot( time, abs(solution.p(2,:)-traj_gazebo(2,1:length(time))),'g', 'linewidth', 4); 
+plot( time, abs(solution.p(3,:)-traj_gazebo(3,1:length(time))),'b', 'linewidth', 4); 
+ylabel('$\vert e_i \vert$ $[\mathrm{m}]$','interpreter','latex')
 xlabel('t $[\mathrm{s}]$','interpreter','latex')
 xlim([0, time(end)])
 
 % save the plot
 set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [30 20]);
-set(gcf, 'PaperPosition', [0 0 30 20]);
-print(gcf, '-dpdf',strcat('../../paper/matlab/validation.pdf'),'-painters')
+set(gcf, 'PaperSize', [40 30]);
+set(gcf, 'PaperPosition', [0 0 40 30]);
+print(gcf, '-dpdf',strcat('validation.pdf'),'-painters')
 
 % 
 % figure(1)
@@ -248,22 +324,6 @@ print(gcf, '-dpdf',strcat('../../paper/matlab/validation.pdf'),'-painters')
 % plot(time, solution.ld,'r');
 % ylabel('ld')
 % legend('sim', 'opt')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function [fr] = FrFun(t)
