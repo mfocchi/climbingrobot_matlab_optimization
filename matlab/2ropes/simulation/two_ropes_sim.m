@@ -232,17 +232,17 @@ function [dxdt] = diffEq(t,x, m, Fr1, Fr2 ,Fleg)
 
     % mass equation and rope constraints 
     A = [m*eye(3) ,    zeros(3,1)  , zeros(3,1),
-         2*(p-p_a1)'  , -1    ,   0,
-         2*(p-p_a2)',   0    ,   -1];
+         (p-p_a1)'  , -l1    ,   0,
+         (p-p_a2)',   0    ,   -l2];
     
     if DEBUG % reset the state already
 
-           b = [m*[0;0;-g]; -2*dp'*dp ; -2*dp'*dp ];     
+           b = [m*[0;0;-g]; -dp'*dp + dl1^2 ; -dp'*dp + dl2^2 ];     
 
     else
        
         J = [ (p-p_a1)/norm(p-p_a1) ,(p-p_a2)/norm(p-p_a2)];
-        b = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t); -2*dp'*dp ; -2*dp'*dp ];
+        b = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t); -dp'*dp + dl1^2 ; -dp'*dp + dl2^2 ];     
     end
 
     y = inv(A)*b;
