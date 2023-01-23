@@ -521,11 +521,11 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 \section{Slider model}
 In Fig. \ref{fig:sliderModel} we present the model of the robot where the anchor point is movable by means of a slider. 
 
-	\begin{figure}
-		\includegraphics[width=\columnwidth]{figs/simplifiedModelSlider.pdf}
-		\caption{Spherical pendulum with slider}
-		\label{fig:sliderModel}
-	\end{figure}
+\begin{figure}
+	\includegraphics[width=\columnwidth]{figs/simplifiedModelSlider.pdf}
+	\caption{Spherical pendulum with slider}
+	\label{fig:sliderModel}
+\end{figure}
 
 Adding a slider introduces a prismatic joint whose axis is aligned with the y axis, we pre-pend to the state vector 
 the linear position $s_y$ of the slider and compute the position of the mass  is given by:
@@ -611,6 +611,79 @@ The fourth equation, relative to the $l$ degree of freedom is:
 \end{equation}
 
 where the additional terms due to the slider are depicted in blue.
+
+\section{Two anchor model}
+
+To derive the model with two anchor points, we employ a Newtonian approach 
+modeling the system as a point mass under the action of the (unilateral) forces coming from the ropes and the leg. 
+Exploiting the fact that we have a kinematic loop (i.e. between the two anchor points) 
+we adopt a redundant representation of the system configuration choosing as degrees of freedom the Cartesian position $p\in\Rnum^3$ of the mass 
+and the lengths $l_1 \in \Rnum$, $l_2\in \Rnum$ of the two ropes:
+
+\begin{equation}
+\vec{q} = \mat{\vec{p} &l_1 &l_2}^T
+\end{equation}
+
+the Newton Equation becomes:
+\begin{equation}
+m \ddot{p} -mg = (\vec{p} - \vec{p}_{a,1}) f_{r,1} +(\vec{p} - \vec{p}_{a,2}) f_{r,2} + \vec{F}_{leg}
+\end{equation}
+
+
+
+where $\vec{p}_{a,1}$, $\vec{p}_{a,2}$, are the two anchor point positions, respectively, while $f_{r,1}$, $f_{r,2} 
+\in \Rnum$ are the magnitudes of the forces exerted by the ropes. 
+By enforcing the following two scalar constraints, the total number of degrees of freedom becomes 3:
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{figs/simplifiedModel2anchors.pdf}
+	\caption{Simplified model with two anchor points.}
+	\label{fig:2anchorsModel}
+\end{figure}
+
+\begin{align}
+&(\vec{p} - \vec{p}_{a,1})^T(\vec{p} - \vec{p}_{a,1}) = l_1\\
+&(\vec{p} - \vec{p}_{a,2})^T(\vec{p} - \vec{p}_{a,2}) = l_2\\
+\end{align}
+
+ 
+for the Euler integration it is convenient to express these constraints at the acceleration level:
+
+\begin{align}
+(\vec{p} - \vec{p}_{a,1})^T \ddot{p} + \dot{p}^2 = \dot{l_1}^2 + l_1\ddot{l_1}\\
+(\vec{p} - \vec{p}_{a,2})^T \ddot{p} + \dot{p}^2 = \dot{l_2}^2 + l_2\ddot{l_2}\\
+\end{align}
+ 
+
+Then, we can isolate the accelerations to get the differential equations of the dynamics, in the following matrix form:
+
+\begin{align}
+&\underbrace{\mat{ m I_{3 \times 3}              & 0   & 0\\
+	(\vec{p} - \vec{p}_{a,1})^T     & -l_1  & 0 \\
+	(\vec{p} - \vec{p}_{a,2})^T     & 0  & -l_2}}_A \mat{\ddot{p} \\ \ddot{l}_1 \\\ddot{l}_2} = \\
+&\quad \quad\underbrace{ \mat{ mg + (\vec{p} - \vec{p}_{a,1}) f_{r,1} +(\vec{p} - \vec{p}_{a,2}) f_{r,2} + \vec{F}_{leg}\\
+				 \dot{l}_1^2 -\dot{p}^2 \\
+				 \dot{l}_2^2 -\dot{p}^2}}_b				 
+\end{align}
+
+from which we get: 
+
+\begin{align}
+ \mat{\ddot{p} \\ \ddot{l}_1 \\\ddot{l}_2} =  A^{-1}b		 
+\end{align}
+
+the initial state $\vec{q}_0, \vec{\dot{q}}_0 \in \Rnum^5$ usable for the integration, 
+can be computed from the initial position of the mass $\vec{p}_0$ and of the initial velocity of the rope 
+extensions $\dot{l}_1$, $\dot{l}_2$:
+
+\begin{align}
+\vec{\dot{q}}_0 &= \mat{  J_0 \mat{\dot{l}_1 \\ \dot{l}_2} & \dot{l}_1     &  \dot{l}_2   }^T\\
+ \vec{q}_0 &= \mat{ \vec{p}_0 & \Vert \vec{p}_0 - \vec{p}_{a,1} \Vert &  \Vert \vec{p}_0 - \vec{p}_{a,2} \Vert}^T
+\end{align}
+
+where $J_0 = \mat{ \vec{p}_0 - \vec{p}_{a,1}  & \vec{p}_0 - \vec{p}_{a,2}} \in \Rnum^{3 \times 2} $ is the Jacobian that maps $\dot{l}_1$, $\dot{l}_2$
+into feasible robot positions (i.e. in the range space of $J_0$).
+
 
 \input{include/ContLyap}
 
