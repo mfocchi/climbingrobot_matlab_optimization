@@ -3,35 +3,23 @@ clc
 close all
 
 global delta_duration  Fleg  Fr1 Fr2  time DEBUG p_a1 p_a2
-delta_duration = 0.05;
+
+
+% Deprecated has the WF in the middle of the anchor points
+p_a1 = [0;-5;0];
+p_a2 = [0; 5;0];
+g = 9.81;
+DEBUG = false;  
+m = 7;   % Mass [kg]
+
+
+delta_duration = 0.5;
 dt = 0.001;
 time =[0:dt:4];
-force_scaling = 20;
 
-%jump params
-% p0 = [2; 8; -10];
-% anchor_distance = 10;
-% Fleg = [100;0;0];
-% Fr1 = ones(length(time)) * -70;
-% Fr2 = ones(length(time)) * -30;
-
-%jump params
-p0 = [0.0; 2.5; -6];
-anchor_distance = 5;
-Fleg = [200;0;0];
-Fr1 = ones(length(time)) * -40;
+Fleg = [100;0;0];
+Fr1 = ones(length(time)) * -70;
 Fr2 = ones(length(time)) * -30;
-
-%WORLD FRAME ATTACHED TO ANCHOR 1
-
-p_a1 = [0;0;0];
-p_a2 = [0;anchor_distance;0];
-g = 9.81;
-
-
-
-DEBUG = false;
-m = 5.08;   % Mass [kg]
 
 
 %Initial Conditions
@@ -41,6 +29,7 @@ m = 5.08;   % Mass [kg]
 %   x0 = [theta0; 0.;phi0; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
 % end
 
+p0 = [2; 3; -10];
 l10 = norm(p0 - p_a1);
 l20 = norm(p0 - p_a2);
 l1d0 = 0.0;
@@ -63,6 +52,7 @@ X = x(:,1);
 Y = x(:,2);
 Z = x(:,3);
 
+
 figure(1)
 subplot(3,1,1)
 plot(time_sim, X,'b'); hold on;grid on;
@@ -73,33 +63,11 @@ subplot(3,1,2)
 plot(time_sim, Y,'b'); hold on;grid on;
 ylabel('Y')
 
+
 subplot(3,1,3)
 plot(time_sim, Z,'b'); hold on;grid on;
 ylabel('Z')
 
-% fprintf('original target is  : [%3.2f, %3.2f, %3.2f] \n',pf );
-% fprintf('the Matlab touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
-% if MICHELE_APPROACH
-%     fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
-%     fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
-% end
-% fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
-% %fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
-% [Tf_gazebo, end_gazebo_index] = max(time_gazebo); % there are nans in the log
-% fprintf('the Gazebo touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n', traj_gazebo(1,end_gazebo_index),  traj_gazebo(2,end_gazebo_index), traj_gazebo(3,end_gazebo_index),Tf_gazebo);
-% fprintf('with error : %3.2f\n',norm(pf - [traj_gazebo(1,end_gazebo_index);  traj_gazebo(2,end_gazebo_index); traj_gazebo(3,end_gazebo_index)]));
-% 
-% 
-% % eval total energy sim
-% Ekin_sim=   (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m.*ld_sim.^2/2;
-% 
-% 
-% %compare with optim
-% % figure(2)
-% % plot(time_sim, Ekin_sim,'b.');hold on;grid on;
-% % plot(time, solution.energy.Ekin,'r');
-% % ylabel('Ekin') 
-% % legend('sim', 'opt')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
@@ -116,15 +84,15 @@ h(2) = plot3(p_a2(1),p_a2(2),p_a2(3),'.y', 'MarkerSize',40);grid on;hold on;
 %initial vel vector
 h(3) = plot3([p0(1) p0(1)+dp0(1)],[p0(2) p0(2)+dp0(2)],[p0(3) p0(3)+dp0(3)],'b','Linewidth',4);
 %initial leg impulse
-h(9) = plot3([p0(1) p0(1)+Fleg(1)/force_scaling],[p0(2) p0(2)+Fleg(2)/force_scaling],[p0(3) p0(3)+Fleg(3)/force_scaling],'r','Linewidth',4);
+h(9) = plot3([p0(1) p0(1)+Fleg(1)/10],[p0(2) p0(2)+Fleg(2)/10],[p0(3) p0(3)+Fleg(3)/10],'r','Linewidth',4);
 % rope forces
 Fr1_vec =  (p0 - p_a1)/norm(p0 - p_a1)*Fr1(1);
 Fr2_vec =  (p0 - p_a2)/norm(p0 - p_a2)*Fr2(1);
 
 %Fr1 (forces are positive if they accelerate the mass
-h(10) = plot3([p0(1) p0(1)+Fr1_vec(1)/force_scaling],[p0(2) p0(2)+Fr1_vec(2)/force_scaling],[p0(3) p0(3)+Fr1_vec(3)/force_scaling],'r','Linewidth',4);
+h(10) = plot3([p0(1) p0(1)+Fr1_vec(1)/10],[p0(2) p0(2)+Fr1_vec(2)/10],[p0(3) p0(3)+Fr1_vec(3)/10],'r','Linewidth',4);
 %Fr2
-h(11) = plot3([p0(1) p0(1)+Fr2_vec(1)/force_scaling],[p0(2) p0(2)+Fr2_vec(2)/force_scaling],[p0(3) p0(3)+Fr2_vec(3)/force_scaling],'r','Linewidth',4);
+h(11) = plot3([p0(1) p0(1)+Fr2_vec(1)/10],[p0(2) p0(2)+Fr2_vec(2)/10],[p0(3) p0(3)+Fr2_vec(3)/10],'r','Linewidth',4);
 
 
 %plot world reference frame
@@ -137,12 +105,13 @@ h(12) = triad('Parent',tt, 'linewidth', 6);
 h(4) = plot3([p_a1(1) p0(1)],[p_a1(2) p0(2)],[p_a1(3) p0(3)],'k-');
 h(5) = plot3([p_a2(1) p0(1)],[p_a2(2) p0(2)],[p_a2(3) p0(3)],'k-');
 
+
 min_x= 0;
 max_x= 2*max(X);
 min_z = min(Z);
 max_z = 1;
-min_y = -2;
-max_y = min_y+anchor_distance+4;
+min_y = -7;
+max_y = 7;
 
 %     drawing a wall at X = 0 
 p1 = [0 min_y min_z];
@@ -159,7 +128,7 @@ set(gca,'YLim',[min_y max_y])
 set(gca,'ZLim',[min_z max_z]) 
 set(gca,'fontsize',30)
 
-h(7) = animatedline('color','g', 'linewidth',3);
+h(7) = animatedline('color','r', 'linewidth',3);
 h(8) = animatedline('color','b', 'linewidth',3);
 
 %Pendulum sphere (red)
@@ -182,14 +151,8 @@ for i = 1:length(X)
  
 end
 
-matlab_final_point = [X(end),Y(end),Z(end)];
-gazebo_final_point =[-0.00298  1.55479 -2.21499];
 h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
-fprintf('Matlab final point [%3.2f, %3.2f, %3.2f] \n', matlab_final_point)
-fprintf('Gazebo final point [%3.2f, %3.2f, %3.2f] \n', gazebo_final_point)
-fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
-fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
-
+fprintf('final point [%3.2f, %3.2f, %3.2f] \n', X(end),Y(end),Z(end))
 
 
 function [fr1] = Fr1Fun(t)
@@ -220,7 +183,7 @@ end
 function [value, isterminal, direction] = stopFun(t, x)
         global time 
          
-        value = x(1);%stop when gets to wall
+        value = x(1);
         %value =  (Z - target_height);
         %value =  (time(end) - t);    
         %direction  =-1 Detect zero crossings of value in the negative direction only
