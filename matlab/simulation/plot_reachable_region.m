@@ -13,7 +13,7 @@ function a = plot_reachable_region(p0, x_vec, y_vec, z_vec, mu, colormap_vector 
 
     a.Label.Interpreter = 'latex';
     a.Label.String = label;
-    a.FontSize =40;
+    a.FontSize =20;
     %setting for ISO view
     %a.Label.Position(1) = 3;
     %a.Position = a.Position - [.02 0 0 0];

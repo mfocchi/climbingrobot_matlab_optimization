@@ -32,26 +32,21 @@ if FRICTION_CONE
     N_dyn = 20;
 end
 
-% Marco Frego test: initial state
+% INITIAL STATE
 l_0 = 3;
 theta0 =atan2(0.38, l_0);
 %theta0 = 0.05; 
 phi0 = 0 ;
 p0 = [l_0*sin(theta0)*cos(phi0); l_0*sin(theta0)*sin(phi0); -l_0*cos(theta0)];
 
-
-% Marco Frego test: final state
-pf_matrix= [[4.0; 5.0; -8],[1.0; 1.0; -8], [4.0; 1.0; -8], [2.0; 2.0; -6], [1.0; 0.0; -6]];
-%pf_matrix= [[4.0; 5.0; -8]];
-
-for n_test = 1: size(pf_matrix,2)
-    pf = pf_matrix(:,n_test);
+%FINAL TARGET
+pf=  [3.00; 3.00; -20.00]; 
 
 
 %pendulum period
 T_pend = 2*pi*sqrt(l_0/g)/4; % half period TODO replace with linearized
 constr_tolerance = 1e-4;
-options = optimoptions('fmincon','Display','none','Algorithm','sqp',  ... % does not always satisfy bounds
+options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
 'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
 num_params = 3;    
@@ -71,10 +66,10 @@ problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
 %EXITFLAG == 0 max number of iterations
 
 if problem_solved
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', n_test==1);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', true);
 else 
     fprintf(2,"Problem didnt converge!\n")
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', n_test==1);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', true);
 end
 opt_Tf = solution.time(end)
  
@@ -88,16 +83,7 @@ fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_constr.final_error_discrete)
 
 %for Daniele
-save(strcat('test_matlab_',num2str(n_test),'.mat'),'solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
-
-end
-
-
-% save the plot
-set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [15 15]);
-set(gcf, 'PaperPosition', [0 0 15 15]);
-print(gcf, '-dpdf',strcat('../../paper/matlab/targets.pdf'),'-painters')
+save('test_matlab_1.mat','solution','T_th','mu','Fun_max', 'Fr_max', 'p0','pf');
 
 
 
@@ -112,41 +98,39 @@ if (DEBUG)
     plot(solution.time,-Fr_max*ones(size(solution.l)),'k');
     plot(solution_constr.time,solution.Fr_rough,'bo'); hold on; grid on;   
     plot(solution.time,solution.Fr,'r');
-   
-%     
-%     figure
-%     subplot(3,1,1)
-%     plot(solution.time, solution.theta,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.theta,'ob');
-%     ylabel('theta')
-% 
-%     subplot(3,1,2)
-%     plot(solution.time, solution.phi,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.phi,'ob');
-%     ylabel('phi')
-%     
-%     subplot(3,1,3)
-%     plot(solution.time, solution.l,'r'); hold on; grid on;
-%     plot(solution_constr.time, solution_constr.l,'ob');
-%     ylabel('l')
-%     
-%     figure
-%     subplot(3,1,1)
-%     plot(solution.time, solution.thetad,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.thetad,'ob');
-%     ylabel('thetad')
-% 
-%     subplot(3,1,2)
-%     plot(solution.time, solution.phid,'r');hold on; grid on;
-%     plot(solution_constr.time, solution_constr.phid,'ob');
-%     ylabel('phid')
-%     
-%     subplot(3,1,3)
-%     plot(solution.time, solution.ld,'r'); hold on; grid on;
-%     plot(solution_constr.time, solution_constr.ld,'ob');
-%     ylabel('ld')
-%     
-%     
+      
+    figure
+    subplot(3,1,1)
+    plot(solution.time, solution.theta,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.theta,'ob');
+    ylabel('theta')
+
+    subplot(3,1,2)
+    plot(solution.time, solution.phi,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.phi,'ob');
+    ylabel('phi')
+    
+    subplot(3,1,3)
+    plot(solution.time, solution.l,'r'); hold on; grid on;
+    plot(solution_constr.time, solution_constr.l,'ob');
+    ylabel('l')
+    
+    figure
+    subplot(3,1,1)
+    plot(solution.time, solution.thetad,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.thetad,'ob');
+    ylabel('thetad')
+
+    subplot(3,1,2)
+    plot(solution.time, solution.phid,'r');hold on; grid on;
+    plot(solution_constr.time, solution_constr.phid,'ob');
+    ylabel('phid')
+    
+    subplot(3,1,3)
+    plot(solution.time, solution.ld,'r'); hold on; grid on;
+    plot(solution_constr.time, solution_constr.ld,'ob');
+    ylabel('ld')
+        
     
     figure
     subplot(3,1,1)
@@ -163,13 +147,11 @@ if (DEBUG)
     plot(solution.time, solution.p(3,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(3,:),'ob') ; hold on;
     ylabel('Z')
-    
-    
-    
+       
     
 end
 
-disp('inputs')
+disp('inputs from optimization')
 p0 
 solution.Fun
 solution.Fut

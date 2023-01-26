@@ -1,0 +1,566 @@
+[
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  codegen_function_data.c -o build/glnxa64/codegen_function_data.o",
+    "file": "codegen_function_data.c",
+    "output": "build/glnxa64/codegen_function_data.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o",
+    "file": "rt_nonfinite.c",
+    "output": "build/glnxa64/rt_nonfinite.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  codegen_function_initialize.c -o build/glnxa64/codegen_function_initialize.o",
+    "file": "codegen_function_initialize.c",
+    "output": "build/glnxa64/codegen_function_initialize.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  codegen_function_terminate.c -o build/glnxa64/codegen_function_terminate.o",
+    "file": "codegen_function_terminate.c",
+    "output": "build/glnxa64/codegen_function_terminate.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  codegen_function.c -o build/glnxa64/codegen_function.o",
+    "file": "codegen_function.c",
+    "output": "build/glnxa64/codegen_function.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  fmincon.c -o build/glnxa64/fmincon.o",
+    "file": "fmincon.c",
+    "output": "build/glnxa64/fmincon.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  checkLinearInputs.c -o build/glnxa64/checkLinearInputs.o",
+    "file": "checkLinearInputs.c",
+    "output": "build/glnxa64/checkLinearInputs.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  eml_int_forloop_overflow_check.c -o build/glnxa64/eml_int_forloop_overflow_check.o",
+    "file": "eml_int_forloop_overflow_check.c",
+    "output": "build/glnxa64/eml_int_forloop_overflow_check.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  any.c -o build/glnxa64/any.o",
+    "file": "any.c",
+    "output": "build/glnxa64/any.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  linspace.c -o build/glnxa64/linspace.o",
+    "file": "linspace.c",
+    "output": "build/glnxa64/linspace.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  power.c -o build/glnxa64/power.o",
+    "file": "power.c",
+    "output": "build/glnxa64/power.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  norm.c -o build/glnxa64/norm.o",
+    "file": "norm.c",
+    "output": "build/glnxa64/norm.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factoryConstruct.c -o build/glnxa64/factoryConstruct.o",
+    "file": "factoryConstruct.c",
+    "output": "build/glnxa64/factoryConstruct.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factoryConstruct1.c -o build/glnxa64/factoryConstruct1.o",
+    "file": "factoryConstruct1.c",
+    "output": "build/glnxa64/factoryConstruct1.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factoryConstruct2.c -o build/glnxa64/factoryConstruct2.o",
+    "file": "factoryConstruct2.c",
+    "output": "build/glnxa64/factoryConstruct2.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factoryConstruct3.c -o build/glnxa64/factoryConstruct3.o",
+    "file": "factoryConstruct3.c",
+    "output": "build/glnxa64/factoryConstruct3.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeObjective_.c -o build/glnxa64/computeObjective_.o",
+    "file": "computeObjective_.c",
+    "output": "build/glnxa64/computeObjective_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  diff.c -o build/glnxa64/diff.o",
+    "file": "diff.c",
+    "output": "build/glnxa64/diff.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  sum.c -o build/glnxa64/sum.o",
+    "file": "sum.c",
+    "output": "build/glnxa64/sum.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeConstrViolationIneq_.c -o build/glnxa64/computeConstrViolationIneq_.o",
+    "file": "computeConstrViolationIneq_.c",
+    "output": "build/glnxa64/computeConstrViolationIneq_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  ixamax.c -o build/glnxa64/ixamax.o",
+    "file": "ixamax.c",
+    "output": "build/glnxa64/ixamax.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computePrimalFeasError.c -o build/glnxa64/computePrimalFeasError.o",
+    "file": "computePrimalFeasError.c",
+    "output": "build/glnxa64/computePrimalFeasError.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeDualFeasError.c -o build/glnxa64/computeDualFeasError.o",
+    "file": "computeDualFeasError.c",
+    "output": "build/glnxa64/computeDualFeasError.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeComplError.c -o build/glnxa64/computeComplError.o",
+    "file": "computeComplError.c",
+    "output": "build/glnxa64/computeComplError.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  isDeltaXTooSmall.c -o build/glnxa64/isDeltaXTooSmall.o",
+    "file": "isDeltaXTooSmall.c",
+    "output": "build/glnxa64/isDeltaXTooSmall.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xdot.c -o build/glnxa64/xdot.o",
+    "file": "xdot.c",
+    "output": "build/glnxa64/xdot.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xnrm2.c -o build/glnxa64/xnrm2.o",
+    "file": "xnrm2.c",
+    "output": "build/glnxa64/xnrm2.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xasum.c -o build/glnxa64/xasum.o",
+    "file": "xasum.c",
+    "output": "build/glnxa64/xasum.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  interface/_coder_codegen_function_api.c -o build/glnxa64/_coder_codegen_function_api.o",
+    "file": "interface/_coder_codegen_function_api.c",
+    "output": "build/glnxa64/_coder_codegen_function_api.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  interface/_coder_codegen_function_mex.c -o build/glnxa64/_coder_codegen_function_mex.o",
+    "file": "interface/_coder_codegen_function_mex.c",
+    "output": "build/glnxa64/_coder_codegen_function_mex.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  sin.c -o build/glnxa64/sin.o",
+    "file": "sin.c",
+    "output": "build/glnxa64/sin.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  cos.c -o build/glnxa64/cos.o",
+    "file": "cos.c",
+    "output": "build/glnxa64/cos.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xcopy.c -o build/glnxa64/xcopy.o",
+    "file": "xcopy.c",
+    "output": "build/glnxa64/xcopy.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  compressBounds.c -o build/glnxa64/compressBounds.o",
+    "file": "compressBounds.c",
+    "output": "build/glnxa64/compressBounds.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeConstraints_.c -o build/glnxa64/computeConstraints_.o",
+    "file": "computeConstraints_.c",
+    "output": "build/glnxa64/computeConstraints_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeForwardDifferences.c -o build/glnxa64/computeForwardDifferences.o",
+    "file": "computeForwardDifferences.c",
+    "output": "build/glnxa64/computeForwardDifferences.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  updateWorkingSetForNewQP.c -o build/glnxa64/updateWorkingSetForNewQP.o",
+    "file": "updateWorkingSetForNewQP.c",
+    "output": "build/glnxa64/updateWorkingSetForNewQP.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  initActiveSet.c -o build/glnxa64/initActiveSet.o",
+    "file": "initActiveSet.c",
+    "output": "build/glnxa64/initActiveSet.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  setProblemType.c -o build/glnxa64/setProblemType.o",
+    "file": "setProblemType.c",
+    "output": "build/glnxa64/setProblemType.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  modifyOverheadPhaseOne_.c -o build/glnxa64/modifyOverheadPhaseOne_.o",
+    "file": "modifyOverheadPhaseOne_.c",
+    "output": "build/glnxa64/modifyOverheadPhaseOne_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  driver.c -o build/glnxa64/driver.o",
+    "file": "driver.c",
+    "output": "build/glnxa64/driver.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  test_exit.c -o build/glnxa64/test_exit.o",
+    "file": "test_exit.c",
+    "output": "build/glnxa64/test_exit.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeGradLag.c -o build/glnxa64/computeGradLag.o",
+    "file": "computeGradLag.c",
+    "output": "build/glnxa64/computeGradLag.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeLambdaLSQ.c -o build/glnxa64/computeLambdaLSQ.o",
+    "file": "computeLambdaLSQ.c",
+    "output": "build/glnxa64/computeLambdaLSQ.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factorQRE.c -o build/glnxa64/factorQRE.o",
+    "file": "factorQRE.c",
+    "output": "build/glnxa64/factorQRE.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xgeqp3.c -o build/glnxa64/xgeqp3.o",
+    "file": "xgeqp3.c",
+    "output": "build/glnxa64/xgeqp3.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeQ_.c -o build/glnxa64/computeQ_.o",
+    "file": "computeQ_.c",
+    "output": "build/glnxa64/computeQ_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xorgqr.c -o build/glnxa64/xorgqr.o",
+    "file": "xorgqr.c",
+    "output": "build/glnxa64/xorgqr.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xgemv.c -o build/glnxa64/xgemv.o",
+    "file": "xgemv.c",
+    "output": "build/glnxa64/xgemv.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xtrsv.c -o build/glnxa64/xtrsv.o",
+    "file": "xtrsv.c",
+    "output": "build/glnxa64/xtrsv.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  sortLambdaQP.c -o build/glnxa64/sortLambdaQP.o",
+    "file": "sortLambdaQP.c",
+    "output": "build/glnxa64/sortLambdaQP.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  saveJacobian.c -o build/glnxa64/saveJacobian.o",
+    "file": "saveJacobian.c",
+    "output": "build/glnxa64/saveJacobian.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  saveState.c -o build/glnxa64/saveState.o",
+    "file": "saveState.c",
+    "output": "build/glnxa64/saveState.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  step.c -o build/glnxa64/step.o",
+    "file": "step.c",
+    "output": "build/glnxa64/step.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  normal.c -o build/glnxa64/normal.o",
+    "file": "normal.c",
+    "output": "build/glnxa64/normal.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  driver1.c -o build/glnxa64/driver1.o",
+    "file": "driver1.c",
+    "output": "build/glnxa64/driver1.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  PresolveWorkingSet.c -o build/glnxa64/PresolveWorkingSet.o",
+    "file": "PresolveWorkingSet.c",
+    "output": "build/glnxa64/PresolveWorkingSet.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  ComputeNumDependentEq_.c -o build/glnxa64/ComputeNumDependentEq_.o",
+    "file": "ComputeNumDependentEq_.c",
+    "output": "build/glnxa64/ComputeNumDependentEq_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  IndexOfDependentEq_.c -o build/glnxa64/IndexOfDependentEq_.o",
+    "file": "IndexOfDependentEq_.c",
+    "output": "build/glnxa64/IndexOfDependentEq_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  countsort.c -o build/glnxa64/countsort.o",
+    "file": "countsort.c",
+    "output": "build/glnxa64/countsort.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  moveConstraint_.c -o build/glnxa64/moveConstraint_.o",
+    "file": "moveConstraint_.c",
+    "output": "build/glnxa64/moveConstraint_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  feasibleX0ForWorkingSet.c -o build/glnxa64/feasibleX0ForWorkingSet.o",
+    "file": "feasibleX0ForWorkingSet.c",
+    "output": "build/glnxa64/feasibleX0ForWorkingSet.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xgeqrf.c -o build/glnxa64/xgeqrf.o",
+    "file": "xgeqrf.c",
+    "output": "build/glnxa64/xgeqrf.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xgemm.c -o build/glnxa64/xgemm.o",
+    "file": "xgemm.c",
+    "output": "build/glnxa64/xgemm.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xtrsm.c -o build/glnxa64/xtrsm.o",
+    "file": "xtrsm.c",
+    "output": "build/glnxa64/xtrsm.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factorQR.c -o build/glnxa64/factorQR.o",
+    "file": "factorQR.c",
+    "output": "build/glnxa64/factorQR.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  maxConstraintViolation.c -o build/glnxa64/maxConstraintViolation.o",
+    "file": "maxConstraintViolation.c",
+    "output": "build/glnxa64/maxConstraintViolation.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  removeAllIneqConstr.c -o build/glnxa64/removeAllIneqConstr.o",
+    "file": "removeAllIneqConstr.c",
+    "output": "build/glnxa64/removeAllIneqConstr.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeFval.c -o build/glnxa64/computeFval.o",
+    "file": "computeFval.c",
+    "output": "build/glnxa64/computeFval.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  linearForm_.c -o build/glnxa64/linearForm_.o",
+    "file": "linearForm_.c",
+    "output": "build/glnxa64/linearForm_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  iterate.c -o build/glnxa64/iterate.o",
+    "file": "iterate.c",
+    "output": "build/glnxa64/iterate.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeGrad_StoreHx.c -o build/glnxa64/computeGrad_StoreHx.o",
+    "file": "computeGrad_StoreHx.c",
+    "output": "build/glnxa64/computeGrad_StoreHx.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xaxpy.c -o build/glnxa64/xaxpy.o",
+    "file": "xaxpy.c",
+    "output": "build/glnxa64/xaxpy.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeFval_ReuseHx.c -o build/glnxa64/computeFval_ReuseHx.o",
+    "file": "computeFval_ReuseHx.c",
+    "output": "build/glnxa64/computeFval_ReuseHx.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  squareQ_appendCol.c -o build/glnxa64/squareQ_appendCol.o",
+    "file": "squareQ_appendCol.c",
+    "output": "build/glnxa64/squareQ_appendCol.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xrot.c -o build/glnxa64/xrot.o",
+    "file": "xrot.c",
+    "output": "build/glnxa64/xrot.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  deleteColMoveEnd.c -o build/glnxa64/deleteColMoveEnd.o",
+    "file": "deleteColMoveEnd.c",
+    "output": "build/glnxa64/deleteColMoveEnd.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  compute_deltax.c -o build/glnxa64/compute_deltax.o",
+    "file": "compute_deltax.c",
+    "output": "build/glnxa64/compute_deltax.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  factor.c -o build/glnxa64/factor.o",
+    "file": "factor.c",
+    "output": "build/glnxa64/factor.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xpotrf.c -o build/glnxa64/xpotrf.o",
+    "file": "xpotrf.c",
+    "output": "build/glnxa64/xpotrf.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  solve.c -o build/glnxa64/solve.o",
+    "file": "solve.c",
+    "output": "build/glnxa64/solve.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  xscal.c -o build/glnxa64/xscal.o",
+    "file": "xscal.c",
+    "output": "build/glnxa64/xscal.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  compute_lambda.c -o build/glnxa64/compute_lambda.o",
+    "file": "compute_lambda.c",
+    "output": "build/glnxa64/compute_lambda.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  feasibleratiotest.c -o build/glnxa64/feasibleratiotest.o",
+    "file": "feasibleratiotest.c",
+    "output": "build/glnxa64/feasibleratiotest.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  addBoundToActiveSetMatrix_.c -o build/glnxa64/addBoundToActiveSetMatrix_.o",
+    "file": "addBoundToActiveSetMatrix_.c",
+    "output": "build/glnxa64/addBoundToActiveSetMatrix_.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  relaxed.c -o build/glnxa64/relaxed.o",
+    "file": "relaxed.c",
+    "output": "build/glnxa64/relaxed.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  updatePenaltyParam.c -o build/glnxa64/updatePenaltyParam.o",
+    "file": "updatePenaltyParam.c",
+    "output": "build/glnxa64/updatePenaltyParam.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  soc.c -o build/glnxa64/soc.o",
+    "file": "soc.c",
+    "output": "build/glnxa64/soc.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeLinearResiduals.c -o build/glnxa64/computeLinearResiduals.o",
+    "file": "computeLinearResiduals.c",
+    "output": "build/glnxa64/computeLinearResiduals.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  computeDeltaLag.c -o build/glnxa64/computeDeltaLag.o",
+    "file": "computeDeltaLag.c",
+    "output": "build/glnxa64/computeDeltaLag.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  BFGSUpdate.c -o build/glnxa64/BFGSUpdate.o",
+    "file": "BFGSUpdate.c",
+    "output": "build/glnxa64/BFGSUpdate.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  codegen_function_emxutil.c -o build/glnxa64/codegen_function_emxutil.o",
+    "file": "codegen_function_emxutil.c",
+    "output": "build/glnxa64/codegen_function_emxutil.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  interface/_coder_codegen_function_info.c -o build/glnxa64/_coder_codegen_function_info.o",
+    "file": "interface/_coder_codegen_function_info.c",
+    "output": "build/glnxa64/_coder_codegen_function_info.o"
+  },
+  {
+    "directory": "/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness/codegen/mex/codegen_function",
+    "command": "/usr/lib/ccache/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/mfocchi/Dropbox/RESEARCH/climbingrobotnotes/matlab/optimize_polynomials_time_stiffness\" -I \"./interface\" -I \"/usr/local/MATLAB/R2020b/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=codegen_function_mex -c  /usr/local/MATLAB/R2020b/extern/version/c_mexapi_version.c -o build/glnxa64/c_mexapi_version.o",
+    "file": "/usr/local/MATLAB/R2020b/extern/version/c_mexapi_version.c",
+    "output": "build/glnxa64/c_mexapi_version.o"
+  }
+]
