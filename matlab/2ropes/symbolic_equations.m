@@ -28,7 +28,7 @@ H0_T_1 = [Ry(pi/2-psi) , [0;0;0]
 H1_T_2 = [Rz(alpha) , [0;0;0]
           zeros(1, 3), 1]  
  
-% move l1 along x
+% 3) move l1 along x
 H2_T_b = [ eye(3), [l1;0;0]
           zeros(1, 3), 1]      
       
@@ -53,52 +53,42 @@ p_dd3 =subs(p_dd2, {str2sym('l1(t)') , str2sym('l2(t)'),str2sym('psi(t)')},   {s
 
 
 
-% 
+% Compute Lagrangian equations
+%
 % v_2 = simplify(sum(p_d.^2),'Steps',50);
-% Fr1_v = [cos(phi)*sin(theta) sin(phi)*sin(theta) -cos(theta)];
-% Fr2_v = [- sin(phi)  cos(phi) 0 ];
+% Fr1_v = ...
+% Fr2_v = ...
 % L = 0.5*m*v_2 +  m*g*l*cos(psi)
 % 
 % 
-% % l1 
-% dLdtheta_dot = diff(L, diff(theta(t), t))
-% L2_1 = subs_args(diff(dLdtheta_dot, t))
-% L2_2 = subs_args(diff(L, theta(t)))
+% %GDL: l1 
+% dLdl1_dot = diff(L, diff(l1(t), t))
+% L1_1 = subs_args(diff(dLdl1_dot, t))
+% L1_2 = subs_args(diff(L, l1(t)))
 % 
-% dp_dtheta = diff(p, theta(t))
-% dps_dtheta = diff(ps, theta(t))
-% Q_2 = subs_args((Fr*Fr_v + Fut*Fut_v + Fun*Fun_v)*dp_dtheta + Fs*Fs_v*dps_dtheta);
+% Q_1 = ...
+
+% % GDL: l2 
+% dLdl2_dot = diff(L, diff(l2(t), t))
+% L2_1 = subs_args(diff(dLdl2_dot, t))
+% L2_2 = subs_args(diff(L, l2(t)))
 % 
-% % l2 
-% dLdphi_dot = diff(L, diff(phi(t), t))
-% L3_1 = subs_args(diff(dLdphi_dot, t))
-% L3_2 = subs_args(diff(L, phi(t)))
+% Q_2 = ...
 % 
-% dp_dphi = diff(p, phi(t))
-% dps_dphi = diff(ps, phi(t))
-% Q_3 = subs_args((Fr*Fr_v + Fut*Fut_v + Fun*Fun_v)*dp_dphi + Fs*Fs_v*dps_dphi);
+% % GDL: psi 
+% dLdl_dot = diff(L, diff(psi(t), t))
+% L3_1 = subs_args(diff(dLdpsi_dot, t))
+% L3_2 = subs_args(diff(L, psi(t)))
 % 
-% % psi 
-% dLdl_dot = diff(L, diff(l(t), t))
-% L4_1 = subs_args(diff(dLdl_dot, t))
-% L4_2 = subs_args(diff(L, l(t)))
-% 
-% dp_dl = diff(p, l(t))
-% dps_dl = diff(ps, l(t))
-% Q_4 = subs_args((Fr*Fr_v + Fut*Fut_v + Fun*Fun_v)*dp_dl + Fs*Fs_v*dps_dl);
+% Q_3 = ...
 
 % equations
-
 % simplify(L1_1 - L1_2) =  Q_1
 % 
 %  simplify(L2_1 - L2_2) =  Q_2
 % 
 % simplify(L3_1 - L3_2) =  Q_3
 % 
-% simplify(L4_1 - L4_2) =  Q_4
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-%Lp = subs_args(L)
 
 function out = subs_args(u)
 
