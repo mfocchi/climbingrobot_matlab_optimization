@@ -275,6 +275,12 @@ ylabel('$\vert e_i \vert$ $[\mathrm{m}]$','interpreter','latex')
 xlabel('t $[\mathrm{s}]$','interpreter','latex')
 xlim([0, time(end)])
 
+lgd=legend({'$X$','$Y$','$Z$'},...
+        'Location','southeast',...
+        'interpreter','latex',...
+        'Orientation','horizontal');
+lgd.FontSize = 25;
+
 % save the plot
 set(gcf, 'Paperunits' , 'centimeters')
 set(gcf, 'PaperSize', [40 30]);

@@ -15,9 +15,9 @@ roll ($q_{HR}$ about the X axis (red)). These joints are useful to align the leg
 This enables to avoid \textit{centroidal} moments that
  would pivot the robot around the rope axis.
 % dealing with this is out of the scope of this paper (and part of future works). 
-Finally a prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusting} impulse.
-With the actual design, the robot will not be able to stabilize itself on the wall, 
-however the design of a landing and stabilization mechanism is out of the scope of this work,
+Finally, a prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusting} impulse.
+With the actual design, the robot will not be able to stabilize itself on the wall.
+However, the design of a landing and stabilization mechanism is out of the scope of this work,
 where we focus on the jump. 
 
 %\begin{figure}
@@ -28,7 +28,7 @@ where we focus on the jump.
 %\end{figure}
 
 The dynamics equation can be written as:  
-
+\vspace{-0.2cm}
 \begin{align}
 \vect{M} (\vect{q}) \vect{\ddot{q}} + \vect{h}(\vect{q},\vect{\dot{q}}) = \mat{\vect{0}_{5 \times 1} \\ \boldsymbol{\tau}_a} + \vect{J}^T \vect{F}_c 
 \end{align}
@@ -39,14 +39,14 @@ Unless specified, all  vectors are expressed in an inertial $\mathcal{W}$ frame 
 The under-actuation is captured by the vector $\vect{0}_{5 \times 1}$, while 
 the efforts of the actuated joints are grouped into the vector $\boldsymbol{\tau}_a = \mat{ \boldsymbol{\tau}_R & \boldsymbol{\tau}_{\text{leg}}}^T \in \Rnum^4$.
 
-\vspace{-0.8cm}
+\vspace{-0.4cm}
 \subsection{Simplified Model}
 Dealing with the full dynamics of the robot can be time consuming, due to the 
 high number of states and constraints involved. Therefore, in this section, we derive a lower dimensional model 
-(3 \gls{dofs}) that captures the dominant dynamics of the system, by making the following assumptions: 1) the mass is entirely concentrated in the body attached to the rope, 
+(3 \gls{dofs}) that captures the dominant dynamics of the system by making the following assumptions: 1) the mass is entirely concentrated in the body attached to the rope, 
 2) we can unwind and rewind the rope that is assumed to be inextensible, rigid, and remains completely elongated (i.e., it cannot bend), 
-3) the rewinder mechanism can pull the rope when winding but it cannot push (i.e., it can only act as a brake during the unwinding phase).
-A geometric sketch of the system is shown in Fig. \ref{fig:sp} where the pitch angle is $\theta$, the yaw angle is $\phi$, 
+3) the rewinder mechanism can pull the rope when winding, but it cannot push (i.e., it can only act as a brake during the unwinding phase).
+A geometric sketch of the system is shown in Fig. \ref{fig:sp}, where the pitch angle is $\theta$, the yaw angle is $\phi$, 
 and $l$ is the length of the rope. 
 
 \begin{figure}[tbp]
@@ -87,7 +87,7 @@ The position $\mathbf{p}$ of the mass  can be extracted from the transformation 
 			-l c_\theta \end{bmatrix} \label{eq1}						
 \end{align}
 
-and the axes $\vect{e}_r$, $\vect{e}_t$, $\vect{e}_n$ are the columns of 	the top-left sub-matrix of $\vect{T}_e^\mathcal{W}$, respectively.
+while the axes $\vect{e}_r$, $\vect{e}_t$, $\vect{e}_n$ are the columns of 	the top-left sub-matrix of $\vect{T}_e^\mathcal{W}$, respectively.
 %\begin{align}
 %	\mathbf{e}_r &= \mat{	c_\phi s_\theta\\
 %		s_\phi s_\theta\\
@@ -99,7 +99,7 @@ and the axes $\vect{e}_r$, $\vect{e}_t$, $\vect{e}_n$ are the columns of 	the to
 %		s_\phi c_\theta\\
 %		s_\theta}		
 %\end{align}
-
+%
 %From equation \ref{eq1}, we can compute the velocities and the kinetic energy:   
 From equation \eqref{eq1}, the velocities along the Cartesian axes are:
 %
@@ -244,20 +244,20 @@ The dynamics of the system will be obtained using the Euler-Lagrange equation:
 \label{eq:nonlinearDyn}
 \end{equation}
 
-        Clearly, in this derivation of the model, we have heavily
-        relied on the point-mass nature of the body.  A possible issue
-        could be the rotational dynamics of the body around the rope axis,
-        which could waste energy generating unnecessary motions and
-        impede the landing phase. This issue will be part of our
-        future work. However, as discussed next, under reasonable
-        assumptions (e.g., thrusting force oriented in the direction
-        of the center of mass), the results based on the simplified
-        model can be applied to a realistic system with a good approximation.
-
+Clearly, in this derivation of the model, we have heavily
+relied on the point-mass nature of the body.  A possible issue
+could be the rotational dynamics of the body around the rope axis,
+which could waste energy, generating unnecessary motions and
+impede the landing phase. This issue will be part of our
+future work. However, as discussed next, under reasonable
+assumptions (e.g., thrusting force oriented in the direction
+of the center of mass), the results based on the simplified
+model can be applied to a realistic system with a good approximation.
+\vspace{-0.4cm}
 \subsection{Robot motion: problems and solution overview}
 The problem of moving CLIO between two given configurations is not 
 easy.  First of all, even the simplified dynamics in~\eqref{eq:nonlinearDyn} is highly nonlinear.  Second, 
-the configurations the robot moves between can in general be 
+the configurations  between which  the robot moves are usually 
 distant, and therefore, using a linearization of the dynamics equations \ref{eq:nonlinearDyn} 
 around a specific operating point would lead to 
 inaccurate results.  Third, one of our

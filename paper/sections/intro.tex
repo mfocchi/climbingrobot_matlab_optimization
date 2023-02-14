@@ -10,7 +10,7 @@ application domains, including
 %% prototypes of climbing robots have been proposed for specific applications to replace 
 %% humans in dangerous and difficult tasks, including inspection of
 nuclear power 
-plants \cite{Briones1994}, high-rise building cleaning \cite{Nansai2016}, bridges 
+plants \cite{Briones1994}, high-rise building cleaning \cite{Nansai2016}, bridge 
 maintenance \cite{Wang2016}, search and rescue missions \cite{Eich2008}. 
 However, % Mention a Gap in knowledge
 there are still ways to climb walls not yet studied or reported \cite{bio_inspired2015}. 
@@ -26,7 +26,7 @@ designing climbing robots. Additional requirements of equal importance
 come from the application and include (R1) safety, (R2) quickness in
 emergency situations, (R3) carrying payloads, and (R4) avoiding
 obstacles \cite{Schmidt2013}.
-
+f
 % Summarizing what's coming in the introduction
 %In the coming two paragraphs, we give the reasons behind using a rope/wire 
 %as an attachment method. After that, we suggest the jumping as moving technique.
@@ -61,10 +61,11 @@ can be used to control its motion.
 Additionally, as shown by Wang et al. \cite{Wang2014} on dragline 
 locomotion bio-inspired from spiders, the aid of rope can dramatically increase the locomotion speed (R2) 
 by a winding and releasing mechanism, therefore being a preferable solution in applications
-that require a prompt intervention such as Search $\&$ Rescue missions.  
+that require a prompt intervention, such as Search $\&$ Rescue missions.  
 %  
 %% Third advantage 
-Furthermore, ropes can support much heavier payloads (R3) than robots relying on sticky/adhesive approaches~\cite{Kim2008,Riskin2009}, because of the limited tangential component of the adhesive and leg actuation.
+Furthermore, ropes can support much heavier payloads (R3) than robots relying on sticky/adhesive approaches~\cite{Kim2008,Riskin2009}
+because of the limited tangential component of the adhesive and leg actuation.
 %the amount of payload that can be carried by sticky/adhesive based climbing 
 %robots \cite{Kim2008,Riskin2009} is very limited due to the small tangential component of 
 %the adhesive and leg actuation. Conversely, a feature of rope to be ideally 
@@ -79,13 +80,13 @@ constraint (i.e. it can only pull and not push), which further complicates the a
 dynamics and the low control authority of this class of robots. 
 % Providing a solution for second problem: locomotion technique, we
 % can reach the target with jumps
-Finally, rather than slowly taking steps as walking mechanism, the robot can take one or multiple 
+Finally, rather than slowly taking steps as a walking mechanism, the robot can take one or multiple 
 jumps like the rapid jumping Salto-1P shown in \cite{Haldane2017} to reach the desired locations, 
 and overcoming obstacles. Some early work on planning jumping trajectories for a rope-aided  
-robot has been performed in \cite{mingo21} but no physical validation was reported.
+robot has been performed in \cite{mingo21}, but no physical validation was reported.
 
 %Difficulties in the jumping technique
-To summarise, the key features of jumping with a rope %that can be
+To summarize, the key features of jumping with a rope %that can be
 % released
 are related to the locomotion speed and the ability to address up to
 \textit{vertical} inclinations.  Moreover, the resulting motion of the
@@ -101,20 +102,20 @@ contact interaction (i.e. friction).
 
 To tackle these issues, numerical optimization comes as an attractive
 solution for these planning problems \cite{Nguyen2019,Ding2020}, since
-it allows to minimize some optimality criteria, while ensuring that
+it allows to minimize some optimality criteria while ensuring that
 the physical constraints are satisfied along the planning horizon.
 %
 %Indeed, casting locomotion planning as an optimization problem
 %allows one to represent high-level tasks and system dynamics using cost functions and 
 %constraints. 
-In this framework, different goals can also be pursued, such as minimising energy 
+In this framework, different goals can also be pursued, such as minimizing energy 
 consumption or reaching the target in minimum time. 
 
 %
 In this work, we present a robotic platform called CLIO
 (CLImbing rObot) that is able to reach desired targets on a vertical
 (or slanted) wall with different frictional properties.  We also
-propose a planning approach, based on numerical optimization, to solve
+propose a planning approach based on numerical optimization, to solve
 the jumping problem employing a simplified model of the dynamics.
 Hence, the contributions of the paper can be summarised in what
 follows:
@@ -140,6 +141,6 @@ coefficient at the lift-off location.
 The paper is organized as follows: Section \ref{sec:robot} gives an
 overview of the robot platform and derives a simplified model of it.
 Section \ref{sec:motionP} describes the optimization problem to plan
-jump trajectories based on the simplified model.  Simulations results
+jump trajectories based on the simplified model.  Simulation results
 are presented in Section \ref{sec:results}.  Finally, we draw the
 conclusions in Section \ref{sec:conclusion}.
