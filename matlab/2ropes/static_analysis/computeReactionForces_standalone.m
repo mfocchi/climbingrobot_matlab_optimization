@@ -7,8 +7,8 @@ p_anchor1 = [0;-5;0]
 p_anchor2 = [0;5;0]
 
 % x = [fl1, fl2, fr1, fr2]
-baseline = 0.4;
-wall_clearance = 0.9;
+baseline = 0.8;
+wall_clearance = 0.4;
 
 mu = 0.8
 g_vec = [0;0;-9.81]
@@ -28,13 +28,13 @@ for step=3:0.1:6
     %          sin(phi)*sin(theta),  cos(phi), cos(theta)*sin(phi) 
     %          -cos(theta),         0,          sin(theta)        ]
 
-    [theta] = computeTheta(p_base);
-    %new model base frame
-    wRb =[ sin(theta), 0, cos(theta),
+    [psi] = computeTheta(p_base);
+    %new model base frame (psi is associated to the rope plane so we have
+    %a rotation of (pi/2 -psi) about the y axis
+    wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
                0, 1,          0, 
-            -cos(theta), 0, sin(theta)]
-
-
+            -sin(pi/2-psi), 0, cos(pi/2-psi)]
+        
     pf1 = [0; -baseline/2; -wall_clearance];
     pf2 = [0; baseline/2; -wall_clearance];
 
@@ -194,10 +194,10 @@ for step=3:0.1:6
 
 
     %plot base reference frame
-    % Tt = [wRb, p_base;
-    %     zeros(1,3) 1];
-    % tt = hgtransform('Matrix', Tt);
-    % ht = triad('Parent',tt, 'linewidth', 6);
+    Tt = [wRb, p_base;
+        zeros(1,3) 1];
+    tt = hgtransform('Matrix', Tt);
+    ht = triad('Parent',tt, 'linewidth', 6);
 
 
     %fundamental to see perpedicuolaity

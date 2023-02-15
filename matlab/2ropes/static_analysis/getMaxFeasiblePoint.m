@@ -21,10 +21,12 @@ for step=3:0.1:7
     %          sin(phi)*sin(theta),  cos(phi), cos(theta)*sin(phi) 
     %          -cos(theta),         0,          sin(theta)        ]
 
-    [theta] = computeTheta(p_base);
-    wRb =[ sin(theta), 0, cos(theta),
+    [psi] = computeTheta(p_base);
+    %new model base frame (psi is associated to the rope plane so we have
+    %a rotation of (pi/2 -psi) about the y axis
+    wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
                0, 1,          0, 
-            -cos(theta), 0, sin(theta)];
+            -sin(pi/2-psi), 0, cos(pi/2-psi)]
 
 
     pf1 = [0; -baseline/2; -wall_clearance];

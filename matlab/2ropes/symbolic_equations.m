@@ -20,7 +20,7 @@ Rz=@(angle)[cos(angle)    -sin(angle) 0
             sin(angle)   cos(angle)   0
             0           0             1];
 %%%%%%%%%%%%%%%%%%%%%%%
-% 1) rotate pi-psi about the y axis
+% 1) rotate pi/2-psi about the y axis
 H0_T_1 = [Ry(pi/2-psi) , [0;0;0]
           zeros(1, 3), 1]      
 
@@ -35,7 +35,7 @@ H2_T_b = [ eye(3), [l1;0;0]
 H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_b)  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% get a simplified model
 clear all
 syms l1(t) l2(t) psi(t) b Fr1 Fr2 Fleg  real
 

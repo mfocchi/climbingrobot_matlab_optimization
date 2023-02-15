@@ -32,8 +32,9 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{glossaries}
 
-
+\include{include/acronyms}
 \include{include/math_commands}
 
 \usepackage{hyperref}
@@ -570,7 +571,7 @@ L& =\textcolor{blue}{ \frac{1}{2} m_s\dot{s}_y^2} +
 \frac{1}{2}m \left[ \dot{l}^2 + l^2\dot{\phi} s_{\theta}^2 + l^2 \dot{\theta}^2\right] +   \nonumber \\
 & \textcolor{blue}{ \frac{1}{2}m \left[\dot{s}_y^2 + 2\dot{l}^2  \dot{s}_y s_\phi s_\theta + 
 	2l\dot{\phi} \dot{s}_y c_\phi s_\theta +
-	2l\dot{s}_y \dot{\theta} c_\theta s_\phi \right]} 
+	2l\dot{s}_y \dot{\theta} c_\theta s_\phi \right]}  + glm c_{\theta}
 \label{eq:lagrSlider}
 \end{align}
 
@@ -585,6 +586,7 @@ The first equation, relative to the $s_y$ degree of freedom is:
 & ( m +m_s) \ddot{s}_y  + 2lmc_\phi c_\theta \dot{\phi} \dot{\theta} + \nonumber \\
 &2\dot{l}m c_\phi s_\theta \dot{\phi}   + s_\phi s_\theta ( \ddot{l}m - l m \dot{\theta}^2  -lm \dot{\phi}^2 )  + \nonumber \\ 
 & lm\ddot{\phi} c_\phi s_\theta + c_\theta s_\phi (lm \ddot{\theta} +2\dot{l} m  \dot{\theta}) = F_s + F_{ut} c_\phi + F_{un}c_\theta s_\phi + F_r s_\phi s_\theta
+\label{eq:slider1}
 \end{align}
 
 
@@ -594,6 +596,7 @@ The second equation, relative to the $\theta$ degree of freedom is:
 \begin{align}
 \ddot{\theta} + \frac{2}{l}\dot{\theta}\dot{l}  -c_\theta s_\theta \dot{\phi}^2 +  \frac{g}{l}s_\theta 
 + \textcolor{blue}{\frac{1}{l}\ddot{s}_y c_\theta s_\phi} = \frac{F_{un}}{ml}
+\label{eq:slider2}
 \end{align}
 
 
@@ -602,6 +605,7 @@ The third equation, relative to the $\phi$ degree of freedom is:
 %
 \begin{equation}
  \ddot{\phi} +  2\dot{\phi}\dot{\theta} \frac{c_\theta}{s_\theta}  + \frac{2}{l} \dot{\phi} \dot{l}  +  \textcolor{blue}{\frac{1}{l s_\theta}  c_\phi \ddot{s}_y} =  \frac{ F_{ut}}{mls_\theta}
+ \label{eq:slider3}
 \end{equation}
 
 The fourth equation, relative to the $l$ degree of freedom is:
@@ -609,9 +613,31 @@ The fourth equation, relative to the $l$ degree of freedom is:
 
 \begin{equation}
 \ddot{l}  - l\dot{\theta}^2 - l\dot{\phi}^2 s_\theta^2  - gc_\theta   + \textcolor{blue}{\ddot{s}_y s_\phi s_\theta} = \frac{F_r}{m}
+\label{eq:slider4}
 \end{equation}
 
-where the additional terms due to the slider are depicted in blue.
+where the additional terms due to the slider are depicted in blue. These equations are coupled and to properly derive the accelerations we need to put them in matrix form:
+
+\begin{equation}
+\mat{a_{11} & a_{12} & a_{13} & a_{14} \\
+	 a_{21} & a_{22} & a_{23} & a_{24} \\
+	 a_{31} & a_{32} & a_{33} & a_{34} \\
+	 a_{41} & a_{42} & a_{43} & a_{44} }\mat{\ddot{s}_y \\ \ddot{\theta} \\ \ddot{\phi} \\ \ddot{l} } = \mat{b_1\\b_2\\b_3\\b_4}
+\end{equation}
+
+where $a_ij$, $b_i$ can be extracted from \eqref{eq:slider1}, \eqref{eq:slider2}, \eqref{eq:slider3},\eqref{eq:slider4}.
+The initial values and final values for the joints are related to the Cartesian position $p$ of the mass as follows:
+
+\begin{align}
+ l &= \sqrt(p_x^2+ (p_y-s_y)^2+p_z^2)\\
+ \phi& = atan2((p_y - s_y, p_x);
+ \theta& = acos(-p_z/l);
+\end{align}
+
+Note that, differently from the case without slider, this robot is redundant, hence there are infinite joint configurations that correspond to the  same Cartesian position.
+Therefore we can select the slider position to have the sliding anchor on top of the resting positions. This is a convenient choice, because from the next static analysis, it will be apparent
+that static stability can be kept only on the neighborhood of the vertical with the supporting anchor.  
+
 
 \section{Two anchor model}
 
@@ -695,6 +721,139 @@ extensions $\dot{l}_1$, $\dot{l}_2$:
 
 where $J_0 = \mat{ \vec{p}_0 - \vec{p}_{a,1}  & \vec{p}_0 - \vec{p}_{a,2}} \in \Rnum^{3 \times 2} $ is the Jacobian that maps $\dot{l}_1$, $\dot{l}_2$
 into feasible robot positions (i.e. in the range space of $J_0$).
+
+\subsection{Full robot description}
+
+Similarly to what has been done in our previous work \cite{icra23climb},
+we report  also a full detailed model  of the robot  (see Fig. \ref{fig:3dmodel2anchors}(left)) in 
+the cases of two ropes (in the slider case the model is the same as in \cite{icra23climb}
+with an additional actuated prismatic joint and link attached to the anchor moving along the $Y$ direction). 
+In the two rope case we model the robot as three kinematic chains branching from the base link. 
+One is represented by the propulsion mechanism (a 3-DoFs
+robotic leg) which is invariant w.r.t \cite{icra23climb}. At the extreme of the leg there is a point-like 
+foot that enables to exert a \textit{pure} Cartesian force (no moment) on the wall. 
+The leg has two \textit{subsequent} rotational joints, called  hip pitch ($q_{HP}$ about the Y axis (green)) and hip 
+roll ($q_{HR}$ about the X axis (red)) that are used to  to align the leg to the thrusting impulse. 
+This enables to avoid \textit{centroidal} moments that
+would pivot the robot around the rope axis.
+A prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusting} impulse.
+The robot will is not able to stabilize itself on the wall, therefore two additional passive rotational 
+joints ($q_{L,l}$, $q_{L,r}$), that represent the \textit{landing} mechanism, are added at the sides of the base. 
+To not overload the picture these joints are depicted in  Fig. \ref{fig:3dmodel2anchors}(right)).
+Finally we have other two kinematic chains represented by the two ropes and their attachments. Note that the attachment points of the ropes are not coincident with 
+the base frame origin  as in the simplified model, 
+but have an offset $\delta$. This has  two-fold reasons: 1)  leave enough space to locate the hoist, 2) have a self-stabilizing effect on the base orientation under the gravity action.
+We model the attachment between each anchor  and  rope with 2 \textit{passive} (rotational) joints.
+The ropes are modeled as an \textit{actuated} prismatic joint ($q_{R,l},q_{R,r}$), 
+followed by 3 \textit{passive} rotational joints to model 
+the connection between the rope and the \textit{base link} of the robot
+\footnote{It would be equivalent to allocate 3 joints at the anchor point and 2 at the base. 
+To avoid redundancy in the representation, it is necessary  to have only one passive joint along the rope axis.}. 
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.45\columnwidth]{figs/3dmodel2anchors.pdf}
+		\includegraphics[width=0.45\columnwidth]{figs/landing.pdf}
+   	\caption{(left) Kinematic model of the ALPINE robot with two ropes (standard definitions). 
+		The anchor frame is aligned with an inertial ($\mathcal{W}$) frame. (right) Overview of the landing mechanism, with base frame definition.}
+	\label{fig:3dmodel2anchors}
+\end{figure}
+
+The total number of \gls{dofs} is   $n=15$  represented by the configuration vector $\vect{q} \in \Rnum^n$.  Where 10 of them, relative to the attachments of the rope systems, are underactuated. 
+The dynamics equation will be subject to the constraint represented by the kinematic loop that is formed by the triangle with the two ropes as edges which tells us that the two attachment points 
+are located at a fixed distance $\delta$.
+
+\begin{align}
+&\Vert {}_w\vec{p}_{r,1}(q)  - {}_w\vec{p}_{r,2}(q) \Vert = \delta^2
+\end{align}
+
+Differentiating w.r.t time we obtain: 
+\begin{align}
+&2({}_w\vec{p}_{r,1}(q)  - {}_w\vec{p}_{r,2}(q))(({}_w\vec{\dot{p}}_{r,1}(q)  - {}_w\vec{\dot{p}}_{r,2}(q))) = 0
+\label{eq:constraint}
+\end{align}
+
+Making explicit the joint velocity dependency through the Jacobian we can rewrite \ref{eq:constraint} in Pfaffian form:
+
+\begin{align}
+\underbrace{({}_wJ_{r,1}(q)  - J_{r,2}(q))}_A(q)\dot{q} = 0
+\label{eq:constraint1}
+\end{align}
+
+where ${}_wJ_{r,1}$ and ${}_wJ_{r,2}$ are the Jacobians of the two rope attachment points, respectively. then the  equation of motion will be written as:
+\begin{align}
+\vect{M} (\vect{q}) \vect{\ddot{q}} + \vect{h}(\vect{q},\vect{\dot{q}}) = \mat{\vect{0}_{10 \times 1} \\ \boldsymbol{\tau}_a} + \vect{J}^T \vect{F}_c 
+A(q)\dot{q} = 0
+\end{align}
+
+where $\vect{M} \in \Rnum^{n \times n}$ is the inertia matrix; $\vect{h} \in \Rnum^n$ represents the bias terms (Centrifugal, Coriolis and Gravity); and 
+$\vect{J} \in \Rnum^{3 \times n} $ is the Jacobian relative to the contact point mapping the contact force $\vect{F}_c \in \Rnum^3$. 
+Unless specified, all  vectors are expressed in an inertial $\mathcal{W}$ frame (attached to the anchor). 
+The under-actuation is captured by the vector $\vect{0}_{10 \times 1}$, while 
+the efforts of the actuated joints are grouped into the vector 
+$\boldsymbol{\tau}_a = \mat{ \boldsymbol{\tau}_{R,l} & \boldsymbol{\tau}_{R,r}  & \boldsymbol{\tau}_{\text{leg}}}^T \in \Rnum^5$.
+
+
+
+
+
+\section{Static Analysis}
+It is intuitive that having two ropes allow to increase the range of forces that can be tolerated as disturbances during maintenance operations or to balance a payload. 
+Ideally these forces will live on a manifold thanks to the fact that the tension of the ropes can be regulated at will. To perform this analysis we consider the landing element, where we set the parameter base-line (distance between landing feet) $d_b = 0.8$ and wall clearance $d_w = 0.4$
+In this section we perform a static analysis to evaluate the static stability of the robot in the case of two ropes
+for a set of positions of the robot on the wall. The margin with respect to which the static stability is lost will represent how 
+much external force (e.g. coming from a driller) can be tolerated for maintenance operation, for each configuration.
+
+The static equilibrium involves the balance of forces and moments (e.g. about the \gls{com} point). Problem statement: we want to find for a specific Cartesian position of the robot against the wall if it exist afeasible combination of forces at the landing feet and at the ropes that satisfy the static equilibrium condition. we  constraint by construction the rope forces to act along the rope axis while for the langing feet linear forces (we do a point-feet assumption) they should obey unilateral and friction constraints. The set of decision variables hence is:
+
+\begin{align}
+x = \mat{f_{L,l} & f_{L,r}, f_{R,l}, f_{R,r}}
+\label{eq:constraint1}
+\end{align}	
+	
+where $f_{L,l}, f_{L,r} \in \Rnum^3$ are the landing feet contact forces, respectively and $f_{R,l}, f_{R,r} \in \Rnum$ are the magnitude of the rope forces (assumed to be acting along the rope axes).
+Because we have 8 unknowns in 6 equations ( balance of forces and moments) the problem is undetermined and we have infinite solutions. 
+We  can setup a quadratic program where we regularize $\Vert x\vert$ to get a unique solution:
+
+\begin{align}
+\argmin x^T W x \\
+s.t. A x = b \\
+	 C x \leq d
+	\label{eq:constraint1}
+\end{align}	
+	
+where: 
+
+\begin{align}
+W = \mat{ w_f I_{3x3} & 0_{3x3} & 0  & 0 \\
+	          0_{3x3} & w_f I_{3x3} & 0  & 0 \\
+	          0_{1x3} & 0_{1x3}  &w_r  & 0 \\
+   	          0_{1x3} & 0_{1x3} & 0  & w_r }
+\label{eq:constraint1}
+\end{align}	
+
+and: 
+	
+
+\begin{align}
+A =\mat{I_{3 \times 3} & I_{3 \times 3} & {}_w\hat{p}_{R,l} & {}_w\hat{p}_{R,r}\\
+		\left[ {}_wp_{f,l} \right]_{\times} & 	\left[ {}_wp_{f,l} \right]_{\times} & 0_{3x1} & 0_{3x1} } \quad b = \mat{ -m\vec{g} \\ 0_{3x1}}
+\label{eq:constraint1}
+\end{align}	
+where ${}_wp_{f,l}, {}_wp_{f,r} \in \Rnum^3$ are the positions of the landing feet and $ {}_w\hat{p}_{R,i} = \frac{p_{a,i}-p_b}{\Vert p_{a,i}-p_b \Vert } \in \Rnum^3$ the direction of the i-th rope axis.
+
+The friction cone constraints are encoded with its pyramidal approximation:
+
+%TODO
+	
+
+The outcome of this anaysis is that out of the convex half-space between the two anchors $\mathcal{P}$ the gravity has a component (not compensated by the rope tension) that creates a moment
+that should be overcome by the contact forces at the landing feet. These forces, though, are limited by the friction coefficient and by the constraint of unilkaterality (legs can push but not pull on the wall).
+The study showed that out of the $\mathcal{P}$ region the moment due to gravity is causing the complete unloading of the most external foot, at a distance $d_b$ from the  vertical to the closest anchor, 
+making the robot unsuitable to perform maintenance operations.
+
+
 
 
 \input{include/ContLyap}

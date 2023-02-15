@@ -1,6 +1,6 @@
-function [theta] = computeTheta(p)
+function [psi] = computeTheta(p)
 
 
- theta = atan2(p(1), -p(3));
+ psi = atan2(p(1), -p(3));
 
 end
