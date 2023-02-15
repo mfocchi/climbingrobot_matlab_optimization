@@ -1,5 +1,5 @@
 The motion plan for the robot is decided by solving an optimal control problem \emph{\`a la} Pontryagin.
-Generally speaking, we can set up the problem in the following way:
+Generally speaking, we can set up the problem in the following way: \vspace{-0.5cm}
 
 
 \begin{equation}\label{eq:OCP}
@@ -15,7 +15,6 @@ Generally speaking, we can set up the problem in the following way:
 
 where $\vect{x}$ is the vector of state variables, $\vect{u}$ is the control input constrained in the convex set $\mathcal{U}$, $f$ is the dynamic equation of the system,
 $\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are the boundary conditions, $t_0$ and $t_f$ are the initial and final time (that is an optimization variable), which can be part of the optimization. The OCP~\eqref{eq:OCP} is in the standard form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
-
 \noindent
 {\bf Dynamical System.}
 The state $\vect{x}$ of our problem is $\vect{x} = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
@@ -101,7 +100,7 @@ The cost is composed of three terms.
 First, we minimize the time $t_f$ to complete the mission (assuming without loss of generality that $t_0=0$). 
 Second, we minimize the final kinetic energy $K(t_f)$ because when the robot lands, it has to dissipate the energy through a damper (we are not considering to reuse the accumulated energy to re-bounce after landing).
 Third, we minimize the work performed by the winding mechanism.
-Therefore, the cost is:
+Thus, the cost is:
 \begin{align*}
 &J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
 & K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,

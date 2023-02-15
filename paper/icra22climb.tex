@@ -1,5 +1,12 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[article]{IEEEtran}
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+% you want to use the \thanks command
+
 % include the list of acronyms, math commands and new commands used in this paper
 \input{includes/used_packages.tex}
 \input{includes/acronyms.tex}
@@ -7,8 +14,8 @@
 \input{includes/newcommands.tex}
 
 
-\title{CLIO: a Novel Robotic Solution for Exploration and Rescue Missions in Hostile Mountain Environments}
-\author{Michele Focchi$^{1}$, Mohamed Bensaadallah$^{2}$, Marco Frego$^{3}$, Angelika Peer$^{3}$, \\Daniele Fontanelli$^{4}$, Andrea Del Prete$^{4}$, Luigi Palopoli$^{1}$
+\title{\LARGE \bf CLIO: a Novel Robotic Solution for Exploration and Rescue Missions in Hostile Mountain Environments}
+\author{Michele Focchi$^{1}$, Mohamed Bensaadallah$^{2}$, Marco Frego$^{3}$, Angelika Peer$^{3}$, \\Daniele Fontanelli$^{4}$, Andrea Del Prete$^{4}$, Luigi Palopoli$^{1}$\vspace{-1.0cm}
 \thanks{$^1$ The authors are with the Dipartimento di Ingegneria and Scienza dell'Informazione (DISI), University of Trento. Email:  \href{mailto:name.surname@unitn.it}{name.surname@unitn.it}}
 \thanks{$^2$ The author is with the Department of Electronics, University of Batna 2, Algeria. Email: \href{mailto:m.bensaadallah@univ-batna2.dz}{m.bensaadallah@univ-batna2.dz}}
 \thanks{$^3$ The authors are with the Faculty of Science and Technology, Free University of Bozen-Bolzano. Email:  \href{mailto:name.surname@unibz.it}{name.surname@unibz.it}}
@@ -19,6 +26,7 @@
 \maketitle
 \thispagestyle{empty}
 \pagestyle{empty}
+
 
 \begin{abstract}%150-250 word abstract
   Rescue missions in mountain environments are hardly achievable by
@@ -46,9 +54,6 @@
   of the foot-wall contact.
 \end{abstract}
 
-\begin{IEEEkeywords}
-	Planning, Control, Climbing Robot, Trajectory optimization    
-\end{IEEEkeywords}
 
 \section{Introduction}\label{sec:introduction}
 \input{sections/intro}
