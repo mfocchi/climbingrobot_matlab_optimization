@@ -42,8 +42,8 @@ for step=3:0.1:6
     w_pf2 = wRb*pf2 +p_base; 
 
     % line of actions of the anchor forces (univ vectors)
-    w_pr1  = (p_anchor1 - p_base)/norm(p_anchor1 - p_base);
-    w_pr2  = (p_anchor2 - p_base)/norm(p_anchor2 - p_base);
+    w_pr1  = (p_base-p_anchor1)/norm(p_base-p_anchor1);
+    w_pr2  = (p_base-p_anchor2)/norm(p_base-p_anchor2);
 
 
 
@@ -80,23 +80,25 @@ for step=3:0.1:6
 
     %friction cone matrix
     %contact frame
-    t1 = [0;0;1]
-    t2 = [0;1;0]
-    n = [1;0;0]
+    n = [1;0;0]   
+    t1 = cross(n, [0;1;0])
+    t2 = cross( [0;0;1], n)
+    
     %friction cone pyramid
     F = [(t1-mu*n)';
          (-t1-mu*n)';
          (t2-mu*n)';
-         (-t2-mu*n)']
+         (-t2-mu*n)'];
 
-    % inequalities friction cones constraints and rope unilaterality of rope
+    % inequalities friction cones constraints + min normal force + 
+    % unilaterality of ropes  fr1 < 0 
     % forces
-    C = blkdiag([F ;-n'],[F; -n'], -1,-1);
+    C = blkdiag([F ;-n'],[F; -n'], 1,1);
     d = [zeros(4,1);-min_feet_force; zeros(4,1);-min_feet_force;0;0]
 
     % only unilateral on feet and rope used for optim
-    %C = blkdiag(-n',-n', -1,-1);
-    %d = [-min_feet_force; -min_feet_force;0;0]
+%     C = blkdiag(-n',-n', 1,1);
+%     d = [-min_feet_force; -min_feet_force;0;0]
 
     [x,FVAL,EXITFLAG] = quadprog_solve_qp(G, g, C, d, Aeq, beq);
     %[x,FVAL,EXITFLAG] = quadprog_solve_qp(G, g, [], [], Aeq, beq);
