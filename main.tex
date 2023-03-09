@@ -629,8 +629,8 @@ where $a_ij$, $b_i$ can be extracted from \eqref{eq:slider1}, \eqref{eq:slider2}
 The initial values and final values for the joints are related to the Cartesian position $p$ of the mass as follows:
 
 \begin{align}
- l &= \sqrt(p_x^2+ (p_y-s_y)^2+p_z^2)\\
- \phi& = atan2((p_y - s_y, p_x);
+ l &= \sqrt{p_x^2+ (p_y-s_y)^2+p_z^2}\\
+ \phi& = atan2(p_y - s_y, p_x);\\
  \theta& = acos(-p_z/l);
 \end{align}
 
@@ -688,7 +688,7 @@ Then, we can isolate the accelerations to get the differential equations of the 
 &\underbrace{\mat{ m I_{3 \times 3}              & 0   & 0\\
 	(\vec{p} - \vec{p}_{a,1})^T     & -l_1  & 0 \\
 	(\vec{p} - \vec{p}_{a,2})^T     & 0  & -l_2}}_A \mat{\ddot{p} \\ \ddot{l}_1 \\\ddot{l}_2} = \\
-&\quad \quad\underbrace{ \mat{ mg + (\vec{p} - \vec{p}_{a,1}) f_{r,1} +(\vec{p} - \vec{p}_{a,2}) f_{r,2} + \vec{F}_{leg}\\
+&\quad \quad\underbrace{ \mat{ mg + (   \frac{ \vec{p} - \vec{p}_{a,1}}{ \Vert \vec{p} - \vec{p}_{a,1}\Vert}  f_{r,1} +\frac{ \vec{p} - \vec{p}_{a,2}}{ \Vert \vec{p} - \vec{p}_{a,2} \Vert} f_{r,2} + \vec{F}_{leg}\\
 				 \dot{l}_1^2 -\dot{p}^2 \\
 				 \dot{l}_2^2 -\dot{p}^2}}_b				 
 \end{align}
@@ -719,7 +719,7 @@ extensions $\dot{l}_1$, $\dot{l}_2$:
  \vec{q}_0 &= \mat{ \vec{p}_0 & \Vert \vec{p}_0 - \vec{p}_{a,1} \Vert &  \Vert \vec{p}_0 - \vec{p}_{a,2} \Vert}^T
 \end{align}
 
-where $J_0 = \mat{ \vec{p}_0 - \vec{p}_{a,1}  & \vec{p}_0 - \vec{p}_{a,2}} \in \Rnum^{3 \times 2} $ is the Jacobian that maps $\dot{l}_1$, $\dot{l}_2$
+where $J_0 = \mat{\frac{ \vec{p} - \vec{p}_{a,1}}{ \Vert \vec{p} - \vec{p}_{a,1}\Vert}   & \frac{ \vec{p} - \vec{p}_{a,2}}{ \Vert \vec{p} - \vec{p}_{a,2}\Vert}  } \in \Rnum^{3 \times 2} $ is the Jacobian that maps $\dot{l}_1$, $\dot{l}_2$
 into feasible robot positions (i.e. in the range space of $J_0$).
 
 \subsection{Full robot description}
@@ -783,8 +783,8 @@ Making explicit the joint velocity dependency through the Jacobian we can rewrit
 
 where ${}_wJ_{r,1}$ and ${}_wJ_{r,2}$ are the Jacobians of the two rope attachment points, respectively. then the  equation of motion will be written as:
 \begin{align}
-\vect{M} (\vect{q}) \vect{\ddot{q}} + \vect{h}(\vect{q},\vect{\dot{q}}) = \mat{\vect{0}_{10 \times 1} \\ \boldsymbol{\tau}_a} + \vect{J}^T \vect{F}_c 
-A(q)\dot{q} = 0
+&\vect{M} (\vect{q}) \vect{\ddot{q}} + \vect{h}(\vect{q},\vect{\dot{q}}) = \mat{\vect{0}_{10 \times 1} \\ \boldsymbol{\tau}_a} + \vect{J}^T \vect{F}_c \\
+&A(q)\dot{q} = 0
 \end{align}
 
 where $\vect{M} \in \Rnum^{n \times n}$ is the inertia matrix; $\vect{h} \in \Rnum^n$ represents the bias terms (Centrifugal, Coriolis and Gravity); and 
