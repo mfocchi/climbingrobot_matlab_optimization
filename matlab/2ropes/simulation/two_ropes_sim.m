@@ -45,7 +45,7 @@ l10 = norm(p0 - p_a1);
 l20 = norm(p0 - p_a2);
 l1d0 = 0.0;
 l2d0 = 0.0;
-J0 = [ (p0-p_a1)/norm(p0-p_a1) ,(p0-p_a2)/norm(p0-p_a2)];
+J0 = computeJacobian(p0);
 dp0 = J0*[l1d0; l2d0];
 
 
@@ -216,6 +216,12 @@ global   Fleg  delta_duration
   
 end
 
+function J = computeJacobian(p)
+ global DEBUG p_a1 p_a2
+ J = [ (p-p_a1)/norm(p-p_a1) ,(p-p_a2)/norm(p-p_a2)];
+
+end
+
 
 function [value, isterminal, direction] = stopFun(t, x)
         global time 
@@ -266,7 +272,7 @@ function [dxdt] = diffEq(t,x, m, Fr1, Fr2 ,Fleg)
 
     else
        
-        J = [ (p-p_a1)/norm(p-p_a1) ,(p-p_a2)/norm(p-p_a2)];
+        J =  computeJacobian(p);
         b = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t); -dp'*dp + dl1^2 ; -dp'*dp + dl2^2 ];     
     end
 

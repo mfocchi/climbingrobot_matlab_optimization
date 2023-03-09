@@ -13,7 +13,7 @@ Created on Wed May  4 11:19:27 2022
 
 import matplotlib.pyplot as plt
 import numpy as np
-
+np.set_printoptions(threshold=np.inf, precision = 5, linewidth = 10000, suppress = True)
 # Pascal triangle
 lut = [      [1],           # n=0
             [1,1],          # n=1
@@ -59,6 +59,7 @@ def Bezier3(t, weights):
 
 
 def RationalBezier3(t, w ,r):
+    # the ratio value gives an idea of how strong each control point influences the curve higher the ratio the closer the curve to that point
     t2 = t * t
     t3 = t2 * t
     mt = 1-t
@@ -92,7 +93,7 @@ force = []
 t = 0.
 # first half
 while t<(T_thrust/2.):
-    #normalize bw 0 and 1
+    #time needs to be normalized bw 0 and 1
     t_norm = t/(T_thrust/2.)   
     force.append( max_force * RationalBezier3(t_norm, up_bezier_control_points, bezier_cp_influence))
     t+=dt
@@ -120,3 +121,157 @@ plt.legend()
 plt.savefig('../figs/bezier.png')
 plt.show()
 
+
+
+# example with  Ricdcardo     
+
+N = 1000
+T_thrust = 0.2
+time = np.linspace(0, T_thrust, N)
+dt = T_thrust/N
+
+
+# bezier params for a 3rd order bezier
+bezier_control_pointsX = [0., 0.0, 1,  10.5]
+bezier_control_pointsY = [0.,  0.0, 1,  10.5]
+bezier_control_pointsZ = [0.,  0.0, 1,   10.5]
+
+# bezier derivativre params, hte derivative is a n-1th curve with weights w0', .. wn-1' = n*(wi+1 - wi)
+order_bezier = 3
+bezier_control_pointsX_der = [0]*3
+bezier_control_pointsY_der = [0]*3
+bezier_control_pointsZ_der = [0]*3
+bezier_control_pointsX_der[0] = order_bezier*(bezier_control_pointsX[1] - bezier_control_pointsX[0])
+bezier_control_pointsX_der[1] = order_bezier*(bezier_control_pointsX[2] - bezier_control_pointsX[1])
+bezier_control_pointsX_der[2] = order_bezier*(bezier_control_pointsX[3] - bezier_control_pointsX[2])
+
+bezier_control_pointsY_der[0] = order_bezier*(bezier_control_pointsY[1] - bezier_control_pointsY[0])
+bezier_control_pointsY_der[1] = order_bezier*(bezier_control_pointsX[2] - bezier_control_pointsY[1])
+bezier_control_pointsY_der[2] = order_bezier*(bezier_control_pointsY[3] - bezier_control_pointsY[2])
+
+bezier_control_pointsZ_der[0] = order_bezier*(bezier_control_pointsZ[1] - bezier_control_pointsZ[0])
+bezier_control_pointsZ_der[1] = order_bezier*(bezier_control_pointsZ[2] - bezier_control_pointsZ[1])
+bezier_control_pointsZ_der[2] = order_bezier*(bezier_control_pointsZ[3] - bezier_control_pointsZ[2])
+
+    
+bezier_control_pointsX_2der = [0]*2
+bezier_control_pointsY_2der = [0]*2
+bezier_control_pointsZ_2der = [0]*2
+
+bezier_control_pointsX_2der[0] = 2*(bezier_control_pointsX_der[1] - bezier_control_pointsX_der[0])
+bezier_control_pointsX_2der[1] = 2*(bezier_control_pointsX_der[2] - bezier_control_pointsX_der[1])
+
+bezier_control_pointsY_2der[0] = 2*(bezier_control_pointsY_der[1] - bezier_control_pointsY_der[0])
+bezier_control_pointsY_2der[1] = 2*(bezier_control_pointsY_der[2] - bezier_control_pointsY_der[1])
+
+bezier_control_pointsZ_2der[0] = 2*(bezier_control_pointsZ_der[1] - bezier_control_pointsZ_der[0])
+bezier_control_pointsZ_2der[1] = 2*(bezier_control_pointsZ_der[2] - bezier_control_pointsZ_der[1])
+
+
+pos =  np.empty((3,N))
+posd =  np.empty((3,N))
+posdd =  np.empty((3,N))
+posd_bezier =  np.empty((3,N))
+posdd_bezier =  np.empty((3,N))
+
+com0 = np.array([0,0,1.])
+comf = np.array([0.1,0,1.1])
+pos_old = np.zeros((3))
+posd_old = np.zeros((3))  
+
+t = 0.
+i = 0
+# first half
+while t<(T_thrust):
+    #time needs to be normalized bw 0 and 1
+    t_norm = t/(T_thrust)
+    pos[:,i] = np.array([  Bezier3(t_norm, bezier_control_pointsX), Bezier3(t_norm, bezier_control_pointsY), Bezier3(t_norm, bezier_control_pointsZ)])
+    posd[:,i] = (pos[:,i] - pos_old)/dt
+    posdd[:,i] = (posd[:,i] - posd_old)/dt
+    pos_old = pos[:,i]
+    posd_old = posd[:,i]
+    # Note you need to scale the derivative of the bezier if you are using a different time frame than 0 and 1 xdot = dP/dt = dP/dt' * dt'/dt where dt' in [0 ,1] dt in [ 0, Tthust] 
+    posd_bezier[:,i] = 1/T_thrust* np.array([  Bezier2(t_norm, bezier_control_pointsX_der), Bezier2(t_norm, bezier_control_pointsY_der), Bezier2(t_norm, bezier_control_pointsZ_der)])
+    posdd_bezier[:,i] =  1/(T_thrust*T_thrust) * ( bezier_control_pointsZ_2der[0] *(1-t_norm) + bezier_control_pointsZ_2der[1]*t_norm)
+    t+=dt
+    i+=1
+    
+
+fig = plt.figure()
+plt.subplot(3,1,1)
+plt.title("trhusting traj")
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posx ")
+plt.plot(time, pos[0,:], "ob")
+plt.grid()
+
+plt.subplot(3,1,2)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posy ")
+plt.plot(time, pos[1,:], "ob")
+plt.grid()
+
+plt.subplot(3,1,3)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posz")
+plt.plot(time, pos[2,:], "ob")
+plt.grid()
+plt.show()
+
+fig = plt.figure()
+plt.subplot(3,1,1)
+plt.title("trhusting traj der")
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdx ")
+plt.plot(time, posd[0,:], "ob")
+plt.plot(time, posd_bezier[0,:], "or")
+plt.grid()
+
+plt.subplot(3,1,2)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdy ")
+plt.plot(time, posd[1,:], "ob")
+plt.plot(time, posd_bezier[1,:], "or")
+plt.grid()
+
+plt.subplot(3,1,3)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdz")
+plt.plot(time, posd[2,:], "ob")
+plt.plot(time, posd_bezier[2,:], "or")
+plt.grid()
+plt.show()
+
+fig = plt.figure()
+plt.subplot(3,1,1)
+plt.title("trhusting traj der")
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdx ")
+plt.plot(time, posdd[0,:], "ob")
+plt.plot(time, posdd_bezier[0,:], "or")
+plt.grid()
+
+plt.subplot(3,1,2)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdy ")
+plt.plot(time, posdd[1,:], "ob")
+plt.plot(time, posdd_bezier[1,:], "or")
+plt.grid()
+
+plt.subplot(3,1,3)
+plt.xlim(0, T_thrust)
+plt.xlabel("time [$s$]")
+plt.ylabel("posdz")
+plt.plot(time, posdd[2,:], "ob")
+plt.plot(time, posdd_bezier[2,:], "or")
+plt.grid()
+
+plt.show()
