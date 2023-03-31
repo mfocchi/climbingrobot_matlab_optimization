@@ -519,7 +519,30 @@ and to map $\mat{l_{p,1},l_{p,2},l_{p,3}}$ into rope lengths (for simulation pur
 	\label{fig:muti_jumps}
 \end{figure}
 
-\section{Slider model}
+
+
+\section{Problem Statement/applications}
+
+The advantage of the proposed robotics solution is that,the robot can stay still in the location where the maintenance should be prformed without wasting energy because brakes can be engaged in the hoists. 
+This results in a significant advantage with respect to drones that have to continuously supply energy to the propellers to overcome gravity in a standstill position.
+Additionally the budget energy required to permorm  a motion on the rock wall is very small compared with other climbing robot  platforms. We report an very high-level comparison 
+of energy energy consumption for several  robotic platform in Table XX (TODO).
+Additionally it can feature higher stability and should have the capability to tolerate big solicitations and disturbance forces coming from the maintenance operations, as it will be detailed in section \ref{sec:static}. We already demonstrated in our previous work (ICRA) that having a single rope strongly limits the \textit{lateral} motions and the set of achievable points on the wall. We propose two different constructive solutions
+to address this issue: 1) adding an active prismatic joint (slider) to  enable the lateral motion of the anchor, 2) attach the robot to an additional (fixed) anchor with an additional rope, that can be winded/unwided independently from the original one with an additional hoist.
+The first solution is easier to control, but is two strong drawbacks: 1) the horizontal slider joint path at the top of the wall should be clear from rock protrusions and obstacles which is often a very limiting requirement in real applications, it requires that the sliding anchor be on top of the vertical of the robot to ensure static stability (see section \ref{sec:static}) and be able to perform maintenance operations. Conversely solution 2) at the price of a bigger controller complexity (the release /winding of the two ropes should be accurately coordinated),  enables to set the anchors in convenient  points despite in the middle there could be some  rock protrusion, and deploy the robot from one anchor point and activate the second one in a later moment. The second advantage is related to the fact that with two ropes a biggere amount of lateral forces could be tolerated.
+
+
+
+\begin{figure}
+%	\includegraphics[width=\columnwidth]{figs/comparison.pdf}
+	\caption{Comparison Slider/two anchors}
+	\label{fig:comparison}
+\end{figure}
+
+prohas limitation on the kind of  
+
+
+\section{Modeling:  Slider model}
 In Fig. \ref{fig:sliderModel} we present the model of the robot where the anchor point is movable by means of a slider. 
 
 \begin{figure}
@@ -639,8 +662,10 @@ Therefore we can select the slider position to have the sliding anchor on top of
 that static stability can be kept only on the neighborhood of the vertical with the supporting anchor.  
 
 
-\section{Two anchor model}
+\section{Modeling: Two anchor model}
 
+
+\subsection{Simplified model}
 To derive the model with two anchor points, we employ a Newtonian approach 
 modeling the system as a point mass under the action of the (unilateral) forces coming from the ropes and the leg. 
 Exploiting the fact that we have a kinematic loop (i.e. between the two anchor points) 
@@ -654,6 +679,7 @@ and the lengths $l_1 \in \Rnum$, $l_2\in \Rnum$ of the two ropes:
 the Newton Equation becomes:
 \begin{equation}
 m \ddot{p} -mg = (\vec{p} - \vec{p}_{a,1}) f_{r,1} +(\vec{p} - \vec{p}_{a,2}) f_{r,2} + \vec{F}_{leg}
+\label{eq:newton}
 \end{equation}
 
 
@@ -671,6 +697,7 @@ By enforcing the following two scalar constraints, the total number of degrees o
 \begin{align}
 &(\vec{p} - \vec{p}_{a,1})^T(\vec{p} - \vec{p}_{a,1}) = l_1\\
 &(\vec{p} - \vec{p}_{a,2})^T(\vec{p} - \vec{p}_{a,2}) = l_2 \nonumber
+\label{eq:norm_constraints}
 \end{align}
 
  
@@ -737,9 +764,7 @@ roll ($q_{HR}$ about the X axis (red)) that are used to  to align the leg to the
 This enables to avoid \textit{centroidal} moments that
 would pivot the robot around the rope axis.
 A prismatic knee ($q_{K}$) joint is used to generate the \textit{thrusting} impulse.
-The robot will is not able to stabilize itself on the wall, therefore two additional passive rotational 
-joints ($q_{L,l}$, $q_{L,r}$), that represent the \textit{landing} mechanism, are added at the sides of the base. 
-To not overload the picture these joints are depicted in  Fig. \ref{fig:3dmodel2anchors}(right)).
+
 Finally we have other two kinematic chains represented by the two ropes and their attachments. Note that the attachment points of the ropes are not coincident with 
 the base frame origin  as in the simplified model, 
 but have an offset $\delta$. This has  two-fold reasons: 1)  leave enough space to locate the hoist, 2) have a self-stabilizing effect on the base orientation under the gravity action.
@@ -754,14 +779,13 @@ Without considering the leg joints, the robot is equivalent to a double spherica
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=0.45\columnwidth]{figs/3dmodel2anchors.pdf}
-		\includegraphics[width=0.45\columnwidth]{figs/landing.pdf}
    	\caption{(left) Kinematic model of the ALPINE robot with two ropes (standard definitions). 
-		The anchor frame is aligned with an inertial ($\mathcal{W}$) frame. (right) Overview of the landing mechanism, with base frame definition.}
+		The anchor frame is aligned with an inertial ($\mathcal{W}$) frame. }
 	\label{fig:3dmodel2anchors}
 \end{figure}
 
 The total number of \gls{dofs} is   $n=15$  represented by the configuration vector $\vect{q} \in \Rnum^n$.  Where 10 of them, relative to the attachments of the rope systems, are underactuated. 
-The dynamics equation will be subject to a holonomic  constraint represented by the fact that the two attachment points 
+The dynamics equation will be subject to a holonomic  constraint represented by the fact that the two attachment points  $\vec\{p\}\_\{r,1\}(q)$, $\vec\{p\}\_\{r,2\}(q)$
 are located at a fixed distance $\delta$. 
 
 \begin{align}
@@ -797,18 +821,69 @@ The under-actuation is captured by the vector $\vect{0}_{10 \times 1}$, while
 the efforts of the actuated joints are grouped into the vector 
 $\boldsymbol{\tau}_a = \mat{ \boldsymbol{\tau}_{R,l} & \boldsymbol{\tau}_{R,r}  & \boldsymbol{\tau}_{\text{leg}}}^T \in \Rnum^5$.
 
+
+% gazebo implementation 
 We implement the simulation of the dynamics in a Gazebo environment using URDF to describe the robot kinematics and Pinocchio library to compute the kinematics functions. 
 The URDF format itself does not support closed kinematic chains (i.e. two joints cannot have the same child link), however this is possibile to do in SDF (Simulation Description Format) format 
 which is the one used by Gazebo. So we embed a fixed joint at the SDF level to close the loop between the kinematic branch coming from the second anchor and the base link.
-Particular care should be paid to initialize the system in a way that at startup, the joint configuration fulfills this kinematic constraint, otherwise the Gazebo's ODE physic engine solver would fail to converge and is be able to enforce the constraint along the whole duration of the simulation. 
+Particular care should be paid to initialize the system in a way that at startup, the joint configuration fulfills this kinematic constraint (see Fig. \ref{fig:kin_feasible_config}), otherwise the Gazebo's ODE physic engine solver would fail to converge and is be able to enforce the constraint along the whole duration of the simulation.
+An initialization procedure should be implemented to bring the robot from the feasible initial configuration to the user desired one.
+ 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figs/kin_feasible_config.png}
+	\caption{User friendly, initial configuration that for $q=0$ satisfy the kinematic loop formed by anchors and ropes.}
+	\label{fig:kin_feasible_config}
+\end{figure}
+
+
+\subsubsection{Landing Mechanism}
+
+The robot will is not able to stabilize itself on the wall, therefore two additional rotational 
+joints ($q_{L,l}$, $q_{L,r}$), that represent the \textit{landing} mechanism, are added at the sides of the base. During the flight the thrusting leg is retracted and the landing is 
+managed by  two additional links (landing legs) attached to he above-mentioned joints that should enter in contact with the wall during the landing. The landing legs should be sufficiently open to avoid that the impact is transmitted through the structure. Moreover, to avoid the generation of internal forces we added two wheels at the tips of the landing legs such that they can move laterally during the contact. 
+\footnote{It would be equivalent to add to additional preismatic joints along the landing legs axes}.
+The energy is dissipated by the action of a Cartesian  impedance control law emulated by the $q_{L,l}$, $q_{L,r}$ joints, 
+with stiffness and damping parameters selected in order to achieve a critically damped behaviour during the landing phase. 
+This avoids that the robot bounces, and loses the contact. 
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.6\columnwidth]{figs/landing_wheels.pdf}
+	\caption{Overview of the landing mechanism, with base frame definition.}
+	\label{fig:landing}
+\end{figure}
+
+
+The accompanying video shows a simulation of the robot taking a jump and successfully landing on the wall. The impact force at landing is  usually  very small in the case of vertical wall, 
+but can be significant in case of slanted wall because we still have, at the landing moment, a component of gravity (perpendicular to the wall) to deal with, 
+this would be zero in the case of vertical wall face). The landing legs could contain an internal telescopic joint that moves out some payload counterweights 
+in order to displace the CoM outward and increase the loading of the feet to be able to perform some  
+maintenance operations (e.g. like drilling) that require some non-zero pressure on the drilling tool. 
+
+\begin{figure}[t]
+	\centering
+	%\includegraphics[width=0.45\columnwidth]{figs/deployment.pdf}
+	\caption{Payload deployment for drilling operations.}
+	\label{fig:payloads}
+\end{figure}
+
+Furure study can consider the motion of these counterweights as an aid 
+to control the base orientation, exploiting the law of conservation of the angular momentum.
+
+\subsubsection{Inverse Kinematics}
+
+Todo
 
 
 
 \section{Static Analysis}
-
+\label{sec:static}
 In this section we perform a static analysis to evaluate the static stability of the robot in the case of two ropes
 for a set of positions of the robot on the wall. This analysis is important because it allows us to evaluate the margin of stability and
 hence the amount of forces that can be tolerated by the robot during maintenace operations without loosing the contact.
+To do this analysis we will consider  the robot with the landing mechanism (e.g. two landing massless legs with point feet) 
+approximated as a rigid body which is  contact with the wall with the landing feet.
 
 It is rather intuitive to think that the possible operating force is strictly linked to the gravity component due to the weight of the robot and that it drops to zero 
 when the rope axis becomes vertical to the wall. Being this an extreme case of no use, we will consider in this analysis a situation in which we have a certain angle $\theta$
@@ -841,7 +916,7 @@ where $x$ is the set of decision variables that ensembles all the external force
 
 \begin{align}
 x = \mat{f_{L,l} & f_{L,r}&  f_{R,l}& f_{R,r}}
-\label{eq:constraint1}
+\label{eq:decision_vars}
 \end{align}	
 	
 and $W$ is a wighting matrix defined as:  
@@ -851,7 +926,7 @@ W = \mat{ w_f I_{3x3} & 0_{3x3} & 0  & 0 \\
 	          0_{3x3} & w_f I_{3x3} & 0  & 0 \\
 	          0_{1x3} & 0_{1x3}  &w_r  & 0 \\
    	          0_{1x3} & 0_{1x3} & 0  & w_r }
-\label{eq:constraint1}
+\label{eq:weight}
 \end{align}	
 
 while the balance equations (linear forces and moments) can be rephrased in matrix form coming up with the  $A$, $b$ quantities:
@@ -859,7 +934,7 @@ while the balance equations (linear forces and moments) can be rephrased in matr
 \begin{align}
 A =\mat{I_{3 \times 3} & I_{3 \times 3} & {}_w\hat{p}_{R,l} & {}_w\hat{p}_{R,r}\\
 		\left[ {}_wp_{f,l} \right]_{\times} & 	\left[ {}_wp_{f,l} \right]_{\times} & 0_{3x1} & 0_{3x1} } \quad b = \mat{ -m\vec{g} \\ 0_{3x1}}
-\label{eq:constraint1}
+\label{eq:balance_constraint}
 \end{align}	
 
 where ${}_wp_{f,l}, {}_wp_{f,r} \in \Rnum^3$ are the positions of the landing feet 
@@ -876,7 +951,8 @@ and the friction coefficient $\mu_i \in \Rnum$,
 the constraint matrix for the $i-th$  landing foot writes:
 
 %
-\begin{equation}\label{eq:force_constraint_matrix}
+\begin{equation}
+\label{eq:force_constraint_matrix}
 \begin{aligned}
 \mathbf{C}_{f,i} &= \mat{
 		(\mathbf{t}_{x} - \mu_i \mathbf{n})^T\\ 
@@ -912,84 +988,111 @@ forces. They encode the fact that ropes have always to be pulling (e.g. $F_{R,l}
 % how to compute it in practice
 To perform the static analysis we have to  define the parameters  
  base-line (distance between landing feet) $d_b = 0.8$ and  wall clearance $d_w = 0.4$ (defined in Fig. \ref{fig:3dmodel2anchors}(right)).
-Then we solve the QP problem for different poitions on the wall trying to see if a feasible combination of forces exists that satisfy static stability. For each solution we evaluate 
+Then we solve the QP problem for different positions on the wall trying to see if a feasible combination of forces exists that satisfy static stability. For each solution we evaluate 
 also the margin $C x^\star - d$ with respect to the situation in which the static stability is lost. This will represent how 
 much external force (e.g. coming from a driller) can be tolerated for maintenance 
 operation (without losing static stability), for each position of the robot  on the wall (TODO plot?).
 We performed the analysis for different values of the base-line and wall clearance parameters and different values of wall rope extensions. 
 
-	\begin{figure}
-		\includegraphics[width=\columnwidth]{figs/static_analysis.png}
-		\caption{Spherical pendulum}
-		\label{fig:static_analysis}
-	\end{figure}
-
 
 The outcome of this analysis (highlighted in the accompanying video) is that the set of feasible positions 
-that are statically feasible out of the convex half-space $\mathcal{A}$ (red shaded area) between the two anchors is very limited (see Fig. \ref{fig:static_analysis}).
-The reason must be found in the gravity force that has a component (not compensated by the rope tension) that creates a moment that, should  be balanced by the contact forces at the landing feet. These forces, though, are limited by 1) the friction constraints that bounds their tangential component 
+that are statically feasible out of the convex half-space between the two anchors is very limited (see Fig. \ref{fig:static_analysis}).
+
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{figs/static_analysis.pdf}
+	\caption{Results of the static analysis in three representative points for a rope extension of 5 $m$. 
+		The red shaded area indicates the location for which static equilibrium fulfilled and unilateral and friction constraints are fullfilled. }
+	\label{fig:static_analysis}
+\end{figure}
+
+The figure shows that, as expected,  the rope connected to the closer anchor gets gradually loaded while the 
+other one unloads. Out of the anchor vertical there on the rope connecting the farther anchor 
+has zero tension. Out of the vertical the set of statically feasible locations is very limited, and is represented 
+by a region (red shaded area $\mathcal{A}$) that extends  approximately half of the baseline $d_b$ out of the vertical.   
+Additionally, the foot inside  $\mathcal{A}$ gets very loaded while the outer one gets gradually unloaded.
+The reason must be found in the gravity force that has a component (not compensated by the rope tension) 
+that creates a moment that, should  be balanced by the contact forces at the landing feet. These forces, though, are limited by 1) the friction constraints that bounds their tangential component 
 2) by the unilateral constraints.
 The study showed that out of the $\mathcal{A}$ region the moment due to gravity is 
 causing the complete unloading of the most external foot, at a distance $d_b$ from the  vertical to the closest anchor, with the risk of tipping over,  
 making the robot unsuitable to perform maintenance operations.
-When the robot is more detached from the wall 
+We repeated the analysis for a range of values of the wall clearance and the base line parameters as well as for different rope lengths and wall inclination. 
+When the wall inclination is more slanted or the robot is more detached from the wall such that the gravity force line of action is shifted w.r.t the anchor point, 
+then it happens that  the legs are more loaded because of the bigger horizontal moment created by gravity and the external 
+leg gets unloaded slightly more far away from the vertical. (TODO check this)
+
+The previous analysis was to give an intuitive grasp on the problem. 
+However, it is convenient to evaluate with accuracy the margin of stability, which is the amount of tolerable  external centroidal forces 
+for maintenance operations. 
+
+\subsection{Feasible Polytope}
+The  feasible centroidal forces and moments than can be tolerated while satisfying stability 
+constraints can be respresented by a set called Contact Wrench Cone. The first step is to compute the gravito inertial 
+wrench for a certain robot configuration and see if it belongs to the CWC. The feasibility margin, i.e. the smallest distance between the gravito inertial wrench and the boundaries represented by the CWC facets.
+can give an idea of the amount of external forces /moments that can be tolerated by the system before losing stability \cite{romeo}. 
+The CWC can be seen as a compact representation of the unilateral constraints  at the rope forces and unilateral /friction constraints at the contact forces projected at the CoM by means of a minkovski sum operation. To compute the CWC we can employ the analytical formulation introduced in  https://arxiv.org/abs/1501.04719, then get the  vertex based formulation by mean of the double description algorithm  \cite{dd}
+then esily compute the margin as in \cite{rome}. WIth respect to \cite{rome} we decided to neglect the limits posed by the actuators that believe to be less limiting than the friction ones. 
 
 
-
-
-\section{Motion Planning}
+\section{Motion Planning }
 The motion plan for the robot is decided by solving an optimal control problem \emph{\`a la} Pontryagin.
-Generally speaking, we can set up the problem in the following way: \vspace{-0.5cm}
+We wrote the optimal control problem considering the simplified model of the robot, in the two anchor configuration.
+Generally speaking, we can set up the problem in the following way: 
 
 
 \begin{equation}\label{eq:OCP}
 \begin{aligned}
-& J = \min_{\vect{u}(t)} \,M(\vect{x}(t_0),\vect{x}(t_f),t_0,t_f)+\int_{t_0}^{t_f}   L\left(\vect{x}(t),\vect{u}(t)\right) dt\\
-&\text{subject to:}\\
-&\,\,\dot{\vect{x}}(t) = \vect{f}(\vect{x}(t),\vect{u}(t)),\\
-&\,\,\vect{u} \in \mathcal{U},\\
-&\,\,\vect{h}\left(\vect{x}(t),\vect{u}(t)\right) \leq 0,\\
-&\,\,\vect{B}(\vect{x}(t_0), t_0, \vect{x}(t_f), t_f)=0,
+	& J = \min_{\vect{u}(t)} \,M(\vect{x}(t_0),\vect{x}(t_f),t_0,t_f)+\int_{t_0}^{t_f}   L\left(\vect{x}(t),\vect{u}(t)\right) dt\\
+	&\text{subject to:}\\
+	&\,\,\dot{\vect{x}}(t) = \vect{f}(\vect{x}(t),\vect{u}(t)),\\
+	&\,\,\vect{u} \in \mathcal{U},\\
+	&\,\,\vect{h}\left(\vect{x}(t),\vect{u}(t)\right) \leq 0,\\
+	&\,\,\vect{B}(\vect{x}(t_0), t_0, \vect{x}(t_f), t_f)=0,
 \end{aligned}
 \end{equation}
 
-where $\vect{x}$ is the vector of state variables, $\vect{u}$ is the control input constrained in the convex set $\mathcal{U}$, $f$ is the dynamic equation of the system,
-$\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are the boundary conditions, $t_0$ and $t_f$ are the initial and final time (that is an optimization variable), which can be part of the optimization. The OCP~\eqref{eq:OCP} is in the standard form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
+where $\vect{x}$ is the vector of state variables, $\vect{u}$ is the control input constrained in the c
+onvex set $\mathcal{U}$, $f$ is the dynamic equation of the system, included the  closed loop kinetic constraints,
+$\vect{h}$ is the constraint on the state and control variables, $\vect{B}$ are 
+the boundary conditions, $t_0$ and $t_f$ are the initial and final time (that is an optimization variable), 
+which can be part of the optimization. The OCP~\eqref{eq:OCP} is in the standard 
+form with Mayer term $M$ and Lagrange term $L$ that model initial/terminal costs and  the running cost, respectively.\\
+%
+%
 \noindent
 {\bf Dynamical System.}
-The state $\vect{x}$ of our problem is $\vect{x} = \left[\theta,\,\phi,\,l,\,\dot{\theta},\,\dot{\phi},\, \dot{l}\right]^T$, while the control variables are
-given by $\vect{u} = \left[\vect{F}_u,\,\vect{F}_t\right]^T$. The dynamic equation is derived from~\eqref{eq:nonlinearDyn}:
+The state $\vect{x}$ of our problem is $\vect{x} = \mat{p_x & p_y &p_z& l_1& l_2& \dot{P_x} & \dot{P_y} & \dot{P_z}& \dot{l_1} & \dot{l_2}}^T$, 
+while the control variables are
+given by $\vect{u} = \mat{f_{leg} & f_{R,r} & f_{R,l}}^T$. 
+The dynamic equation, casted in state space form, is derived from~\eqref{eq:newton} and \eqref{eq:norm_constraints}:
+%
 \begin{equation}
 \label{eq:NonLinStateSpace}
 \begin{aligned}
 \begin{bmatrix}
-\dot{x}_1\\\dot{x}_2 \\ \dot{x}_3\\ \dot{x}_4\\ \dot{x}_5\\ \dot{x}_6\end{bmatrix}
+\dot{x}_1\\\dot{x}_2 \\ \dot{x}_3\\ \dot{x}_4\\ \dot{x}_5\\ \dot{x}_6\\\dot{x}_7\\\dot{x}_8\end{bmatrix}
 =
 \begin{bmatrix}
 x_4\\
-x_5\\ x_6 \\  - \frac{2}{x_3} x_4 x_6 + c_{x_1} s_{x_1}  x_5^2 - \frac{g}{x_3}  s_{x_1} +  \frac{1}{mx_3}F_{u,n}\\
-- 2 \frac{c_{x_1}}{s_{x_1}} x_4 x_5 - \frac{2}{x_3} x_5 x_6 + \frac{1}{mx_3 s_{x_1}} F_{u,t}\\
-x_3 x_4^2 + x_3 s^2_{x_1}x_5^2+g c_{x_1} +\frac{1}{m}F_r .
+x_5\\ x_6 \\ x_7 \\x_8 \\ ... .
 \end{bmatrix}
 \end{aligned}
 \end{equation}
 
 \noindent
 {\bf Boundary Conditions.}
-The terminal constraints are usually expressed in Cartesian space $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$ and they can be expressed as a function of
+The terminal constraints are usually expressed in Cartesian space for the final position and velocity 
+$p_f$ = $[X,\,Y,\,Z,\,\dot{X},\dot{Y},\dot{Z}]^T$ and they can be expressed as a function of
 the state variables by means of~\eqref{eq1}. For instance, for $X,Y,Z$, we have:
+
 \begin{equation}
 \begin{aligned}
-&x_1= \atandue\left(-Z,\sqrt{X^2+Y^2}\right), \\ 
-&x_2 = \atandue(Y,X),\\
-&x_3 = \sqrt{X^2+Y^2+Z^2},\quad \\
-%  &x_4(t_0) = \frac{1}{\Lambda}\left(c_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 +c_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0+s_{x_1(t_0)}\dot{Z}_0\right)\\
-%   &x_5(t_0) = \frac{1}{\Lambda s_{x_1(t_0)}}\left(-s_{x_2(t_0)} \dot{X}_0) \right) + \\
-%   &\quad  +  \frac{1}{\Lambda s_{x_1(t_0)}} \left(c_{x_2(t_0)} - c_{x_2(t_0)} c^2_{x_1(t_0)} + c^2_{x_1(t_0)} s_{x_2(t_0)}  \right) \dot{Y}_0 \\
-%    &\quad + \frac{1}{2 \Lambda}\left(-c_{x_1(t_0)}\left(\sqrt{2}\sin\left(2 x_2(t_0)+\pi/4\right)-1 \right) \right) \dot{Z}_0 \\
-%    &x_6(t_0) = \frac{x_3(0)}{\Lambda}\left(s_{x_{1}(t_0)} c_{x_2(t_0)} \dot{X}_0 + s_{x_1(t_0)}s_{x_2(t_0)} \dot{Y}_0\right)\\
-%    & \quad + \frac{1}{2 \Lambda} c_{x_1(t_0)}\left(\sqrt{2} \cos\left(2 x_2(t_0)+\pi/4\right)-\frac{1}{2}\right) \dot{Z}_0 \\
-%   &\Lambda = x_3(t_0) \left(c_{x_2(t_0)} s_{x_2(t_0)} c^2_{x_1(t_0)} - c^2_{x_2(t_0)} c^2_{x_1(t_0)} + 1\right).
+	&x_1= p_{f,x} \\
+	&x_2 = p_{f,y}\\
+	&x_3 = p_{f,z}\\
+	&x_4 = \Vert p_{f} - p_{a,r} \Vert\\
+	&x_5 = \Vert p_{f} - p_{a,l} \Vert
 \end{aligned}
 \end{equation}
 
@@ -1002,73 +1105,150 @@ a region whose boundary is a surface. We assume that this surface can be express
 a differential 2D manifold expressed by $f(\vect{x}) = 0$. Therefore the admissible region is generally given by
 $f(\vect{x}) \geq 0$ and could be non-convex. 
 %By using~\eqref{eq1}, we can express the constraint either in Cartesian coordinates or in terms of the state variables. 
+
+
 Another constraint is added to prevent collision with the wall (i.e. $X >0$) and to ensure the robot elevation does not exceed the anchor level (i.e. $Z<0$).
 
 
 \noindent
 {\bf Actuation Constraints.}
-The system actuators are given by the two forces $\mathbf{F}_r$ and $\mathbf{F}_u$.
-The $\mathbf{F}_r$ force acts along the direction of the rope ($\vect{e}_R$ axis). % \vect{f}_r$ (see~\eqref{eq:forces}) this is for journal
+
+The system actuators are given by the rope forces $f_{R,l} \in \Rnum$ and $f_{R,l} \in \Rnum$ 
+that act along the direction of the respective rope axes $p_{R,r}$, $p_{R,l}$, respectively and $F_{leg} \in \Rnum^3$ which is the resultant at the CoM of the impulse  
+force applied at the contact point.
+% \vect{f}_r$ (see~\eqref{eq:forces}) this is for journal
+
 Since the rope cannot push the robot 
-(assumption 3, the rewinder can only pull the wire), $F_r$ can only be used to retract the robot or to slow down its descent (under the action of gravity). 
+(assumption 3, the rewinder can only pull the wire), $f_{R,l}$ and $f_{R,l}$ can only be used to retract 
+the robot or to slow down its descent (under the action of gravity). 
 Moreover, the force is bounded by the limits of the actuators (e.g. a hoist). Therefore, the
 constraint on $F_r$ is:
-\[
--F_r^{\text{max}} \leq F_r \leq 0.
-\]
-As regards $\mathbf{F}_u$, since it is meant to act for a very short duration, reaching high peaks, we model it through a Dirac impulse: $\mathbf{F}_u   (t) = \mathbf{F}_u \delta(t)$, where
+
+\begin{align}
+-f_{R,r}^{\text{max}} \leq f_{R,r} \leq 0. \nonumber \\
+-f_{R,l}^{\text{max}} \leq f_{R,l} \leq 0. \nonumber
+\end{align}
+
+As regards $\mathbf{F}_{leg}$, since it is meant to act for a very short duration, 
+reaching high peaks, we model it through a Dirac impulse: $\mathbf{F}_u   (t) = \mathbf{F}_{leg} \delta(t)$, where
 $\mathbf{F}_u$ is a vector with the two components $F_{u,t}$ and $F_{u,n}$.
 The Dirac delta is a generalized function and cannot be handled by the optimal control frameworks, therefore, a smooth approximation is needed.
 A natural approximation is a Gaussian function, that is $\delta(t-t_0) \approx \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(t-t_0)^2}{2 \sigma^2}}$, \cite{saichev:1996}. The duration $T_{th}$ of the impulse 
 is roughly given by $6 \sigma$. Given the nature of our actuation mechanism, a realistic choice is to have a duration in the order of tens of milliseconds, which consequently
-determines a remarkable intensity of the impulse. The maximum norm of $\mathbf{F}_u$ is upper-bounded by the actuation limits:
-\[
-\sqrt{F_{u,n}^2 + F_{u,t}^2} \leq F_{u}^{\text{max}} \quad .
-\]
-Additionally, the tangential component $F_{u,t}$ is generated by the friction with the mountain wall. 
-Hence, $F_{u,n}$ and $F_{u,t}$ are constrained by the following relation (friction cone):
+determines a remarkable intensity of the impulse. 
+
+The maximum norm of $\mathbf{F}_{leg}$ is upper-bounded by the actuation limits:
+
+\begin{align}
+\Vert f_{leg} \Vert \leq f_{leg, max}
+\end{align}
+
+Additionally, the tangential components of $f_{leg}$ are generated by the friction with the mountain wall. 
+Hence, we enforce friction cone constrains encoded by the following relation:
+
 \begin{align*}
-\vert F_{u,t} \vert \leq \mu F_{u,n}
+\vert t_{xy} f_{leg}  \vert \leq \mu f_{leg,z}
 \end{align*} 
+
 where $\mu$ is the \textit{friction coefficient}, a constant depending on the nature of the terrain. 
-%For our simulation scenarios below, we have chosen $\mu = 0.8$ and $F_u^{\text{max}}=1000$ N. 
 
 \noindent
 {\bf Objective Function.}
-%The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, and a terminal component, which accounts for the cost related to the final configuration of the system.
+The cost functional is composed of two terms: an integral component accounting for the cost accumulated during a period of time, 
+and a terminal component, which accounts for the cost related to the final configuration of the system.
 The cost is composed of three terms. 
 First, we minimize the time $t_f$ to complete the mission (assuming without loss of generality that $t_0=0$). 
-Second, we minimize the final kinetic energy $K(t_f)$ because when the robot lands, it has to dissipate the energy through a damper (we are not considering to reuse the accumulated energy to re-bounce after landing).
-Third, we minimize the work performed by the winding mechanism.
+Second, we minimize the final kinetic energy $K(t_f)$ because when the robot lands, 
+it has to dissipate the energy through a damper (we are not considering to reuse the accumulated energy to re-bounce after landing).
+Third, we minimize the work performed by the winding mechanisms.
+
 Thus, the cost is:
 \begin{align*}
-&J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
-& K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
+	&J = w_t t_f + w_E K(t_f) + w_{f_{rr}}  \int_{0}^{t_f} (f_{R,r} \cdot x_7 (t))^2 dt + \\ w_{f_{rl}} 
+	& \int_{0}^{t_f} (f_{R,l} \cdot x_8 (t))^2 dt,  \\
+	& K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
 \end{align*}
-%%%
+%
 with $w_t$, $w_E$ and $w_{F_r}$ being the weights associated to the three cost components.
-%We are interested in minimizing the interval of time $t_f - t_0$ needed to complete the mission and the kinetic energy $K(t_f)$ at the final instant. The reason for $K(t_f)$ is because when the robot lands,
-%it has to stop its motion and dissipate the energy through a damper (at the moment we are not considering to reuse the accumulated energy to re-bounce after landing).
-%Therefore, assuming without loss of generality that $t_0=0$, we optimize
-%\begin{align*}
 %&J = w_tt_f + w_E K(t_f) + w_{F_r} \int_{0}^{t_f} (F_r\cdot x_6(t))^2 dt ,  \\
 %& K(t) = \frac{m}{2} x_3(t)^2 \left(x_4(t)^2 + s_{x_1(t)}^2+ x_5(t)^2 \right) + \frac{m }{2} x_6(t)^2,
 %\end{align*}
-%%%%
-%with $w_t$ and $w_E$ two weights to combine the temporal with the energetic contribution while $w_{F_r}$ is the weight 
-%associated to a term proportional to the work performed by the winding mechanism.
-We should observe that, in case of a difficult convergence, it is possible to ``soften'' some of the constraints. For instance, for the terminal constraint, it is possible to introduce a
-slack variable $\Delta$ and have a constraint $\left\|\vect{p}(t_f) - \vect{p}_f\right\|^2 \leq \Delta$, where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
+
+We should observe that, in case of a difficult convergence, it is possible to ``soften'' some of the constraints.
+ For instance, for the terminal constraint, it is possible to introduce a
+slack variable $\Delta$ and have a constraint $\left\|\vect{p}(t_f) - \vect{p}_f\right\|^2 \leq \Delta$, 
+where the slack $\Delta$ can be either a maximum tolerance set by the user or become part of 
+the cost function. Another possibility is to add the relaxed constraint as a penalty in the objective function.
 
 \noindent
 \textbf{Initial guess.}
 To speed-up convergence, we initialized the optimization with a reasonable initial guess.
 Because time $t_f$ is an optimization parameter, we compute the time constant for the system linearized around the initial state. %The other variables were initialised ...
 The linearized system becomes also a good approximation when the jump length is small with respect to the rope elongation. 
+The state trajectories instead are initialized with linear interpolations between the initial $p_0$and final target $p_f$ locations.
 
+\section{Flight Motion Control }
+During the flight phase after a push, the leg has no longer influence on the linear motion of the base (and a very limited one on the angular motion) and we need to rely on the rope actuators to track the reference trajectories prescribed by the planner.  Because of the non-linearity of the system linear control strategies are not believed to provide satisfactory results. However, since the rope forces are constrained to be in one direction (unilateral constraints) a Liapunov base approach cannot be applied straightforwardly, because an unilateral constraints can be seen as a saturation. Also 
+feedback linearization technique lose their guarantees in presence of unilateral constraints. 
+As an additional complexity, we have partial under-actuation, because rope forces lie in a flat cone, the controllability of the robot position is limited to the rope plane, resulting in the  $\theta$ angle being uncontrollable. An \gls{mpc} approach could be an better solution because it enable to create a control policy that takes into account the future behavior of the robot 
+while considering the constraints. The  drawback is that the problem is non linear and so difficult to implement online because, 
+even if we consider the simplified model, there is a non linearity (norm) due to the constraints \ref{eq:norm_constraints} on the rope lengths.
+Instead of tackling the control problem in its full complexity we can devise a better strategy based on some observations:1) the accurate control of the linear position of the robot is not a big concern (unless the are dangerous obstacle to avoid on the way)  because additional jumps could be taken on the way. 
+2) The most critical part to control is the orientation, any tracking error of the leg impulse force at the 
+lift-off phase. Indeed, any force not pointing exactly through the  CoM would  initiate pivoting motions that 
+can lead to a landing posture which is different from the desired one (i.e. with the landing feet aligned  
+with the rock wall). This can result in a suboptimal  landing phase with unpredictable tipping over of the base link.
+The orientation error about the base roll direction, is inherently mitigated thanks to the self-stabilizing effect (see Fig. \ref{fig:static_analysis}) 
+due the presence of an offset between the rope  attachment  points but remains an issue in the yaw and pitch direction.
+
+\begin{figure}
+	%\includegraphics[width=\columnwidth]{figs/self_stabilyze.pdf}
+	\caption{Self stabilyzing effects on the orientation due to the arrangement of the rope attachment points. }
+	\label{fig:static_analysis}
+\end{figure}
+
+Because of the above reasons, we decided to give the optimized values of the rope forces coming from the planner 
+as  feed-forward component and design an orientation controller that would provide a feedback moment $\Gamma^{fbk}$ that should be mapped in to rope forces. 
+
+\begin{align}
+\mat{f_{R,l}\\f_{R,r}} = \mat{f^*_{R,l}\\f^*_{R,r}} + \mat{f^{fbk}_{R,l}\\f^{fbk}_{R,r}}  
+\end{align}
+
+to find $f^{fbk} \in \Rnum^2$ the mapping between $\Gamma^{fbk}$ we employ a single rigid body model \cite{} equation that approximate the whole robot as a single rigid 
+body, floating in the air, under the action of rope forces: 
+
+\begin{align}
+\Gamma  = \underbrace{\mat{ \mat{\vec{p}_{r,r} - p}_{\times} & \mat{\vec{p}_{r,l} - p}_{\times} }}_P \mat{f_{R,l}\\f_{R,r}}  
+\end{align}
+
+hence:
+\begin{align}
+ \mat{f^{fbk}_{R,l}\\f^{fbk}_{R,r}} =  P^\dagger \Gamma^{fbk}
+\end{align}
+
+where then $\Gamma^{fbk}$ is  the moment needed to drive to zero the orientation error with respect to the desired landing posture:
+TODO change pr1 pr2 into prr prl
+
+\begin{align}
+\Gamma^{fbk} = K_o e_o  - D_{\omega} \omega
+\end{align}
+
+where $K_o \in \Rnum^{3 \times3}$ and $K_{\omega} \in \Rnum^{3 \times3}$ are appropriate orientation proportional and derivative gains 
+and $e_o \in \Rnum^3$ is the orientation error obtained from the exponential map:
+
+\begin{align}
+Todo
+\end{align}
 
 
 %\input{include/ContLyap}
+
+
+\section{Experiments}
+
+\section{Conclusions}
+Future works will consider adding smooth approximations of the terrain (e.g. patches) as constraints 
+in the optimal control problem in order to devides motions that are able to avoid obstacles.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
