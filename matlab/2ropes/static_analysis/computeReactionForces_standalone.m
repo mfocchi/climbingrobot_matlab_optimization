@@ -144,8 +144,8 @@ for step=3:0.1:6
 
     min_z = -7;
     max_z = 1;
-    min_y = -12;
-    max_y = 12;
+    min_y = p_anchor1(2)-5;
+    max_y = p_anchor2(2)+5;
     
     
     clf(gcf)
