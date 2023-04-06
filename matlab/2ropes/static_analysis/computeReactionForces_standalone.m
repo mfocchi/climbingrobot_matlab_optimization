@@ -3,8 +3,9 @@ close all
 clear all
 clc
 
-p_anchor1 = [0;-5;0]
-p_anchor2 = [0;5;0]
+anchor_distance = 10;
+p_anchor1 = [0;0;0]
+p_anchor2 = [0;anchor_distance;0]
 
 % x = [fl1, fl2, fr1, fr2]
 baseline = 0.8;
@@ -17,7 +18,7 @@ force_scale =0.1
 min_feet_force = 0;
 % margin out of the vertical
 margin = 0.31;
-steps=[0, 3, p_anchor2(2)+ margin]
+steps=  0.5*anchor_distance + [0, 3, 0.5*anchor_distance+ margin]
 figure
 
 for i=1:length(steps)
