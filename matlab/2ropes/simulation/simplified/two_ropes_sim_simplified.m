@@ -2,7 +2,7 @@ clear all
 clc
 close all
 
-global delta_duration  Fleg  Fr1 Fr2  time DEBUG p_a1 p_a2
+global delta_duration  Fleg  Fr1 Fr2  time  b p_a1 p_a2
 delta_duration = 0.05;
 dt = 0.001;
 time =[0:dt:4];
@@ -16,7 +16,7 @@ force_scaling = 20;
 % Fr2 = ones(length(time)) * -30;
 
 %jump params
-p0 = [0.0; 2.5; -6];
+p0 = [0.005; 2.5; -6]; % there is singularity for px = 0!
 
 Fleg = [200;0;0];
 Fr1 = ones(length(time)) * -40;
@@ -24,33 +24,24 @@ Fr2 = ones(length(time)) * -30;
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
+b = anchor_distance;
 p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
 
-
-
-DEBUG = false;
 m = 5.08;   % Mass [kg]
 
 
-%Initial Conditions
-% if DEBUG
-%   x0 = [theta0; solution.thetad(1); phi0; solution.phid(1); l_0; solution.ld(1)]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
-% else
-%   x0 = [theta0; 0.;phi0; 0.; l_0; 0.]; %[theta ;d/dt(theta) ;phi ;d/dt(phi) ;l ;d/dt(l)] 
-% end
-
+psi0 = atan2(p0(1), -p0(3));
 l10 = norm(p0 - p_a1);
 l20 = norm(p0 - p_a2);
+phid0 = 0;
 l1d0 = 0.0;
 l2d0 = 0.0;
-J0 = computeJacobian(p0);
-dp0 = J0*[l1d0; l2d0];
 
 
 %initial conditions
-x0 = [p0; l10; l20; J0*[l1d0; l2d0]; l1d0; l2d0];
+x0 = [psi0; l10; l20; phid0; l1d0; l2d0];
 
 %%Simulation:
 % define the stop function event
@@ -59,9 +50,9 @@ Opt    = odeset('Events', @stopFun);
 %1 - Solve differential equations with variable step solver
 [time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,m,@Fr1Fun,@Fr2Fun, @FlegFun), time, x0, Opt); 
 
-X = x(:,1);
-Y = x(:,2);
-Z = x(:,3);
+for i=1:length(x)    
+    [X(i), Y(i), Z(i)] = forwardKin(x(i,1), x(i,2), x(i,3));
+end
 
 figure(1)
 subplot(3,1,1)
@@ -113,17 +104,16 @@ axis equal; hold on;
 h(1) = plot3(p_a1(1),p_a1(2),p_a1(3),'.m', 'MarkerSize',40);grid on;hold on;
 %anchor2    
 h(2) = plot3(p_a2(1),p_a2(2),p_a2(3),'.y', 'MarkerSize',40);grid on;hold on;
-%initial vel vector
-h(3) = plot3([p0(1) p0(1)+dp0(1)],[p0(2) p0(2)+dp0(2)],[p0(3) p0(3)+dp0(3)],'b','Linewidth',4);
-%initial leg impulse
+
+%initial leg impulse (red)
 h(9) = plot3([p0(1) p0(1)+Fleg(1)/force_scaling],[p0(2) p0(2)+Fleg(2)/force_scaling],[p0(3) p0(3)+Fleg(3)/force_scaling],'r','Linewidth',4);
+
 % rope forces
 Fr1_vec =  (p0 - p_a1)/norm(p0 - p_a1)*Fr1(1);
 Fr2_vec =  (p0 - p_a2)/norm(p0 - p_a2)*Fr2(1);
-
-%Fr1 (forces are positive if they accelerate the mass
+%Fr1 (red ) (forces are positive if they accelerate the mass
 h(10) = plot3([p0(1) p0(1)+Fr1_vec(1)/force_scaling],[p0(2) p0(2)+Fr1_vec(2)/force_scaling],[p0(3) p0(3)+Fr1_vec(3)/force_scaling],'r','Linewidth',4);
-%Fr2
+%Fr2 (red ) 
 h(11) = plot3([p0(1) p0(1)+Fr2_vec(1)/force_scaling],[p0(2) p0(2)+Fr2_vec(2)/force_scaling],[p0(3) p0(3)+Fr2_vec(3)/force_scaling],'r','Linewidth',4);
 
 
@@ -133,7 +123,7 @@ Tt = [eye(3), [0;0;0];
 tt = hgtransform('Matrix', Tt);
 h(12) = triad('Parent',tt, 'linewidth', 6);
 
-%     Vertical line
+%  plot rope lines (black)
 h(4) = plot3([p_a1(1) p0(1)],[p_a1(2) p0(2)],[p_a1(3) p0(3)],'k-');
 h(5) = plot3([p_a2(1) p0(1)],[p_a2(2) p0(2)],[p_a2(3) p0(3)],'k-');
 
@@ -144,7 +134,7 @@ max_z = 1;
 min_y = -2;
 max_y = min_y+anchor_distance+4;
 
-%     drawing a wall at X = 0 
+%  drawing a wall at X = 0 
 p1 = [0 min_y min_z];
 p2 = [0 max_y min_z];
 p3 = [0 max_y max_z];
@@ -167,9 +157,11 @@ h(8) = animatedline('color','b', 'linewidth',3);
 
 view(60,27);
 
+
 % Loop for animation
 for i = 1:length(X)    
-    %Pendulum trajectory
+    %Pendulum trajectory position of the pendulum green during push blue
+    %during flight
     if time_sim(i)<=delta_duration
         addpoints(h(7), X(i),Y(i),Z(i)); 
 
@@ -182,13 +174,19 @@ for i = 1:length(X)
  
 end
 
+% plot target point (red)
+h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
+
+
+
+
+axis equal
 matlab_final_point = [X(end),Y(end),Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
-h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 fprintf('Matlab final point [%3.2f, %3.2f, %3.2f] \n', matlab_final_point)
 fprintf('Gazebo final point [%3.2f, %3.2f, %3.2f] \n', gazebo_final_point)
-fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
-fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
+% fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
+% fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 
 
@@ -218,7 +216,7 @@ end
 
 function J = computeJacobian(p)
  global DEBUG p_a1 p_a2
- J = [ (p-p_a1)/norm(p-p_a1) ,(p-p_a2)/norm(p-p_a2)];
+ J = [ (p(:)-p_a1)/norm(p(:)-p_a1) ,(p(:)-p_a2)/norm(p(:)-p_a2)];
 
 end
 
@@ -241,43 +239,44 @@ end
 
 function [dxdt] = diffEq(t,x, m, Fr1, Fr2 ,Fleg)
 
-    global DEBUG p_a1 p_a2
-
-    %x = [theta, dottheta, phi, dotphi, l, dotl]
+    global  b     
     g = 9.81;   %Gravity   [m/s2]
 
     %Retrieving states
-    px = x(1);
-    py = x(2);
-    pz = x(3);
-    l1 = x(4);
-    l2 = x(5);
-    dpx = x(6);
-    dpy = x(7);
-    dpz = x(8);
-    dl1 = x(9);
-    dl2 = x(10);
-
-    p = [px;py;pz];
-    dp = [dpx;dpy;dpz];
-
-    % mass equation and rope constraints 
-    A = [m*eye(3) ,    zeros(3,1)  , zeros(3,1),
-         (p-p_a1)'  , -l1    ,   0,
-         (p-p_a2)',   0    ,   -l2];
+    psi = x(1);
+    l1 = x(2);
+    l2 = x(3);
+    psid = x(4);
+    l1d = x(5);
+    l2d = x(6);
     
-    if DEBUG % reset the state already
+    [px, py, pz]  = forwardKin(psi, l1, l2);  
+    pz2b = pz*2*b;
+    px2b = px*2*b;
 
-           b = [m*[0;0;-g]; -dp'*dp + dl1^2 ; -dp'*dp + dl2^2 ];     
+    px_l1 = px/l1;
+    n_pz_l1 =  -pz/l1;
+    px_l1_sinpsi = px/l1/sin(psi);
+    py2b = py*2*b;
+    
+    % mass equation and rope constraints 
+    A_dyn = [l1*n_pz_l1,   px_l1 - (l1*sin(psi)*(py2b/(b^2*l1) - py2b^2/(2*b^2*l1^3)))/(2*px_l1_sinpsi),  (l2*py2b*sin(psi))/(2*b^2*l1*px_l1_sinpsi),
+                      0,                                                                           l1/b,                                       -l2/b,
+               l1*px_l1, (l1*cos(psi)*(py2b/(b^2*l1) - py2b^2/(2*b^2*l1^3)))/(2*px_l1_sinpsi) - n_pz_l1, -(l2*py2b*cos(psi))/(2*b^2*l1*px_l1_sinpsi)];
+    
+    
+    b_dyn =  [2*l1d*n_pz_l1*psid - l1*psid^2*px_l1 - (sin(psi)*(4*l1^4*l1d^2 - 8*l1^3*l2*l1d*l2d + 4*l1^2*l2^2*l2d^2 - 6*l1^2*l1d^2*py2b - 2*l1^2*l2d^2*py2b + 8*l1*l2*l1d*l2d*py2b + 3*l1d^2*py2b^2))/(4*b^2*l1^3*px_l1_sinpsi) - (py2b^2*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2)^2)/(16*b^4*l1^5*px_l1_sinpsi^3) + (psid*py2b*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^2*px_l1_sinpsi) + (l1d*py2b*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^3*px_l1_sinpsi),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               (l1d^2 - l2d^2)/b,
+               l1*n_pz_l1*psid^2 + 2*l1d*psid*px_l1 + (cos(psi)*(4*l1^4*l1d^2 - 8*l1^3*l2*l1d*l2d + 4*l1^2*l2^2*l2d^2 - 6*l1^2*l1d^2*py2b - 2*l1^2*l2d^2*py2b + 8*l1*l2*l1d*l2d*py2b + 3*l1d^2*py2b^2))/(4*b^2*l1^3*px_l1_sinpsi) + (py2b^2*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2)^2)/(16*b^4*l1^5*px_l1_sinpsi^3) - (l1d*py2b*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^3*px_l1_sinpsi) + (psid*py2b*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^2*px_l1_sinpsi)];
+ 
+        
 
-    else
-       
-        J =  computeJacobian(p);
-        b = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t); -dp'*dp + dl1^2 ; -dp'*dp + dl2^2 ];     
-    end
+    J =  computeJacobian([px, py, pz]);
+    Ftot = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t)]; 
+    
 
-    y = inv(A)*b;
-    dxdt = [dpx; dpy; dpz; dl1; dl2; y];
+    y = inv(A_dyn)*(inv(m)*Ftot - b_dyn);
+    dxdt = [psid; l1d; l2d;  y];
 
 
 end
