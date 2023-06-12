@@ -49,8 +49,9 @@ constr_tolerance = 1e-4;
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
 'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
-num_params = 3;    
-x0 = [  0,    0.0,         T_pend ,      0*ones(1,N_dyn)]; %opt vars=   thetad0, phid0, K,/time, slacks_dyn, slacks_energy,   sigma =    %norm(p_f - pf)
+num_params = 3; % thetad0  phid0, time
+Fr0 = 0*ones(1,N_dyn);
+x0 = [  0,    0.0,         T_pend ,      Fr0]; %opt vars=   thetad0, phid0, time, traj for Fr with Ndyn values
 lb = [ -30,   -30,           0.01, -Fr_max*ones(1,N_dyn)];
 ub = [  30,    30,             inf, 0*ones(1,N_dyn)];
 tic
@@ -93,6 +94,7 @@ if (DEBUG)
     eval_constraints(c, num_constr, constr_tolerance)  
 
     figure
+    title('retraxction force')
     ylabel('Fr')
     plot(solution.time,0*ones(size(solution.l)),'k'); hold on; grid on;
     plot(solution.time,-Fr_max*ones(size(solution.l)),'k');
@@ -100,6 +102,7 @@ if (DEBUG)
     plot(solution.time,solution.Fr,'r');
       
     figure
+    title('States')
     subplot(3,1,1)
     plot(solution.time, solution.theta,'r');hold on; grid on;
     plot(solution_constr.time, solution_constr.theta,'ob');
@@ -133,6 +136,7 @@ if (DEBUG)
         
     
     figure
+    title('CoM Cartesian Trajectory')
     subplot(3,1,1)
     plot(solution.time, solution.p(1,:),'r') ; hold on;    
     plot(solution_constr.time, solution_constr.p(1,:),'ob') ; hold on;    
@@ -151,12 +155,17 @@ if (DEBUG)
     
 end
 
-disp('inputs from optimization')
+disp('jumping from p0')
 p0 
-solution.Fun
-solution.Fut
-disp('check')
-opt_Tf
+disp('landing at target')
 solution.achieved_target
+
+disp('results from optimization')
+disp('Fun')
+solution.Fun
+disp('Fut')
+solution.Fut
+disp('jump duration Tf')
+opt_Tf
 
 

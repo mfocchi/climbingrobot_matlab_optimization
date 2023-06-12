@@ -1,11 +1,24 @@
 
-for each clip cut the relevant part 
+voiceover:  Mountain environments are fascinating, yet,  extremely vulnerable to climate changes  -landslides, floods and avalanches, can endanger economic activities and put at survival  risk small towns and villages.
 
-1) put intro slide
+Slide 2
 
-2) Slide with robot picture
 
-TODO: change text
+voiceover: 
+- any realistic strategy to counter these risks is necessarily based on constant monitoring and on a thorough maintenance activity
+- maintenance operations are currently executed by specialised personnel, able to reach the operation areas
+ through mountaineering techniques and to execute complex operations while hanging from a rope. 
+- the scarcity of personnel with these skills and the inherent danger of the environment suggest the application of a robotic solution.
+
+
+
+Slide 3:
+
+
+voiceover: The solution should satisfy vital requirements that are out of reach for conventional solution, namely: carry a heavy payload, be able to move quicly along the wall
+and to overcome obstacles on the way where the robot could be trapped, and, finally, be autonomous in performing maintenance operation
+
+
 
 TEXT 1: 
 Novel concept of a climbing robot 
@@ -88,7 +101,7 @@ a reachability analysis to numerically to derive a  region of reachable targets.
 TODO strongly reduce the duration of the reachable region video (e.g by half)
 
 TODO add to voice over
-You can see that there i a limited number of   targets that are reachable  out of the friction boundaries, 
+You can see that there is a limited number of   targets that are reachable  out of the friction boundaries, 
 and that they  involve high energy consumption from the  retraction mechanism 
 
 
@@ -103,6 +116,9 @@ TEXT2:
 Reachable targets are limited by friction limits
 
 
+
+voiceover: with the aim to increase the reachability region and improve controllability of lateral motions, we are studying two solutions: one with a slider joint and another with two anchor points. 
+the second looks more promising in terms of deployability and capability to perform maintenance operations. 
 
 
 

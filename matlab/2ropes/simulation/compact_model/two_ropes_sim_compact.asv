@@ -2,25 +2,38 @@ clear all
 clc
 close all
 
-global delta_duration  Fleg  Fr1 Fr2  time  b p_a1 p_a2
-delta_duration = 0.05;
+global delta_duration  Fleg  Fr1 Fr2  time   p_a1 p_a2 b   g m
+
+
+
+
+OPTIM = true;
 dt = 0.001;
-time =[0:dt:4];
-force_scaling = 20;
 
-%jump params
-% p0 = [2; 8; -10];
-% anchor_distance = 10;
-% Fleg = [100;0;0];
-% Fr1 = ones(length(time)) * -70;
-% Fr2 = ones(length(time)) * -30;
+if OPTIM 
+    load ('../../optimal_control_2ropes/optim.mat');
+    Tf = opt_Tf;
+    time =[0:dt:Tf];
+      Fleg = solution.Fleg;
+      Fr1 = resample(solution.Fr_l, length(time), length(solution.Fr_l) );
+      Fr2 = resample(solution.Fr_r, length(time), length(solution.Fr_r) );
+      delta_duration = T_th;
+      force_scaling = 100;
+    
+else
+    Tf = 4;
+    time =[0:dt:Tf];
+    delta_duration = 0.05;
+    %inputs
+    Fleg = [200;0;0];
+    Fr1 = ones(length(time)) * -40;
+    Fr2 = ones(length(time)) * -30;
+    force_scaling = 20;
+    %jump params
+    p0 = [0.005; 2.5; -6]; % there is singularity for px = 0!
+end    
+   
 
-%jump params
-p0 = [0.005; 2.5; -6]; % there is singularity for px = 0!
-
-Fleg = [200;0;0];
-Fr1 = ones(length(time)) * -40;
-Fr2 = ones(length(time)) * -30;
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
@@ -28,19 +41,16 @@ b = anchor_distance;
 p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
-
 m = 5.08;   % Mass [kg]
 
-
+%compute initial state from jump param
 psi0 = atan2(p0(1), -p0(3));
 l10 = norm(p0 - p_a1);
 l20 = norm(p0 - p_a2);
 phid0 = 0;
 l1d0 = 0.0;
 l2d0 = 0.0;
-
-
-%initial conditions
+% states are psi0, l10, l20
 x0 = [psi0; l10; l20; phid0; l1d0; l2d0];
 
 %%Simulation:
@@ -48,7 +58,7 @@ x0 = [psi0; l10; l20; phid0; l1d0; l2d0];
 Opt    = odeset('Events', @stopFun);
 
 %1 - Solve differential equations with variable step solver
-[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,m,@Fr1Fun,@Fr2Fun, @FlegFun), time, x0, Opt); 
+[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,@Fr1Fun,@Fr2Fun, @FlegFun), time, x0, Opt); 
 
 for i=1:length(x)    
     [X(i), Y(i), Z(i)] = forwardKin(x(i,1), x(i,2), x(i,3));
@@ -129,7 +139,7 @@ h(5) = plot3([p_a2(1) p0(1)],[p_a2(2) p0(2)],[p_a2(3) p0(3)],'k-');
 
 min_x= 0;
 max_x= 2*max(X);
-min_z = min(Z);
+min_z = min(Z)-2;
 max_z = 1;
 min_y = -2;
 max_y = min_y+anchor_distance+4;
@@ -185,23 +195,27 @@ matlab_final_point = [X(end),Y(end),Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
 fprintf('Matlab final point [%3.2f, %3.2f, %3.2f] \n', matlab_final_point)
 fprintf('Gazebo final point [%3.2f, %3.2f, %3.2f] \n', gazebo_final_point)
+fprintf('Touchdown at s t [%3.2f] \n', time_sim(end))
+
 % fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 
-
+% this is needed because the intergration time t might be different from
+% the discretization of the input Fr
 function [fr1] = Fr1Fun(t)
 global   Fr1 time
    idx = min(find(time>=t));
    fr1 = Fr1(idx);
 end
 
+% this is needed because the intergration time t might be different from
+% the discretization of the input Fr
 function [fr2] = Fr2Fun(t)
 global   Fr2 time
    idx = min(find(time>=t));
    fr2 = Fr2(idx);
 end
-
 
 function [fleg] = FlegFun(t)
 global   Fleg  delta_duration 
@@ -215,7 +229,7 @@ global   Fleg  delta_duration
 end
 
 function J = computeJacobian(p)
- global DEBUG p_a1 p_a2
+ global  p_a1 p_a2
  J = [ (p(:)-p_a1)/norm(p(:)-p_a1) ,(p(:)-p_a2)/norm(p(:)-p_a2)];
 
 end
@@ -233,14 +247,15 @@ function [value, isterminal, direction] = stopFun(t, x)
         
         direction  = -1;
         isterminal = 1;   % Stop the integration
+        
 
        
 end
 
-function [dxdt] = diffEq(t,x, m, Fr1, Fr2 ,Fleg)
+function [dxdt] = diffEq(t,x, Fr1, Fr2 ,Fleg)
 
-    global  b     
-    g = 9.81;   %Gravity   [m/s2]
+    global  b g m     
+ 
 
     %Retrieving states
     psi = x(1);
@@ -253,7 +268,6 @@ function [dxdt] = diffEq(t,x, m, Fr1, Fr2 ,Fleg)
     [px, py, pz]  = forwardKin(psi, l1, l2);  
     pz2b = pz*2*b;
     px2b = px*2*b;
-
     px_l1 = px/l1;
     n_pz_l1 =  -pz/l1;
     px_l1_sinpsi = px/l1/sin(psi);

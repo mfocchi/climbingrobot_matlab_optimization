@@ -1,41 +1,41 @@
 % compute kinematic simbolically for the 2 rope model minimum
 % representation
-clear all 
-syms psi  l1 l2 b alpha   real 
-
-% for some reason acos() returns pi -acos so I need to subtract from pi to
-% get acos
-alpha = (pi - acos((l2^2 -b^2 -l1^2)/(2*b*l1)))
-
-
-Rx=@(angle) [1       0        0
-            0       cos(angle) -sin(angle)
-            0       sin(angle)  cos(angle)];
-    
-
-Ry=@(angle)[cos(angle)  0      sin(angle)
-            0           1      0
-         -sin(angle) 0      cos(angle)];
-
-Rz=@(angle)[cos(angle)    -sin(angle) 0
-            sin(angle)   cos(angle)   0
-            0           0             1];
-%%%%%%%%%%%%%%%%%%%%%%%
-% WF is assumed in first anchor the left one
-% the state variables are: psi, alpha, l1
-% 1) rotate pi/2-psi about the y axis
-H0_T_1 = [Ry(pi/2-psi) , [0;0;0]
-          zeros(1, 3), 1]      
-
-% 2) rotate pi/2-alpha about z' axis
-H1_T_2 = [Rz(pi/2-alpha) , [0;0;0]
-          zeros(1, 3), 1]  
- 
-% 3) move l1 along x'' axis
-H2_T_b = [ eye(3), [l1;0;0]
-          zeros(1, 3), 1]      
-      
-H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_b)  
+% clear all 
+% syms psi  l1 l2 b alpha   real 
+% 
+% % for some reason acos() returns pi -acos so I need to subtract from pi to
+% % get acos
+% alpha = (pi - acos((l2^2 -b^2 -l1^2)/(2*b*l1)))
+% 
+% 
+% Rx=@(angle) [1       0        0
+%             0       cos(angle) -sin(angle)
+%             0       sin(angle)  cos(angle)];
+%     
+% 
+% Ry=@(angle)[cos(angle)  0      sin(angle)
+%             0           1      0
+%          -sin(angle) 0      cos(angle)];
+% 
+% Rz=@(angle)[cos(angle)    -sin(angle) 0
+%             sin(angle)   cos(angle)   0
+%             0           0             1];
+% %%%%%%%%%%%%%%%%%%%%%%%
+% % WF is assumed in first anchor the left one
+% % the state variables are: psi, alpha, l1
+% % 1) rotate pi/2-psi about the y axis
+% H0_T_1 = [Ry(pi/2-psi) , [0;0;0]
+%           zeros(1, 3), 1]      
+% 
+% % 2) rotate pi/2-alpha about z' axis
+% H1_T_2 = [Rz(pi/2-alpha) , [0;0;0]
+%           zeros(1, 3), 1]  
+%  
+% % 3) move l1 along x'' axis
+% H2_T_b = [ eye(3), [l1;0;0]
+%           zeros(1, 3), 1]      
+%       
+% H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_b)  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % get a simplified model (states l1, l2, psi)
@@ -45,19 +45,33 @@ syms l1(t) l2(t) psi(t) b Fr1 Fr2 Fleg  real
 p = [l1*sin(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2);
       (b^2 + l1^2 - l2^2)/(2*b);
      -l1*cos(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)]
+ 
+ 
 alpha = (pi - acos((l2^2 -b^2 -l1^2)/(2*b*l1)))
 
 %check value is correct should be p = [0, 2.5, -6 ] for 0, 6.5, 6.5
 p_val = vpa(subs(p,{psi(t),l1(t),l2(t), b},{0, 6.5, 6.5,5}),4)
 alpha_val = vpa(subs(alpha, {psi(t),l1(t),l2(t), b},{0, 6.5, 6.5,5}),4)
  
-% clean
+% position clean
 p1 = subs(p, {str2sym('l1(t)') , str2sym('l2(t)'),str2sym('psi(t)')},   {str2sym('l1'), str2sym('l2'),str2sym('psi')});
 
-
+%compute velocity
 p_d = simplify(diff(p, t),'Steps',50);
-p_dd =  diff(p_d, t);
 
+% velocity clean
+p_d1 =subs(p_d,  {str2sym( 'diff(l1(t), t)') , str2sym( 'diff(l2(t), t)'), str2sym('diff(psi(t), t)')},   {str2sym('l1d') , str2sym('l2d'),str2sym('psid') });                       
+p_d2 =subs(p_d1, {str2sym('l1(t)') , str2sym('l2(t)'),str2sym('psi(t)')},   {str2sym('l1'), str2sym('l2'),str2sym('psi')});
+% trick to replace the sqrt
+p_d3 = simplify(p_d2)
+p_d4 =subs(p_d3, {str2sym('sin(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)')} ,  {str2sym('px_l1') });
+p_d5 =subs(p_d4, {str2sym('cos(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)')} ,  {str2sym('n_pz_l1') });
+p_d6 =subs(p_d5, {str2sym('(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)')} ,  {str2sym('px_l1_sinpsi') });
+p_d7 =subs(p_d6, {str2sym(' (b^2 + l1^2 - l2^2)')} ,  {str2sym('py2b') });
+
+
+%compute acceleration
+p_dd =  diff(p_d, t);
 p_dd1 =subs(p_dd,  {str2sym( 'diff(l1(t), t, t)') , str2sym( 'diff(l2(t), t, t)'), str2sym('diff(psi(t), t, t)')},  {str2sym('l1dd') , str2sym('l2dd'),str2sym('psidd')});                       
 p_dd2 =subs(p_dd1,  {str2sym( 'diff(l1(t), t)') , str2sym( 'diff(l2(t), t)'), str2sym('diff(psi(t), t)')},   {str2sym('l1d') , str2sym('l2d'),str2sym('psid') });                       
 p_dd3 =subs(p_dd2, {str2sym('l1(t)') , str2sym('l2(t)'),str2sym('psi(t)')},   {str2sym('l1'), str2sym('l2'),str2sym('psi')});
