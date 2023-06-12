@@ -1,33 +1,31 @@
 clear all ; close all ; clc
 global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE m g b p_a1 p_a2 T_th N_dyn int_method contact_normal 
 
-m = 5.08;   % Mass [kg]
-g = 9.81;
 
 % physical limits
 Fleg_max = 300;
-Fr_max = 50; % Fr is negative
+Fr_max = 90; % Fr is negative
 mu = 0.8;
 T_th = 0.05;
 contact_normal =[1;0;0];
 jump_clearance = 1;
 
-%int_method = 'euler';
-int_method = 'rk4';
+addpath('../simulation/compact_model');
+int_method = 'euler';
+%int_method = 'rk4';
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % slacks energy weight E
-w4 = 0.1; % diff Fr
+w4 = 0.1; % diff Fr1/2 smothing
 w5 = 1; %ekinf (important! energy has much higher values!)
-w6 = 0.1; %Fr
-N_dyn = 30; %dynamic constraints (discretization) 200
+w6 = 0.1; %Fr work
+N_dyn = 50; %dynamic constraints (discretization) 200
 FRICTION_CONE = 1;
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
 b = anchor_distance;
-T_th = 0.1;
 p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
@@ -38,7 +36,7 @@ m = 5.08;   % Mass [kg]
 p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
 
 %FINAL TARGET
-pf= [0.5; 4;-3.61];
+pf= [0.5; 2.6;-4];
 
 
 %compute initial state from jump param
@@ -159,6 +157,6 @@ disp('target')
 solution.achieved_target
 
 
-save('optim.mat','solution','T_th','mu','Fleg_max', 'Fr_max', 'p0','pf', 'opt_Tf');
+save('optimOK.mat','solution','T_th','mu','N_dyn','Fleg_max', 'Fr_max', 'p0','pf', 'opt_Tf');
 
 

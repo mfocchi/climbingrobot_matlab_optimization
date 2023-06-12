@@ -2,26 +2,30 @@ clear all
 clc
 close all
 
-global delta_duration  Fleg  Fr1 Fr2  time   p_a1 p_a2 b   g m
+global delta_duration  Fleg  Fr1 Fr2   optim_time OPTIM  p_a1 p_a2 b   g m
 
 
 
 
 OPTIM = true;
-dt = 0.001;
+
 
 if OPTIM 
-    load ('../../optimal_control_2ropes/optim.mat');
-    Tf = opt_Tf;
-    time =[0:dt:Tf];
-      Fleg = solution.Fleg;
-      Fr1 = resample(solution.Fr_l, length(time), length(solution.Fr_l) );
-      Fr2 = resample(solution.Fr_r, length(time), length(solution.Fr_r) );
-      delta_duration = T_th;
-      force_scaling = 100;
+    load ('../../optimal_control_2ropes/optimOK.mat');
+    Tf = opt_Tf; 
+    dt = 0.001;
+    time = [0:dt:Tf];
+    Fleg = solution.Fleg;
+    optim_time = solution.time;
+    Fr1 = solution.Fr_l; %resample creates oscillations!
+    Fr2 = solution.Fr_r;
+    delta_duration = T_th;
+    force_scaling = 100;
+    p0 = solution.p(:,1);
     
 else
     Tf = 4;
+    dt = 0.001;
     time =[0:dt:Tf];
     delta_duration = 0.05;
     %inputs
@@ -44,25 +48,24 @@ g = 9.81;
 m = 5.08;   % Mass [kg]
 
 %compute initial state from jump param
-psi0 = atan2(p0(1), -p0(3));
-l10 = norm(p0 - p_a1);
-l20 = norm(p0 - p_a2);
-phid0 = 0;
-l1d0 = 0.0;
-l2d0 = 0.0;
-% states are psi0, l10, l20
-x0 = [psi0; l10; l20; phid0; l1d0; l2d0];
+x0 = computeStateFromCartesian(p0);
 
 %%Simulation:
 % define the stop function event
 Opt    = odeset('Events', @stopFun);
 
-%1 - Solve differential equations with variable step solver
-[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim,x,@Fr1Fun,@Fr2Fun, @FlegFun), time, x0, Opt); 
 
+% % %1 - Solve differential equations with variable step solver
+[time_sim, x] = ode45(@(time_sim,x) diffEq(time_sim, x, @Fr1Fun,@Fr2Fun, @FlegFun), time, x0, Opt); 
 for i=1:length(x)    
     [X(i), Y(i), Z(i)] = forwardKin(x(i,1), x(i,2), x(i,3));
 end
+
+% [~,~,x, time_sim] = integrate_dynamics(x0, 0, Tf/(N_dyn-1), N_dyn,Fr1, Fr2, Fleg,'rk4');
+% for i=1:length(x)    
+%     [X(i), Y(i), Z(i)] = forwardKin(x(1,i), x(2,i), x(3,i));
+% end
+ 
 
 figure(1)
 subplot(3,1,1)
@@ -168,6 +171,7 @@ h(8) = animatedline('color','b', 'linewidth',3);
 view(60,27);
 
 
+
 % Loop for animation
 for i = 1:length(X)    
     %Pendulum trajectory position of the pendulum green during push blue
@@ -193,9 +197,9 @@ h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 axis equal
 matlab_final_point = [X(end),Y(end),Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
-fprintf('Matlab final point [%3.2f, %3.2f, %3.2f] \n', matlab_final_point)
-fprintf('Gazebo final point [%3.2f, %3.2f, %3.2f] \n', gazebo_final_point)
-fprintf('Touchdown at s t [%3.2f] \n', time_sim(end))
+fprintf('Matlab final point [%3.4f, %3.4f, %3.4f] \n', matlab_final_point)
+fprintf('Gazebo final point [%3.4f, %3.4f, %3.4f] \n', gazebo_final_point)
+fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
 
 % fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
@@ -212,19 +216,33 @@ fprintf('Touchdown at s t [%3.2f] \n', time_sim(end))
 % end
 % plot(time_sim,Fr1_log, 'r');
 
+
+
 % this is needed because the intergration time t might be different from
 % the discretization of the input Fr
 function [fr1] = Fr1Fun(t)
-global   Fr1 time
-   idx = min(find(time>=t));
+global   Fr1 time optim_time OPTIM
+
+   if OPTIM
+       t_ = optim_time;
+   else 
+       t_ = time;
+   end
+   idx = min(find(t_>t))-1;
    fr1 = Fr1(idx);
 end
 
 % this is needed because the intergration time t might be different from
 % the discretization of the input Fr
 function [fr2] = Fr2Fun(t)
-global   Fr2 time
-   idx = min(find(time>=t));
+global   Fr2 time optim_time OPTIM
+
+   if OPTIM
+       t_ = optim_time;
+   else 
+       t_ = time;
+   end
+   idx = min(find(t_>t))-1;
    fr2 = Fr2(idx);
 end
 
@@ -239,17 +257,22 @@ global   Fleg  delta_duration
   
 end
 
-function J = computeJacobian(p)
- global  p_a1 p_a2
- J = [ (p(:)-p_a1)/norm(p(:)-p_a1) ,(p(:)-p_a2)/norm(p(:)-p_a2)];
-
-end
 
 
-function [value, isterminal, direction] = stopFun(t, x)
-        global time 
+function [value, isterminal, direction] = stopFun(t, x )
+         global OPTIM optim_time
+        
+        [px, py, pz] = forwardKin(x(1), x(2), x(3));
          
-        value = x(1);%stop when gets to wall
+        if OPTIM
+            %value =  optim_time(end) - t;
+            value =1; % stops at the end of time
+        else
+            value = px;%stop when gets to wall
+        end
+        
+    
+
         %value =  (Z - target_height);
         %value =  (time(end) - t);    
         %direction  =-1 Detect zero crossings of value in the negative direction only
@@ -298,7 +321,7 @@ function [dxdt] = diffEq(t,x, Fr1, Fr2 ,Fleg)
 
     J =  computeJacobian([px, py, pz]);
     Ftot = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t)]; 
-    
+
 
     y = inv(A_dyn)*(inv(m)*Ftot - b_dyn);
     dxdt = [psid; l1d; l2d;  y];

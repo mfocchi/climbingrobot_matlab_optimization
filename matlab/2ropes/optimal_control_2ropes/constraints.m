@@ -19,14 +19,14 @@ ineq = zeros(1,0);
 
 % number of constraints
 number_of_constr.wall_constraints = N_dyn;
-number_of_constr.retraction_force_constraints = 4*N_dyn; %unilateral and actuation for 2 ropes
+number_of_constr.retraction_force_constraints = 0;% already included in bounds %4*N_dyn; %unilateral and actuation for 2 ropes
 
 if FRICTION_CONE
     number_of_constr.force_constraints  = 3;
 else
     number_of_constr.force_constraints  = 2; %unilateral and actuation
 end
-number_of_constr.initial_final_constraints = 2;
+number_of_constr.initial_final_constraints = 1;
 number_of_constr.via_point = 1;
 
 
@@ -36,6 +36,7 @@ dt_dyn = Tf / (N_dyn-1);
 % single shooting
 x0 =  computeStateFromCartesian(p0);
 [~,~,x, t] = integrate_dynamics(x0,0, dt_dyn, N_dyn, Fr_l,Fr_r,Fleg, int_method);
+
 psi = x(1,:);
 l1 = x(2,:);
 l2 = x(3,:);
@@ -74,21 +75,24 @@ end
 
 % 2- N_dyn constraints on retraction force   -Fr_max < Fr < 0 
 % unilaterality
-for i=1:N_dyn     
-     ineq = [ineq  Fr_l(i) ]; % Fr_l <0
-    
-end 
-for i=1:N_dyn     
-     ineq = [ineq  Fr_r(i) ]; % Fr_r <0
-    
-end 
 
-% max force
-for i=1:N_dyn 
-  ineq = [ineq -Fr_max - Fr_l(i)];    % -Fr_max -Fr_l <0
-end
-for i=1:N_dyn 
-  ineq = [ineq -Fr_max - Fr_r(i)];    % -Fr_max -Fr_r <0
+if number_of_constr.retraction_force_constraints>0
+    for i=1:N_dyn     
+         ineq = [ineq  Fr_l(i) ]; % Fr_l <0
+
+    end 
+    for i=1:N_dyn     
+         ineq = [ineq  Fr_r(i) ]; % Fr_r <0
+
+    end 
+
+    % max force
+    for i=1:N_dyn 
+      ineq = [ineq -Fr_max - Fr_l(i)];    % -Fr_max -Fr_l <0
+    end
+    for i=1:N_dyn 
+      ineq = [ineq -Fr_max - Fr_r(i)];    % -Fr_max -Fr_r <0
+    end
 end
 
 % debug
@@ -125,8 +129,15 @@ end
 %ineq= [ineq norm(p_f - pf) - x(num_params+N+N_dyn+1)];
 % 4- initial final point  fixed slack 
 fixed_slack = 0.02;%*norm(p0 - pf); 
-ineq= [ineq norm(p_0 - p0) - fixed_slack];
-ineq= [ineq norm(p_f - pf) - fixed_slack];
+
+if number_of_constr.initial_final_constraints == 2
+    ineq= [ineq norm(p_0 - p0) - fixed_slack];
+    ineq= [ineq norm(p_f - pf) - fixed_slack];
+end
+
+if number_of_constr.initial_final_constraints == 1
+        ineq= [ineq norm(p_f - pf) - fixed_slack];
+end
 
 
 %5 - jump clearance
@@ -137,15 +148,15 @@ end
 eq = [];
 
 
-if any(isinf(ineq))
-    disp('Infn in constraint')
-    find(isinf(ineq)) 
-    isinf(ineq)
-end
-if any(isnan(ineq))
-    disp('Nan in constraint')
-    find(isnan(ineq))
-    isnan(ineq)
-end
+% if any(isinf(ineq))
+%     disp('Infn in constraint')
+%     find(isinf(ineq)) 
+%     isinf(ineq)
+% end
+% if any(isnan(ineq))
+%     disp('Nan in constraint')
+%     find(isnan(ineq))
+%     isnan(ineq)
+% end
 
 end

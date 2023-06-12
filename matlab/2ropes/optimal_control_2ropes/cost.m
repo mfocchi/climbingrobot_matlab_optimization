@@ -11,7 +11,7 @@ function cost = cost(x, p0,  pf)
     p0 = p0(:);
     pf = pf(:);
     % variable intergration step
-    dt_dyn = Tf / N_dyn; 
+    dt_dyn = Tf / (N_dyn-1); 
     
 
     x0 =  computeStateFromCartesian(p0);  
@@ -48,6 +48,6 @@ function cost = cost(x, p0,  pf)
     % fut = abs(Fut)  % minimizing this and increasing the weight it turns
 
      %0.001*abs(Fut) 
-    cost =  w4 * (sum(diff(Fr_r)) + sum(diff(Fr_l))) +  w5* Ekinfcost;
+    cost =  w4 * (sum(diff(Fr_r)) + sum(diff(Fr_l))) + w6*Tf;% +  w5* Ekinfcost;
 
 end
