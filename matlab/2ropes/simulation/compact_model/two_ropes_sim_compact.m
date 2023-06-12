@@ -201,6 +201,17 @@ fprintf('Touchdown at s t [%3.2f] \n', time_sim(end))
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 
+%sanity check functions
+% figure
+% plot(optim_time, Fr1,'o'); hold on; grid on;
+% Fr1_log = [];
+% for i=1:length(time_sim)
+%    t = time_sim(i);
+%    Fr1_log = [Fr1_log Fr1Fun(t)]
+%     
+% end
+% plot(time_sim,Fr1_log, 'r');
+
 % this is needed because the intergration time t might be different from
 % the discretization of the input Fr
 function [fr1] = Fr1Fun(t)
