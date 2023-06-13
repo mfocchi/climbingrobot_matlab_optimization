@@ -34,19 +34,17 @@ number_of_constr.via_point = 1;
 dt_dyn = Tf / (N_dyn-1);
 
 % single shooting
-x0 =  computeStateFromCartesian(p0);
-[~,~,x, t] = integrate_dynamics(x0,0, dt_dyn, N_dyn, Fr_l,Fr_r,Fleg, int_method);
-
-psi = x(1,:);
-l1 = x(2,:);
-l2 = x(3,:);
-psid = x(4,:);
-l1d = x(5,:);
-l2d = x(6,:);
-
-p = [l1.*sin(psi).*(1 - (b^2 + l1.^2 - l2.^2).^2/(4*b^2*l1.^2)).^(1/2);
-    (b^2 + l1.^2 - l2.^2)/(2*b);
-    -l1.*cos(psi)*(1 - (b^2 + l1.^2 - l2.^2).^2/(4*b^2*l1.^2)).^(1/2)];
+% single shooting
+state0 =  computeStateFromCartesian(p0);
+[~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
+psi = states(1,:);
+l1 = states(2,:);
+l2 = states(3,:);
+psid = states(4,:);
+l1d = states(5,:);
+l2d = states(6,:); 
+p = computePositionVelocity(psi, l1, l2); %only position
+   
 
 p_0 = p(:, 1);
 p_f = p(:,end);

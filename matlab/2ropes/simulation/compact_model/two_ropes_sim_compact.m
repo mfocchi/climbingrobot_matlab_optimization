@@ -5,7 +5,12 @@ close all
 global delta_duration  Fleg  Fr1 Fr2   optim_time OPTIM  p_a1 p_a2 b   g m
 
 
-
+%cd to actual dir
+filePath = matlab.desktop.editor.getActiveFilename;
+pathparts = strsplit(filePath,filesep);
+dirpath= pathparts(1:end-1);
+actual_dir =  strjoin(dirpath,"/");
+cd(actual_dir);
 
 OPTIM = true;
 
@@ -70,16 +75,38 @@ end
 figure(1)
 subplot(3,1,1)
 plot(time_sim, X,'b'); hold on;grid on;
+plot(solution.time, solution.p(1,:),'ro');
 ylabel('X')
-%legend('sim', 'opt')
+legend('sim', 'opt')
 
 subplot(3,1,2)
 plot(time_sim, Y,'b'); hold on;grid on;
+plot(solution.time, solution.p(2,:),'ro');
 ylabel('Y')
 
 subplot(3,1,3)
 plot(time_sim, Z,'b'); hold on;grid on;
+plot(solution.time, solution.p(3,:),'ro');
 ylabel('Z')
+
+% states
+figure(2)
+subplot(3,1,1)
+plot(time_sim, x(:,1),'b'); hold on;grid on;
+plot(solution.time, solution.psi,'ro');
+ylabel('psi')
+legend('sim', 'opt')
+
+subplot(3,1,2)
+plot(time_sim, x(:,2),'b'); hold on;grid on;
+plot(solution.time, solution.l1,'ro');
+ylabel('l1')
+
+subplot(3,1,3)
+plot(time_sim, x(:,3),'b'); hold on;grid on;
+plot(solution.time, solution.l2,'ro');
+ylabel('l2')
+
 
 % fprintf('original target is  : [%3.2f, %3.2f, %3.2f] \n',pf );
 % fprintf('the Matlab touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
@@ -105,11 +132,14 @@ ylabel('Z')
 % % ylabel('Ekin') 
 % % legend('sim', 'opt')
 
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
-figure(2)
+figure(3)
 
-title('Matlab Animation - simplified model');
+title('Maetlab Animation - simplified model');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
 
 axis equal; hold on;
@@ -216,6 +246,9 @@ fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
 % end
 % plot(time_sim,Fr1_log, 'r');
 
+figure
+plot(optim_time, Fr1,'r-o'); hold on; grid on;
+plot(optim_time, Fr2,'b-o'); hold on; grid on;
 
 
 % this is needed because the intergration time t might be different from
@@ -260,9 +293,9 @@ end
 
 
 function [value, isterminal, direction] = stopFun(t, x )
-         global OPTIM optim_time
+         global OPTIM 
         
-        [px, py, pz] = forwardKin(x(1), x(2), x(3));
+        %[px, py, pz] = forwardKin(x(1), x(2), x(3));
          
         if OPTIM
             %value =  optim_time(end) - t;

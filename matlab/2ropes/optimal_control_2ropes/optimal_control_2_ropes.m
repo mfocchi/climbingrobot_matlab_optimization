@@ -11,15 +11,15 @@ contact_normal =[1;0;0];
 jump_clearance = 1;
 
 addpath('../simulation/compact_model');
-int_method = 'euler';
-%int_method = 'rk4';
+%int_method = 'euler';
+int_method = 'rk4';
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % slacks energy weight E
-w4 = 0.1; % diff Fr1/2 smothing
+w4 = 1; % diff Fr1/2 smothing
 w5 = 1; %ekinf (important! energy has much higher values!)
-w6 = 0.1; %Fr work
+w6 = 1; %Fr work
 N_dyn = 50; %dynamic constraints (discretization) 200
 FRICTION_CONE = 1;
 
@@ -36,7 +36,7 @@ m = 5.08;   % Mass [kg]
 p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
 
 %FINAL TARGET
-pf= [0.5; 2.6;-4];
+pf= [0.5; 4;-4];
 
 
 %compute initial state from jump param
@@ -53,7 +53,7 @@ num_params = 4;
 Fr_l0 = 0*ones(1,N_dyn);
 Fr_r0 = 0*ones(1,N_dyn);
 x0 = [  100,            0.0,          0.0,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-lb = [ -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
+lb = [  0,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
 ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,N_dyn),            0*ones(1,N_dyn)];
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) , options);

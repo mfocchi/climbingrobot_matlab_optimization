@@ -9,27 +9,20 @@ Fr_r = x(num_params+N_dyn+1:num_params+2*N_dyn);
 
 dt_dyn = Tf / (N_dyn-1); 
 % single shooting
-x0 =  computeStateFromCartesian(p0);
-[~,~,x, t] = integrate_dynamics(x0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
-psi = x(1,:);
-l1 = x(2,:);
-l2 = x(3,:);
-psid = x(4,:);
-l1d = x(5,:);
-l2d = x(6,:);
-
+state0 =  computeStateFromCartesian(p0);
+[~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
+psi = states(1,:);
+l1 = states(2,:);
+l2 = states(3,:);
+psid = states(4,:);
+l1d = states(5,:);
+l2d = states(6,:); 
 [p, pd ]= computePositionVelocity(psi, l1, l2, psid,l1d, l2d);
    
 
+
 p_0 = p(:, 1);
 p_f = p(:,end);
-
-%disp(strcat('Initial velocity is [theta0, phi0]:',num2str(thetad(1)),"   ", num2str(phid(1))) );
-% velocity (constant length)
-% pd = [cos(theta).*cos(phi).*thetad.*l - sin(phi).*sin(theta).*phid.*l;
-%     cos(theta).*sin(phi).*thetad .*l + cos(phi).*sin(theta).*phid.*l;
-%     sin(theta).*thetad.*l];
-
 
 deltax = diff(p(1,:));  % diff(X);
 deltay = diff(p(2,:));   % diff(Y);
@@ -51,21 +44,18 @@ solution.energy.Ekin0z = 0;
 solution.energy.Ekin0 = 0;
 solution.energy.intEkin = 0;
 solution.energy.U0 = 0;
-solution.energy.Ekinfx = 0;
-solution.energy.Ekinfy = 0;
-solution.energy.Ekinfz = 0;
-solution.energy.Ekinf = 0;
 solution.energy.Uf = 0;
-
-% Calculating and ploting the total Energy from the new fit: theta, thetad and phid
-%TODO solution.energy.Etot =  (m*l.^2/2).*(thetad.^2 + sin(theta).^2 .*phid.^2) +m.*ld.^2/2 - m*g*l.*cos(theta);
-
 
 % kinetic energy at the beginning
 solution.energy.Ekin0x = m/2*pd(1,1)'*pd(1,1);
 solution.energy.Ekin0y = m/2*pd(2,1)'*pd(2,1);
 solution.energy.Ekin0z = m/2*pd(3,1)'*pd(3,1);
 solution.energy.Ekin0 = m/2*pd(:,1)'*pd(:,1);
+
+solution.energy.Ekinfx = m/2*pd(1,end)'*pd(1,end);
+solution.energy.Ekinfy = m/2*pd(2,end)'*pd(2,end);
+solution.energy.Ekinfz = m/2*pd(3,end)'*pd(3,end);
+solution.energy.Ekinf = m/2*pd(:,end)'*pd(:,end);
 
 
 for i =1:length(t)
