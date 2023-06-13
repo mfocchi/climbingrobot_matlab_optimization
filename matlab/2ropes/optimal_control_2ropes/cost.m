@@ -1,6 +1,6 @@
 function cost = cost(x, p0,  pf)
 
-    global m w1 w2 w3 w4 w5 w6  b  num_params N_dyn int_method  contact_normal
+    global m w1 w2 w3 w4 w5 w6  b  num_params N_dyn int_method  int_steps contact_normal
 
     Fleg = [ x(1); x(2); x(3)];
     Tf = x(4);
@@ -16,7 +16,8 @@ function cost = cost(x, p0,  pf)
 
     % single shooting
     state0 =  computeStateFromCartesian(p0);
-    [~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
+    [states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
+
     psi = states(1,:);
     l1 = states(2,:);
     l2 = states(3,:);
@@ -41,7 +42,7 @@ function cost = cost(x, p0,  pf)
     pf = pf(:);
     
     %minimize the final kin energy at contact
-    Ekinfcost=  m/2*pd(:,end)'*pd(:,end);
+    %Ekinfcost=  m/2*contact_normal'*pd(:,end)'*pd(:,end)*contact_normal;
       
     % minimize hoist work / energy consumption
     hoist_work = sum(abs(Fr_l.*l1d)*dt_dyn) + sum(abs(Fr_r.*l2d)*dt_dyn);  %assume the motor is not regenreating

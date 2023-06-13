@@ -1,5 +1,5 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE m g b p_a1 p_a2 T_th N_dyn int_method contact_normal 
+global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE m g b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal  
 
 
 % physical limits
@@ -11,8 +11,7 @@ contact_normal =[1;0;0];
 jump_clearance = 1;
 
 addpath('../simulation/compact_model');
-%int_method = 'euler';
-int_method = 'rk4';
+
 
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
@@ -20,8 +19,16 @@ w3 = 1 ; % slacks energy weight E
 w4 = 1; % diff Fr1/2 smothing
 w5 = 1; %ekinf (important! energy has much higher values!)
 w6 = 1; %Fr work
-N_dyn = 50; %dynamic constraints (discretization) 200
-FRICTION_CONE = 1;
+%accurate
+int_method = 'rk4';
+int_steps = 5; %0 means normal intergation
+N_dyn = 30; %dynamic constraints (discretization) 
+FRICTION_CONE = 0;
+%fast
+% int_method = 'euler';
+% int_steps = 5; %0 means normal intergation
+% N_dyn = 40; %dynamic constraints (discretization) 
+% FRICTION_CONE = 0;
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
@@ -33,10 +40,10 @@ m = 5.08;   % Mass [kg]
 
 %jump params
 % INITIAL POINT
-p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+p0 = [0.5; 2.5; -16]; % there is singularity for px = 0!
 
 %FINAL TARGET
-pf= [0.5; 4;-4];
+pf= [0.5; 1;-14];
 
 
 %compute initial state from jump param
@@ -78,7 +85,6 @@ opt_Tf = solution.time(end)
 fprintf('Fleg:  %f %f %f \n\n',solution.Fleg(1), solution.Fleg(2), solution.Fleg(3))
 fprintf('cost:  %f\n\n',solution.cost)
 fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
-fprintf('initial_error:  %f\n\n',solution.initial_error)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_constr.final_error_discrete)

@@ -1,6 +1,6 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, jump_clearance)
 
-global     m num_params b  N_dyn FRICTION_CONE  contact_normal  int_method
+global     m num_params b  N_dyn FRICTION_CONE  contact_normal  int_method int_steps
 
 % ineq are <= 0
 
@@ -33,10 +33,10 @@ number_of_constr.via_point = 1;
 % variable intergration step
 dt_dyn = Tf / (N_dyn-1);
 
-% single shooting
+
 % single shooting
 state0 =  computeStateFromCartesian(p0);
-[~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
+[states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
 psi = states(1,:);
 l1 = states(2,:);
 l2 = states(3,:);

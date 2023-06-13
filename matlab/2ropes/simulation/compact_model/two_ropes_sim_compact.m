@@ -225,13 +225,12 @@ h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 
 
 axis equal
-matlab_final_point = [X(end),Y(end),Z(end)];
+matlab_final_point = [X(end);Y(end);Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
 fprintf('Matlab final point [%3.4f, %3.4f, %3.4f] \n', matlab_final_point)
 fprintf('Gazebo final point [%3.4f, %3.4f, %3.4f] \n', gazebo_final_point)
 fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
-
-% fprintf('error norm[%3.2f] \n', norm(matlab_final_point - gazebo_final_point))
+fprintf('error norm[%3.4f %3.4f %3.4f] \n',matlab_final_point - solution.achieved_target)
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 

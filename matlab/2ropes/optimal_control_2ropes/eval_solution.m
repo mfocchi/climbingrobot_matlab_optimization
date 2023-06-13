@@ -1,6 +1,6 @@
 function solution = eval_solution(x,  dt, p0, pf)
 
-global m g   num_params  N_dyn  int_method
+global m g   num_params  N_dyn  int_method int_steps
 %eval trajectory
 Fleg = [ x(1); x(2); x(3)];
 Tf = x(4);
@@ -10,7 +10,7 @@ Fr_r = x(num_params+N_dyn+1:num_params+2*N_dyn);
 dt_dyn = Tf / (N_dyn-1); 
 % single shooting
 state0 =  computeStateFromCartesian(p0);
-[~,~,states, t] = integrate_dynamics(state0,0, dt_dyn, N_dyn, Fr_l,Fr_r, Fleg,int_method);
+[states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
 psi = states(1,:);
 l1 = states(2,:);
 l2 = states(3,:);
