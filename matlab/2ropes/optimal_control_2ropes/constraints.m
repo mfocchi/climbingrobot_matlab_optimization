@@ -45,7 +45,7 @@ l1d = states(5,:);
 l2d = states(6,:); 
 p = computePositionVelocity(psi, l1, l2); %only position
    
-
+% I assume px py pz  are row vectors
 p_0 = p(:, 1);
 p_f = p(:,end);
  
@@ -139,8 +139,23 @@ end
 
 
 %5 - jump clearance
-if number_of_constr.via_point >0 
+center = [0, 2,-3.5];
+a_y =1;
+a_z = 3;
+radius = 1;
+
+%px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
+%-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
+if number_of_constr.via_point >0       
     ineq = [ineq (-p(1,N_dyn/2) +jump_clearance) ];   
+%     for i=1:N_dyn        
+%         
+%         arg  = sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2);
+%         %%%add ineq only if inside sphere
+%         if imag(arg) == 0
+%             ineq = [ineq  ( -p(1, i) + center(1) +sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2) ) ];   
+%         end
+%     end
 end
 
 eq = [];

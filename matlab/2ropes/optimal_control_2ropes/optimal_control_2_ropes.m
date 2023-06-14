@@ -1,6 +1,14 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE m g b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal  
+global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal  
 
+
+
+%cd to actual dir
+filePath = matlab.desktop.editor.getActiveFilename;
+pathparts = strsplit(filePath,filesep);
+dirpath= pathparts(1:end-1);
+actual_dir =  strjoin(dirpath,"/");
+cd(actual_dir);
 
 % physical limits
 Fleg_max = 300;
@@ -10,9 +18,9 @@ T_th = 0.05;
 contact_normal =[1;0;0];
 jump_clearance = 1;
 
-addpath('../simulation/compact_model');
 
 
+% optim parameters
 w1 = 1 ; % green initial cost (not used)
 w2 = 1; %red final cost (not used)
 w3 = 1 ; % slacks energy weight E
@@ -24,6 +32,9 @@ int_method = 'rk4';
 int_steps = 5; %0 means normal intergation
 N_dyn = 30; %dynamic constraints (discretization) 
 FRICTION_CONE = 1;
+constr_tolerance = 1e-3;
+dt=0.001; % only to evaluate solution
+
 %fast
 % int_method = 'euler';
 % int_steps = 5; %0 means normal intergation
@@ -48,13 +59,11 @@ pf= [0.5; 4;-4];
 
 %compute initial state from jump param
 x0 = computeStateFromCartesian(p0);
-dt=0.001; % to evaluate solution
+
+
 
 %pendulum period
 T_pend = 2*pi*sqrt(x0(2)/g)/4; % half period TODO replace with linearized x0(2) = l10
-constr_tolerance = 1e-3;
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
 
 num_params = 4;    
 Fr_l0 = 0*ones(1,N_dyn);
@@ -62,6 +71,11 @@ Fr_r0 = 0*ones(1,N_dyn);
 x0 = [  100,            0.0,          0.0,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
 lb = [  0,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
 ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,N_dyn),            0*ones(1,N_dyn)];
+
+
+options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
+
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) , options);
 toc
@@ -69,6 +83,7 @@ toc
 [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fleg_max, Fr_max, mu, jump_clearance);
 solution = eval_solution(x, dt,  p0, pf) ;
 solution.cost = final_cost;
+solution.T_th = T_th;
 problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
 % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
 % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
@@ -80,11 +95,11 @@ else
     fprintf(2,"Problem didnt converge!\n")
     plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', true);
 end
-opt_Tf = solution.time(end)
+
  
 fprintf('Fleg:  %f %f %f \n\n',solution.Fleg(1), solution.Fleg(2), solution.Fleg(3))
 fprintf('cost:  %f\n\n',solution.cost)
-fprintf('final_kin_energy:  %f\n\n',solution.energy.Ekinf)
+fprintf('final_kin_energy:  %f\n\n',solution.Ekinf)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_constr.final_error_discrete)
@@ -158,11 +173,11 @@ end
 
 disp('Fleg')
 solution.Fleg
-opt_Tf
+solution.Tf
 disp('target')
 solution.achieved_target
 
 
-save('optimOK.mat','solution','T_th','mu','N_dyn','Fleg_max', 'Fr_max', 'p0','pf', 'opt_Tf');
+save('test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 
 

@@ -4,7 +4,6 @@ close all
 
 global delta_duration  Fleg  Fr1 Fr2   optim_time OPTIM  p_a1 p_a2 b   g m
 
-
 %cd to actual dir
 filePath = matlab.desktop.editor.getActiveFilename;
 pathparts = strsplit(filePath,filesep);
@@ -12,19 +11,20 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
-OPTIM = true;
 
+OPTIM = true;
+addpath('../../optimal_control_2ropes');
 
 if OPTIM 
-    load ('../../optimal_control_2ropes/optimOK.mat');
-    Tf = opt_Tf; 
+    load ('test_matlab3.mat');
+    Tf = solution.Tf; 
     dt = 0.001;
     time = [0:dt:Tf];
     Fleg = solution.Fleg;
     optim_time = solution.time;
     Fr1 = solution.Fr_l; %resample creates oscillations!
     Fr2 = solution.Fr_r;
-    delta_duration = T_th;
+    delta_duration = solution.T_th;
     force_scaling = 100;
     p0 = solution.p(:,1);
     
@@ -66,6 +66,7 @@ for i=1:length(x)
     [X(i), Y(i), Z(i)] = forwardKin(x(i,1), x(i,2), x(i,3));
 end
 
+%Ndyn = length(Fr1);
 % [~,~,x, time_sim] = integrate_dynamics(x0, 0, Tf/(N_dyn-1), N_dyn,Fr1, Fr2, Fleg,'rk4');
 % for i=1:length(x)    
 %     [X(i), Y(i), Z(i)] = forwardKin(x(1,i), x(2,i), x(3,i));
@@ -139,8 +140,11 @@ ylabel('l2')
 % 3D plot Animation
 figure(3)
 
-title('Maetlab Animation - simplified model');
+title('Matlab Animation - simplified model');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
+
+
+
 
 axis equal; hold on;
 %anchor 1    
@@ -198,6 +202,8 @@ h(8) = animatedline('color','b', 'linewidth',3);
 %Pendulum sphere (red)
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
+
+h(9) = plot_sphere([0, 2,-3.5],3, 1, 3,  min_z, max_z, min_y,max_y);
 view(60,27);
 
 
@@ -227,6 +233,7 @@ h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 axis equal
 matlab_final_point = [X(end);Y(end);Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
+fprintf('Optim final point [%3.4f, %3.4f, %3.4f] \n', solution.achieved_target)
 fprintf('Matlab final point [%3.4f, %3.4f, %3.4f] \n', matlab_final_point)
 fprintf('Gazebo final point [%3.4f, %3.4f, %3.4f] \n', gazebo_final_point)
 fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
