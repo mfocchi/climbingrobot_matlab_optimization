@@ -23,7 +23,7 @@ w6 = 1; %Fr work
 int_method = 'rk4';
 int_steps = 5; %0 means normal intergation
 N_dyn = 30; %dynamic constraints (discretization) 
-FRICTION_CONE = 0;
+FRICTION_CONE = 1;
 %fast
 % int_method = 'euler';
 % int_steps = 5; %0 means normal intergation
@@ -40,10 +40,10 @@ m = 5.08;   % Mass [kg]
 
 %jump params
 % INITIAL POINT
-p0 = [0.5; 2.5; -16]; % there is singularity for px = 0!
+p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
 
 %FINAL TARGET
-pf= [0.5; 1;-14];
+pf= [0.5; 4;-4];
 
 
 %compute initial state from jump param
