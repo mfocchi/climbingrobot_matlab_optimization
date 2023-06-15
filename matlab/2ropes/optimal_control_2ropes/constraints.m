@@ -1,7 +1,7 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, jump_clearance)
 
-global     m num_params b  N_dyn FRICTION_CONE  contact_normal  int_method int_steps
-
+global     m num_params b  N_dyn FRICTION_CONE  contact_normal  int_method int_steps obstacle_avoidance
+ 
 % ineq are <= 0
 
 Fleg = [ x(1); x(2); x(3)];
@@ -27,7 +27,7 @@ else
     number_of_constr.force_constraints  = 2; %unilateral and actuation
 end
 number_of_constr.initial_final_constraints = 1;
-number_of_constr.via_point = 1;
+number_of_constr.via_point = 0;
 
 
 % variable intergration step
@@ -61,12 +61,40 @@ solution_constr.time = t;
 solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 
-% 1 -N_dyn  constraint to do not enter the wall, p_x >=0
-for i=1:N_dyn 
-    ineq = [ineq -p(1,i) ];   
-    %ineq = [ineq -psi(i) ];   
+
+% 1 -N_dyn  constraint to do not enter the wall, p_x >=0 
+
+if obstacle_avoidance
     
-end 
+    center = [0, 3,-4.5];
+    a_y =1;
+    a_z = 3;
+    radius = 1.5;
+
+     %px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
+     %-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
+
+    for i=1:N_dyn 
+        arg  = sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2);
+        %%%add ineq only if inside sphere
+        if imag(arg) == 0
+            ineq = [ineq  (-p(1, i) + center(1) + arg)  ];   
+        else 
+            ineq = [ineq -p(1,i) ];   
+
+        end
+
+    end
+else
+
+    for i=1:N_dyn 
+        ineq = [ineq -p(1,i) ];   
+        %ineq = [ineq -psi(i) ]; 
+    end
+end
+
+
+
 % % % debug
 % disp('after wall')
 % length(ineq)
@@ -139,23 +167,10 @@ end
 
 
 %5 - jump clearance
-center = [0, 2,-3.5];
-a_y =1;
-a_z = 3;
-radius = 1;
 
-%px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
-%-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
 if number_of_constr.via_point >0       
     ineq = [ineq (-p(1,N_dyn/2) +jump_clearance) ];   
-%     for i=1:N_dyn        
-%         
-%         arg  = sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2);
-%         %%%add ineq only if inside sphere
-%         if imag(arg) == 0
-%             ineq = [ineq  ( -p(1, i) + center(1) +sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2) ) ];   
-%         end
-%     end
+
 end
 
 eq = [];

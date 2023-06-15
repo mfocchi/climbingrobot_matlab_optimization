@@ -1,6 +1,6 @@
 function  plot_curve(solution, solution_constr, p0,pf,  mu, plot_energy, color_input, full_update)
 
-global p_a1 p_a2
+global p_a1 p_a2 obstacle_avoidance
 
 if full_update
     % anchor1  line
@@ -80,6 +80,10 @@ plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
 %leg inpulse
 force_scale = 0.2;
 arrow3d_points(p0,p0 + solution.Fleg*force_scale,'color','r');grid on;hold on;
+
+if obstacle_avoidance
+    plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
+end
 
 grid on;
 

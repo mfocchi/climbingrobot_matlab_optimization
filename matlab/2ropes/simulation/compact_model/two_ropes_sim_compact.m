@@ -16,7 +16,7 @@ OPTIM = true;
 addpath('../../optimal_control_2ropes');
 
 if OPTIM 
-    load ('test_matlab3.mat');
+    load ('test_matlab2.mat');
     Tf = solution.Tf; 
     dt = 0.001;
     time = [0:dt:Tf];
@@ -203,7 +203,7 @@ h(8) = animatedline('color','b', 'linewidth',3);
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
 
-h(9) = plot_sphere([0, 2,-3.5],3, 1, 3,  min_z, max_z, min_y,max_y);
+h(9) = plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
 view(60,27);
 
 

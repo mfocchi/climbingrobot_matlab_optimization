@@ -1,5 +1,5 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal  
+global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal obstacle_avoidance
 
 
 
@@ -10,8 +10,25 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
+
+obstacle_avoidance = false;
+if obstacle_avoidance
+    %jump params
+    % INITIAL POINT
+    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    %FINAL TARGET
+    pf= [0.5; 4;-3];
+    Fleg_max = 500;
+else
+    %jump params
+    % INITIAL POINT
+    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    %FINAL TARGET
+    pf= [0.5; 4;-4];
+    Fleg_max = 300;
+end
 % physical limits
-Fleg_max = 300;
+Fleg_max = 500;
 Fr_max = 90; % Fr is negative
 mu = 0.8;
 T_th = 0.05;
@@ -49,12 +66,7 @@ p_a2 = [0;anchor_distance;0];
 g = 9.81;
 m = 5.08;   % Mass [kg]
 
-%jump params
-% INITIAL POINT
-p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
 
-%FINAL TARGET
-pf= [0.5; 4;-4];
 
 
 %compute initial state from jump param
