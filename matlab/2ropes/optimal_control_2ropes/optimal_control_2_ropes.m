@@ -28,7 +28,6 @@ else
     Fleg_max = 300;
 end
 % physical limits
-Fleg_max = 500;
 Fr_max = 90; % Fr is negative
 mu = 0.8;
 T_th = 0.05;
@@ -66,6 +65,11 @@ p_a2 = [0;anchor_distance;0];
 g = 9.81;
 m = 5.08;   % Mass [kg]
 
+% with lander
+% m = 15.07 
+% Fleg_max = 600;
+% Fr_max = 300;
+
 
 
 
@@ -80,8 +84,8 @@ T_pend = 2*pi*sqrt(x0(2)/g)/4; % half period TODO replace with linearized x0(2) 
 num_params = 4;    
 Fr_l0 = 0*ones(1,N_dyn);
 Fr_r0 = 0*ones(1,N_dyn);
-x0 = [  100,            0.0,          0.0,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-lb = [  0,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
+x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
+lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
 ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,N_dyn),            0*ones(1,N_dyn)];
 
 
