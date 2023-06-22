@@ -21,7 +21,7 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N)
     tracking = sum (vecnorm(ref_com_mpc - p).^2);
     
     % smoothnes: minimize jerky control action
-    smooth = sum(diff(delta_Fr_l)) + sum(diff(delta_Fr_r));
+    smooth = sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
          
-    cost =  w1* tracking;%  + w2 *smooth ;
+    cost =  w1* tracking + w2 *smooth ;
 end
