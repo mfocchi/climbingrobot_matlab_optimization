@@ -65,27 +65,23 @@ if ~DEBUG_DYNAMICS
         %compute position relative to actualstate      
          [act_p] = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));
          %adding noise only position!
-         act_p =  act_p + [0.2*rand(1);0.2*rand(1); 0.2*rand(1)];
+         %random
+         %act_p =  act_p + [0.2*rand(1);0.2*rand(1); 0.2*rand(1)];
+         % deterninistic
+         act_p =  act_p + [0.;0.1; 0.0];
          
          %overwrite the position part of the state
          act_state_pos_noise = computeStateFromCartesian(act_p);
          actual_state(1:3) = act_state_pos_noise(1:3);
          %%%%%%%%%%%%%%%%%%%%%%%
-         
+  
          
          %Optimization
-        delta_Fr_l0 = 0*ones(1,mpc_N);
-        delta_Fr_r0 = 0*ones(1,mpc_N);
-        x0 = [   delta_Fr_l0,                    delta_Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-        lb = [  -Fr_max*ones(1,mpc_N), -Fr_max*ones(1,mpc_N)];
-        ub = [   Fr_max*ones(1,mpc_N),  Fr_max*ones(1,mpc_N)];
-        options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-        'MaxFunctionEvaluations', 1000, 'ConstraintTolerance', constr_tolerance);
-
-        %optim (comment this for sanity check test) 
-        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_state, actual_t, ref_com, Fr_l0, Fr_r0, mpc_N),  x0,[],[],[],[],lb,ub, [], options);%,  @(x) constraints_mpc(x, actual_com, ref_com, Fr_l0, Fr_r0 ) , options);
-        delta_Fr_l = x(1:mpc_N);
-        delta_Fr_r = x(mpc_N+1:2*mpc_N);
+         [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_max, Fr_l0, Fr_r0, mpc_N);
+        
+         delta_Fr_l = x(1:mpc_N);
+         delta_Fr_r = x(mpc_N+1:2*mpc_N);
+%         
     end
     
     % predict new traj
