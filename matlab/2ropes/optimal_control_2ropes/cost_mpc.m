@@ -10,7 +10,7 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N)
     delta_Fr_l = x(1:mpc_N); 
     delta_Fr_r = x(mpc_N+1:2*mpc_N); 
     
-    ref_com_mpc = ref_com(1:mpc_N);
+    ref_com_mpc = ref_com(:, 1:mpc_N);
        
        
     [p, pd] = eval_pos_vel_mpc(state0,  actual_t,  Fr_l0, Fr_r0,delta_Fr_l, delta_Fr_r, mpc_N);
@@ -18,7 +18,7 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N)
     
     %p has mpc_N +1 elements 
     % track
-    tracking = sum (vecnorm(ref_com(1:length(p)) - p).^2);
+    tracking = sum (vecnorm(ref_com_mpc - p).^2);
     
     % smoothnes: minimize jerky control action
     smooth = sum(diff(delta_Fr_l)) + sum(diff(delta_Fr_r));

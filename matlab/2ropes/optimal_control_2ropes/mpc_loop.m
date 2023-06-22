@@ -4,7 +4,7 @@ load test_matlab2.mat
 global m  g w1 w2  b p_a1 p_a2  mpc_dt int_method int_steps contact_normal 
 
 DEBUG_DYNAMICS = false;
-DEBUG_MPC_MACHINERY = true;
+DEBUG_MPC_MACHINERY = false;
 
 w1 =1;
 w2=1;
