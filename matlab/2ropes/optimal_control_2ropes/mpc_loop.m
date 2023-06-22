@@ -9,7 +9,7 @@ DEBUG_MPC_MACHINERY = false;
 w1 =1;
 w2=1;
 Fleg_max = 300;
-Fr_max = 20; % Fr is negative (max variation)
+Fr_max = 50; % Fr is negative (max variation)
 contact_normal =[1;0;0];
 jump_clearance = 1;
 
@@ -32,11 +32,12 @@ mpc_N = 0.4*length(solution.time);
 mpc_dt = solution.Tf / (N_dyn-1);
 
 samples = length(solution.time) - mpc_N+1;
-% 0.3*rand(3,1); 
+
 
 start_mpc = 3;
 actual_t = solution.time(start_mpc);
-actual_state = [solution.psi(:,start_mpc),solution.l1(:,start_mpc),solution.l2(:,start_mpc), solution.psid(:,start_mpc), solution.l1d(:,start_mpc), solution.l2d(:,start_mpc)];
+actual_state = [solution.psi(:,start_mpc);solution.l1(:,start_mpc);solution.l2(:,start_mpc); solution.psid(:,start_mpc); solution.l1d(:,start_mpc); solution.l2d(:,start_mpc)];
+
 
 if DEBUG_DYNAMICS
    % 1 - sanity check: on traj consider after the application of T_th!
@@ -50,23 +51,37 @@ for i=start_mpc:samples
     ref_com = solution.p(:,i:i+mpc_N-1);      
     Fr_l0 = solution.Fr_l(:,i:i+mpc_N-1);
     Fr_r0 = solution.Fr_r(:,i:i+mpc_N-1);
-    
-  
-    delta_Fr_l0 = 0*ones(1,mpc_N);
-    delta_Fr_r0 = 0*ones(1,mpc_N);
-    x0 = [   delta_Fr_l0,                    delta_Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-    lb = [  -Fr_max*ones(1,mpc_N), -Fr_max*ones(1,mpc_N)];
-    ub = [   Fr_max*ones(1,mpc_N),  Fr_max*ones(1,mpc_N)];
-    options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-    'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
-    
+
 if ~DEBUG_DYNAMICS
+     
+    
+
         
     %debug mpc machinery
     if DEBUG_MPC_MACHINERY
         delta_Fr_l = zeros(1,mpc_N);
         delta_Fr_r = zeros(1,mpc_N);
     else
+        %compute position relative to actualstate      
+         [act_p] = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));
+         %adding noise only position!
+         act_p =  act_p + [0.2*rand(1);0.2*rand(1); 0.2*rand(1)];
+         
+         %overwrite the position part of the state
+         act_state_pos_noise = computeStateFromCartesian(act_p);
+         actual_state(1:3) = act_state_pos_noise(1:3);
+         %%%%%%%%%%%%%%%%%%%%%%%
+         
+         
+         %Optimization
+        delta_Fr_l0 = 0*ones(1,mpc_N);
+        delta_Fr_r0 = 0*ones(1,mpc_N);
+        x0 = [   delta_Fr_l0,                    delta_Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
+        lb = [  -Fr_max*ones(1,mpc_N), -Fr_max*ones(1,mpc_N)];
+        ub = [   Fr_max*ones(1,mpc_N),  Fr_max*ones(1,mpc_N)];
+        options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
+        'MaxFunctionEvaluations', 1000, 'ConstraintTolerance', constr_tolerance);
+
         %optim (comment this for sanity check test) 
         [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_state, actual_t, ref_com, Fr_l0, Fr_r0, mpc_N),  x0,[],[],[],[],lb,ub, [], options);%,  @(x) constraints_mpc(x, actual_com, ref_com, Fr_l0, Fr_r0 ) , options);
         delta_Fr_l = x(1:mpc_N);
@@ -78,7 +93,9 @@ if ~DEBUG_DYNAMICS
         
     %update dynamics (this emulates the real dynamics with noise)
     [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,int_steps),[0;0;0], int_method); 
-    actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
+    
+    
+    %actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
 
     %plot
     clf(gcf)
@@ -88,14 +105,17 @@ if ~DEBUG_DYNAMICS
     set(0, 'DefaultUicontrolFontSize', 30);    
     %ref signal
     subplot(3,1,1)
+    ylabel('X')
     plot(solution.time(start_mpc:end), solution.p(1,start_mpc:end), 'ro-'); grid on;hold on;
     plot(mpc_time, mpc_p(1,:), 'bo-'); grid on;hold on;
         
     subplot(3,1,2)
+    ylabel('Y')
     plot(solution.time(start_mpc:end), solution.p(2,start_mpc:end), 'ro-'); grid on;hold on;
     plot(mpc_time, mpc_p(2,:), 'bo-'); grid on;hold on;
         
     subplot(3,1,3)
+    ylabel('Z')
     plot(solution.time(start_mpc:end), solution.p(3,start_mpc:end), 'ro-'); grid on;hold on;
     plot(mpc_time, mpc_p(3,:), 'bo-'); grid on;hold on;
         
