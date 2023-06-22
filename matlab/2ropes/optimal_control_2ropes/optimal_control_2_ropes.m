@@ -69,18 +69,15 @@ m = 5.08;   % Mass [kg]
 % m = 15.07 
 % Fleg_max = 600;
 % Fr_max = 300;
-
+% jump_clearance = 1.5;
 
 
 
 %compute initial state from jump param
 x0 = computeStateFromCartesian(p0);
 
-
-
 %pendulum period
 T_pend = 2*pi*sqrt(x0(2)/g)/4; % half period TODO replace with linearized x0(2) = l10
-
 num_params = 4;    
 Fr_l0 = 0*ones(1,N_dyn);
 Fr_r0 = 0*ones(1,N_dyn);
@@ -195,5 +192,6 @@ solution.achieved_target
 
 
 save('test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+%save('test_matlab2landingClearance.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 
 

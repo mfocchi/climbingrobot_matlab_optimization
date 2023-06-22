@@ -15,8 +15,10 @@ cd(actual_dir);
 OPTIM = true;
 addpath('../../optimal_control_2ropes');
 
-if OPTIM 
+if OPTIM %inputs from optim
     load ('test_matlab2.mat');
+    %load ('test_matlab_cpp.mat');    
+    %load ('test_matlab2landingClearance.mat');
     Tf = solution.Tf; 
     dt = 0.001;
     time = [0:dt:Tf];
@@ -28,7 +30,7 @@ if OPTIM
     force_scaling = 100;
     p0 = solution.p(:,1);
     
-else
+else %fixed inputs
     Tf = 4;
     dt = 0.001;
     time =[0:dt:Tf];
@@ -51,6 +53,8 @@ p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
 m = 5.08;   % Mass [kg]
+%m = 15.07  % lander
+
 
 %compute initial state from jump param
 x0 = computeStateFromCartesian(p0);

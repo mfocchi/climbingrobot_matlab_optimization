@@ -46,7 +46,7 @@ p = [l1*sin(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2);
       (b^2 + l1^2 - l2^2)/(2*b);
      -l1*cos(psi)*(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)]
  
- 
+% this pi is needed to have the correct value of alpha 
 alpha = (pi - acos((l2^2 -b^2 -l1^2)/(2*b*l1)))
 
 %check value is correct should be p = [0, 2.5, -6 ] for 0, 6.5, 6.5

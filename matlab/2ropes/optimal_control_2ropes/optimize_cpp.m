@@ -2,8 +2,10 @@
 function [problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
 
 
-    global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal 
-
+    global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal obstacle_avoidance
+    
+    
+    obstacle_avoidance = false;
 
     %WORLD FRAME ATTACHED TO ANCHOR 1
     anchor_distance = 5;
@@ -35,20 +37,18 @@ function [problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu
     FRICTION_CONE = 1;
 
 
-
-
+    
     %compute initial state from jump param
     x0 = computeStateFromCartesian(p0);
+
     %pendulum period
     T_pend = 2*pi*sqrt(x0(2)/g)/4; % half period TODO replace with linearized x0(2) = l10
-
     num_params = 4;    
     Fr_l0 = 0*ones(1,N_dyn);
     Fr_r0 = 0*ones(1,N_dyn);
-    x0 = [  100,            0.0,          0.0,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-    lb = [  0,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
+    x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
+    lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
     ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,N_dyn),            0*ones(1,N_dyn)];
-
 
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);

@@ -27,7 +27,7 @@ else
     number_of_constr.force_constraints  = 2; %unilateral and actuation
 end
 number_of_constr.initial_final_constraints = 1;
-number_of_constr.via_point = 0;
+number_of_constr.via_point = 1;
 
 
 % variable intergration step

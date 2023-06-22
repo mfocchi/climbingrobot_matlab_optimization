@@ -3,7 +3,7 @@
 
 %%
 
-clear all 
+clear all; close all
 
 %cd to actual dir
 filePath = matlab.desktop.editor.getActiveFilename;
@@ -25,12 +25,12 @@ jump_clearance = 1;
 p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
 
 %FINAL TARGET
-pf= [0.5, 4,-2];
+pf= [0.5, 4,-4];
 
-%[problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
-%Tf = 1.1654
-%solution.achieved_target = [0.5036, 3.9865, -4.0086] 
-
+% it should be:
+%solution.Tf =1.2175
+%solution.achieved_target =0.5197  3.9967 -4.0008
+[problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
 
 % run the mex generator after calling optimize_cpp otherwise he complains
 % it is missing the pa1
@@ -40,5 +40,5 @@ pf= [0.5, 4,-2];
 % cfg.SaturateOnIntegerOverflow = false;
 % codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0,0 } -nargout 2 -report
 
-[problem_solved, solution] = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, 2.5) 
-save('test_matlab3.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+[problem_solved, solution] = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
+save('test_matlab_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
