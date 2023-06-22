@@ -13,7 +13,7 @@ function [states_rough, t_rough] = computeRollout(x0, t0, dt_dyn, N_dyn, Fr_l, F
                                                 Fr_l(i-1)*ones(1,int_steps), Fr_r(i-1)*ones(1,int_steps), Fleg, int_method); % keep Fr constant           
             else
               states_rough(:,i) = x0;
-              t_rough(i) = 0;      
+              t_rough(i) = t0;      
             end    
         end
     end

@@ -1,10 +1,13 @@
 clc; clear all;
 
 load test_matlab2.mat
-global m  g w1 w2 w3 w4 w5 w6  b p_a1 p_a2  mpc_dt int_method int_steps contact_normal 
+global m  g w1 w2  b p_a1 p_a2  mpc_dt int_method int_steps contact_normal 
 
+DEBUG_DYNAMICS = false;
+DEBUG_MPC_MACHINERY = true;
 
-
+w1 =1;
+w2=1;
 Fleg_max = 300;
 Fr_max = 20; % Fr is negative (max variation)
 contact_normal =[1;0;0];
@@ -28,21 +31,22 @@ N_dyn = length(solution.time);
 mpc_N = 0.4*length(solution.time);
 mpc_dt = solution.Tf / (N_dyn-1);
 
-samples = length(solution.time) - mpc_N;
+samples = length(solution.time) - mpc_N+1;
 % 0.3*rand(3,1); 
 
-actual_t = 0;
-actual_state = [solution.psi(:,3),solution.l1(:,3),solution.l2(:,3), solution.psid(:,3), solution.l1d(:,3), solution.l2d(:,3)];
+start_mpc = 3;
+actual_t = solution.time(start_mpc);
+actual_state = [solution.psi(:,start_mpc),solution.l1(:,start_mpc),solution.l2(:,start_mpc), solution.psid(:,start_mpc), solution.l1d(:,start_mpc), solution.l2d(:,start_mpc)];
 
-% 1 - sanity check: on traj consider after the application of T_th!
-% (sample > 2)
-% [cost, pos] = cost_mpc(zeros(1,2*mpc_N), actual_state,  actual_t, solution.p(3:end), solution.Fr_l(3:end), solution.Fr_r(3:end),  mpc_N);
-% pos
-% solution.p(:,3:samples)
+if DEBUG_DYNAMICS
+   % 1 - sanity check: on traj consider after the application of T_th!
+   % (sample > 2)
+    pos = eval_pos_vel_mpc(actual_state,  actual_t, solution.Fr_l(start_mpc:end), solution.Fr_r(start_mpc:end),zeros(1,mpc_N),zeros(1,mpc_N), mpc_N)
+    solution.p(:,3:samples)
+end
 
 
-
-for i=3:samples
+for i=start_mpc:samples
     ref_com = solution.p(:,i:i+mpc_N-1);      
     Fr_l0 = solution.Fr_l(:,i:i+mpc_N-1);
     Fr_r0 = solution.Fr_r(:,i:i+mpc_N-1);
@@ -55,29 +59,63 @@ for i=3:samples
     ub = [   Fr_max*ones(1,mpc_N),  Fr_max*ones(1,mpc_N)];
     options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
     'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
-
-     %cost_mpc(x0, actual_state, actual_t,ref_com, Fr_l0, Fr_r0, mpc_N);
-
-%     tic
-%     [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_com, actual_t, ref_com, Fr_l0, Fr_r0), x0,[],[],[],[],lb,ub, options);%,  @(x) constraints_mpc(x, actual_com, ref_com, Fr_l0, Fr_r0 ) , options);
-%     toc
     
-     actual_t = actual_t + mpc_dt; 
-      
-     
-     
+if ~DEBUG_DYNAMICS
+        
+    %debug mpc machinery
+    if DEBUG_MPC_MACHINERY
+        delta_Fr_l = zeros(1,mpc_N);
+        delta_Fr_r = zeros(1,mpc_N);
+    else
+        %optim (comment this for sanity check test) 
+        [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_state, actual_t, ref_com, Fr_l0, Fr_r0, mpc_N),  x0,[],[],[],[],lb,ub, [], options);%,  @(x) constraints_mpc(x, actual_com, ref_com, Fr_l0, Fr_r0 ) , options);
+        delta_Fr_l = x(1:mpc_N);
+        delta_Fr_r = x(mpc_N+1:2*mpc_N);
+    end
+    
+    % predict new traj
+    [mpc_p, mpc_pd, mpc_time] = eval_pos_vel_mpc(actual_state,  actual_t, Fr_l0, Fr_r0,delta_Fr_l ,delta_Fr_r, mpc_N);
+        
+    %update dynamics (this emulates the real dynamics with noise)
+    [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,int_steps),[0;0;0], int_method); 
+    actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
+
+    %plot
+    clf(gcf)
+    set(0, 'DefaultAxesBox', 'on');
+    set(0, 'DefaultTextFontSize', 30);
+    set(0, 'DefaultAxesFontSize', 30);
+    set(0, 'DefaultUicontrolFontSize', 30);    
+    %ref signal
+    subplot(3,1,1)
+    plot(solution.time(start_mpc:end), solution.p(1,start_mpc:end), 'ro-'); grid on;hold on;
+    plot(mpc_time, mpc_p(1,:), 'bo-'); grid on;hold on;
+        
+    subplot(3,1,2)
+    plot(solution.time(start_mpc:end), solution.p(2,start_mpc:end), 'ro-'); grid on;hold on;
+    plot(mpc_time, mpc_p(2,:), 'bo-'); grid on;hold on;
+        
+    subplot(3,1,3)
+    plot(solution.time(start_mpc:end), solution.p(3,start_mpc:end), 'ro-'); grid on;hold on;
+    plot(mpc_time, mpc_p(3,:), 'bo-'); grid on;hold on;
+        
+    pause(0.3)
+    
+else
+    
     % sanity check : uncomment one of the two
-     %i
-     %ref_com(:,1) % need to consider the next sample
-     %actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3))
+     i
+     ref_com(:,1) % need to consider the next sample
+     actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3))
      
      % 2 - sanity check with  for loop and integrate dynamics
-     %[actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) + delta_Fr_l0(1))*ones(1,int_steps),  (Fr_r0(1) + delta_Fr_r0(1))*ones(1,int_steps),[0;0;0], int_method); % keep Fr constant   
+     [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) )*ones(1,int_steps),  (Fr_r0(1) )*ones(1,int_steps),[0;0;0], int_method); % keep Fr constant   
      % 3 - sanity check with for loop and computeRollout
-      [state12, time12] = computeRollout(actual_state, actual_t,mpc_dt, 2, Fr_l0(1) + delta_Fr_l0(1), Fr_r0(1) + delta_Fr_r0(1),[0;0;0],int_method,int_steps);  
-      actual_state = state12(:,2); 
-
+     % [state12, time12] = computeRollout(actual_state, actual_t,mpc_dt, 2, Fr_l0(1) , Fr_r0(1)  ,[0;0;0],int_method,int_steps);  
+     % actual_state = state12(:,2);   
+end
      
 
+     
 end
 
