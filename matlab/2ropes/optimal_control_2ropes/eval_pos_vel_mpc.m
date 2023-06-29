@@ -1,5 +1,9 @@
 function [p,pd,t] = eval_pos_vel_mpc( state0,  actual_t,  Fr_l0, Fr_r0,delta_Fr_l, delta_Fr_r, mpc_N)
-
+    %init values for cpp
+    p = zeros(3, mpc_N);
+    pd = zeros(3, mpc_N);
+    t = zeros(1, mpc_N);
+    
     global  mpc_dt int_method  int_steps 
 
     if  (length(Fr_l0) < mpc_N) || (length(Fr_r0) < mpc_N)
@@ -22,5 +26,5 @@ function [p,pd,t] = eval_pos_vel_mpc( state0,  actual_t,  Fr_l0, Fr_r0,delta_Fr_
     l1d = states(5,:);
     l2d = states(6,:); 
     [p, pd ]= computePositionVelocity(psi, l1, l2, psid,l1d, l2d);
-
+   
 end

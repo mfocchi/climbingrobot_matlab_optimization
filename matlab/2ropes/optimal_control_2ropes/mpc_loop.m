@@ -4,11 +4,11 @@ load test_matlab2.mat
 global m  g w1 w2  b p_a1 p_a2  mpc_dt int_method int_steps contact_normal 
 
 DEBUG_DYNAMICS = false;
-DEBUG_MPC_MACHINERY = false;
+DEBUG_MPC_MACHINERY = true;
 
 w1 =1;
 w2=1;
-Fleg_max = 300;
+
 Fr_max = 50; % Fr is negative (max variation)
 contact_normal =[1;0;0];
 jump_clearance = 1;
@@ -30,7 +30,7 @@ m = 5.08;   % Mass [kg]
 N_dyn = length(solution.time);
 mpc_N = 0.4*length(solution.time);
 mpc_dt = solution.Tf / (N_dyn-1);
-
+max_feval = 5000;
 samples = length(solution.time) - mpc_N+1;
 
 
@@ -62,6 +62,8 @@ if ~DEBUG_DYNAMICS
         delta_Fr_l = zeros(1,mpc_N);
         delta_Fr_r = zeros(1,mpc_N);
     else
+        
+        %ADD NOISE
         %compute position relative to actualstate      
          [act_p] = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));
          %adding noise only position!
@@ -74,11 +76,10 @@ if ~DEBUG_DYNAMICS
          act_state_pos_noise = computeStateFromCartesian(act_p);
          actual_state(1:3) = act_state_pos_noise(1:3);
          %%%%%%%%%%%%%%%%%%%%%%%
-  
-         
+           
          %Optimization
-         [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_max, Fr_l0, Fr_r0, mpc_N);
-        
+         [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N);
+         
          delta_Fr_l = x(1:mpc_N);
          delta_Fr_r = x(mpc_N+1:2*mpc_N);
 %         

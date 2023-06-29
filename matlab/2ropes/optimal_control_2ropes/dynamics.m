@@ -34,8 +34,11 @@ function [dxdt] = dynamics(t, x, Fr_l, Fr_r,Fleg) % because we have time invaria
     J =  computeJacobian([px; py; pz]);
     
 
-    Ftot = [m*[0;0;-g] + J*[Fr_l;Fr_r] + evalImpulse(t,Fleg)]; 
-    
+    Ftot = m*[0;0;-g] + J*[Fr_l;Fr_r]; 
+
+    if norm(Fleg)>0
+       Ftot= Ftot+ evalImpulse(t,Fleg); 
+    end    
 
     y = inv(A_dyn)*(inv(m)*Ftot - b_dyn);
     dxdt = [psid; l1d; l2d;  y];
