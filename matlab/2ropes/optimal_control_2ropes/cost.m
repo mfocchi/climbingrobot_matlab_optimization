@@ -1,6 +1,6 @@
 function cost = cost(x, p0,  pf)
 
-    global  N_dyn int_method  int_steps 
+    global  w1 w2 w3 w4 w5 w6  num_params N_dyn int_method  int_steps 
 
     Fleg = [ x(1); x(2); x(3)];
     Tf = x(4);

@@ -27,7 +27,7 @@ p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
 %FINAL TARGET
 pf= [0.5, 4,-4];
 
-% it should be:
+% it should give the same result as optimal control 2 ropes:
 %solution.Tf =1.2175
 %solution.achieved_target =0.5197  3.9967 -4.0008
 [problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
@@ -40,5 +40,6 @@ pf= [0.5, 4,-4];
 % cfg.SaturateOnIntegerOverflow = false;
 % codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0,0 } -nargout 2 -report
 
+%it gives a slightly different result than optimal control 2 ropes:
 [problem_solved, solution] = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) 
 save('test_matlab_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
