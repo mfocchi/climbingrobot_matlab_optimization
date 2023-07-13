@@ -27,8 +27,12 @@ else
     number_of_constr.force_constraints  = 2; %unilateral and actuation
 end
 number_of_constr.initial_final_constraints = 1;
-number_of_constr.via_point = 1;
 
+if obstacle_avoidance
+   number_of_constr.via_point = 0;
+else
+   number_of_constr.via_point = 1;
+end
 
 % variable intergration step
 dt_dyn = Tf / (N_dyn-1);

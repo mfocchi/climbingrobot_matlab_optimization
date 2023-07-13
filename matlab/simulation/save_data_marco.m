@@ -124,7 +124,7 @@ solution.Fr = Fr;
 
 
 %%Energy consumption
-J_TO_Wh = 0.000277
+J_TO_Wh = 0.000277 %maps joule to Wh
 impulse_end_idx = max(find(time<=T_th))
 impulse_work =   m/2*pd(:,impulse_end_idx)'*pd(:,impulse_end_idx);
 hoist_work = 0;

@@ -1,39 +1,56 @@
 clear all ; close all ; clc
 global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal obstacle_avoidance
 
-
-
-%cd to actual dir
+%cd to actual dir if you are not already there
 filePath = matlab.desktop.editor.getActiveFilename;
 pathparts = strsplit(filePath,filesep);
 dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
-
-
 obstacle_avoidance = false;
-if obstacle_avoidance
+
+%possible settings
+test_type='normal' ;
+%test_type='obstacle_avoidance' ;
+%test_type='landing_test'; 
+
+
+if strcmp(test_type, 'obstacle_avoidance')
     %jump params
     % INITIAL POINT
     p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
     %FINAL TARGET
     pf= [0.5; 4;-3];
     Fleg_max = 500;
-else
+    obstacle_avoidance = true;
+    m = 5.08;   % Mass [kg]
+    jump_clearance = 1;
+elseif  strcmp(test_type, 'landing_test')
+    %jump params
+    % INITIAL POINT
+    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    %FINAL TARGET
+    pf= [0.5; 4;-4];
+    m = 15.07;
+    Fleg_max = 600;
+    Fr_max = 300;
+    jump_clearance = 1.5;
+else %normal
     %jump params
     % INITIAL POINT
     p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
     %FINAL TARGET
     pf= [0.5; 4;-4];
     Fleg_max = 300;
+    jump_clearance = 1;
+    m = 5.08;   % Mass [kg]
 end
+
 % physical limits
 Fr_max = 90; % Fr is negative
 mu = 0.8;
 T_th = 0.05;
 contact_normal =[1;0;0];
-jump_clearance = 1;
-
 
 
 % optim parameters
@@ -51,7 +68,7 @@ FRICTION_CONE = 1;
 constr_tolerance = 1e-3;
 dt=0.001; % only to evaluate solution
 
-%fast
+%faster
 % int_method = 'euler';
 % int_steps = 5; %0 means normal intergation
 % N_dyn = 40; %dynamic constraints (discretization) 
@@ -63,13 +80,7 @@ b = anchor_distance;
 p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
-m = 5.08;   % Mass [kg]
 
-% with lander
-% m = 15.07 
-% Fleg_max = 600;
-% Fr_max = 300;
-% jump_clearance = 1.5;
 
 
 
@@ -190,8 +201,11 @@ solution.Tf
 disp('target')
 solution.achieved_target
 
-
-save('test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-%save('test_matlab2landingClearance.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-
+if strcmp(test_type, 'obstacle_avoidance')
+    save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+elseif strcmp(test_type, 'landing_test')  
+    save('../simulation/compact_model/tests/test_matlab2landingClearance.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+else
+    save('../simulation/compact_model/tests/test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');    
+end
 

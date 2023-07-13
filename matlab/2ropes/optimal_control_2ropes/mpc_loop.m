@@ -1,10 +1,10 @@
 clc; clear all;
 
-load test_matlab2.mat
+load('../simulation/compact_model/tests/test_matlab2.mat')
 global m  g w1 w2  b p_a1 p_a2  mpc_dt int_method int_steps contact_normal 
 
 DEBUG_DYNAMICS = false;
-DEBUG_MPC_MACHINERY = true;
+DEBUG_MPC_MACHINERY = false;
 
 w1 =1;
 w2=1;
@@ -51,88 +51,84 @@ for i=start_mpc:samples
     ref_com = solution.p(:,i:i+mpc_N-1);      
     Fr_l0 = solution.Fr_l(:,i:i+mpc_N-1);
     Fr_r0 = solution.Fr_r(:,i:i+mpc_N-1);
-
-if ~DEBUG_DYNAMICS
-     
+    fprintf("Iteration #: %d\n", i)
     
-
+    if ~DEBUG_DYNAMICS
         
-    %debug mpc machinery
-    if DEBUG_MPC_MACHINERY
-        delta_Fr_l = zeros(1,mpc_N);
-        delta_Fr_r = zeros(1,mpc_N);
+        %debug mpc machinery
+        if DEBUG_MPC_MACHINERY
+            delta_Fr_l = zeros(1,mpc_N);
+            delta_Fr_r = zeros(1,mpc_N);
+        else
+
+            %ADD NOISE
+             %compute position relative to actualstate      
+             [act_p] = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));
+            
+             %adding noise only on position!
+             %1 - random noise 
+             %act_p =  act_p + [0.2*rand(1);0.2*rand(1); 0.2*rand(1)];
+             % 2 deterninistic noise (only errors on Y and Z are corrected because of
+             % underactuation!)
+             act_p =  act_p + [0.;0.1; 0.0];
+
+             %overwrite the position part of the state after adding noise
+             act_state_pos_noise = computeStateFromCartesian(act_p);
+             actual_state(1:3) = act_state_pos_noise(1:3);
+             %%%%%%%%%%%%%%%%%%%%%%%
+
+             %Optimization
+             [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N);
+
+             delta_Fr_l = x(1:mpc_N);
+             delta_Fr_r = x(mpc_N+1:2*mpc_N);
+        end
+
+        % predict new traj
+        [mpc_p, mpc_pd, mpc_time] = eval_pos_vel_mpc(actual_state,  actual_t, Fr_l0, Fr_r0,delta_Fr_l ,delta_Fr_r, mpc_N);
+
+        %update dynamics (this emulates the real dynamics with noise)
+        [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,int_steps),[0;0;0], int_method); 
+
+
+        %actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
+
+        %plot
+        clf(gcf)
+        set(0, 'DefaultAxesBox', 'on');
+        set(0, 'DefaultTextFontSize', 30);
+        set(0, 'DefaultAxesFontSize', 30);
+        set(0, 'DefaultUicontrolFontSize', 30);    
+        %ref signal
+        subplot(3,1,1)
+        ylabel('X')
+        plot(solution.time(start_mpc:end), solution.p(1,start_mpc:end), 'ro-'); grid on;hold on;
+        plot(mpc_time, mpc_p(1,:), 'bo-'); grid on;hold on;
+
+        subplot(3,1,2)
+        ylabel('Y')
+        plot(solution.time(start_mpc:end), solution.p(2,start_mpc:end), 'ro-'); grid on;hold on;
+        plot(mpc_time, mpc_p(2,:), 'bo-'); grid on;hold on;
+
+        subplot(3,1,3)
+        ylabel('Z')
+        plot(solution.time(start_mpc:end), solution.p(3,start_mpc:end), 'ro-'); grid on;hold on;
+        plot(mpc_time, mpc_p(3,:), 'bo-'); grid on;hold on;
+
+        pause(0.3)
+
     else
-        
-        %ADD NOISE
-        %compute position relative to actualstate      
-         [act_p] = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));
-         %adding noise only position!
-         %random
-         %act_p =  act_p + [0.2*rand(1);0.2*rand(1); 0.2*rand(1)];
-         % deterninistic
-         act_p =  act_p + [0.;0.1; 0.0];
-         
-         %overwrite the position part of the state
-         act_state_pos_noise = computeStateFromCartesian(act_p);
-         actual_state(1:3) = act_state_pos_noise(1:3);
-         %%%%%%%%%%%%%%%%%%%%%%%
-           
-         %Optimization
-         [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N);
-         
-         delta_Fr_l = x(1:mpc_N);
-         delta_Fr_r = x(mpc_N+1:2*mpc_N);
-%         
+
+        % sanity check : uncomment one of the two
+         ref_com(:,1) % need to consider the next sample
+         actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3))
+
+         % 2 - sanity check with  for loop and integrate dynamics
+         [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) )*ones(1,int_steps),  (Fr_r0(1) )*ones(1,int_steps),[0;0;0], int_method); % keep Fr constant   
+         % 3 - sanity check with for loop and computeRollout
+         % [state12, time12] = computeRollout(actual_state, actual_t,mpc_dt, 2, Fr_l0(1) , Fr_r0(1)  ,[0;0;0],int_method,int_steps);  
+         % actual_state = state12(:,2);   
     end
-    
-    % predict new traj
-    [mpc_p, mpc_pd, mpc_time] = eval_pos_vel_mpc(actual_state,  actual_t, Fr_l0, Fr_r0,delta_Fr_l ,delta_Fr_r, mpc_N);
-        
-    %update dynamics (this emulates the real dynamics with noise)
-    [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,int_steps),[0;0;0], int_method); 
-    
-    
-    %actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
-
-    %plot
-    clf(gcf)
-    set(0, 'DefaultAxesBox', 'on');
-    set(0, 'DefaultTextFontSize', 30);
-    set(0, 'DefaultAxesFontSize', 30);
-    set(0, 'DefaultUicontrolFontSize', 30);    
-    %ref signal
-    subplot(3,1,1)
-    ylabel('X')
-    plot(solution.time(start_mpc:end), solution.p(1,start_mpc:end), 'ro-'); grid on;hold on;
-    plot(mpc_time, mpc_p(1,:), 'bo-'); grid on;hold on;
-        
-    subplot(3,1,2)
-    ylabel('Y')
-    plot(solution.time(start_mpc:end), solution.p(2,start_mpc:end), 'ro-'); grid on;hold on;
-    plot(mpc_time, mpc_p(2,:), 'bo-'); grid on;hold on;
-        
-    subplot(3,1,3)
-    ylabel('Z')
-    plot(solution.time(start_mpc:end), solution.p(3,start_mpc:end), 'ro-'); grid on;hold on;
-    plot(mpc_time, mpc_p(3,:), 'bo-'); grid on;hold on;
-        
-    pause(0.3)
-    
-else
-    
-    % sanity check : uncomment one of the two
-     i
-     ref_com(:,1) % need to consider the next sample
-     actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3))
-     
-     % 2 - sanity check with  for loop and integrate dynamics
-     [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, mpc_dt/(int_steps-1), int_steps, (Fr_l0(1) )*ones(1,int_steps),  (Fr_r0(1) )*ones(1,int_steps),[0;0;0], int_method); % keep Fr constant   
-     % 3 - sanity check with for loop and computeRollout
-     % [state12, time12] = computeRollout(actual_state, actual_t,mpc_dt, 2, Fr_l0(1) , Fr_r0(1)  ,[0;0;0],int_method,int_steps);  
-     % actual_state = state12(:,2);   
-end
-     
-
      
 end
 

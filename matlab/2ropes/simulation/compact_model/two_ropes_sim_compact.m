@@ -13,10 +13,23 @@ cd(actual_dir);
 
 
 OPTIM = true;
-addpath('../../optimal_control_2ropes');
+%possible settings
+test_type='normal'; 
+%test_type='obstacle_avoidance'; 
+%test_type='landing_test';
 
 if OPTIM %inputs from optim
-    load ('test_matlab2.mat');
+    if strcmp(test_type, 'obstacle_avoidance')
+        load ('tests/test_matlab2obstacle.mat');
+        m = 5.08;   % Mass [kg]
+    elseif strcmp(test_type, 'landing_test')  
+        load ('tests/test_matlab2landingClearance.mat');
+        m = 15.07 ;   % Mass [kg]    
+    else    	
+        load ('tests/test_matlab2.mat');
+        m = 5.08;   % Mass [kg]
+    end           
+            
     %load ('test_matlab_cpp.mat');    
     %load ('test_matlab2landingClearance.mat');
     Tf = solution.Tf; 
@@ -42,8 +55,8 @@ else %fixed inputs
     force_scaling = 20;
     %jump params
     p0 = [0.005; 2.5; -6]; % there is singularity for px = 0!
-end    
-   
+    m = 5.08;   % Mass [kg]
+end     
 
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
@@ -52,9 +65,6 @@ b = anchor_distance;
 p_a1 = [0;0;0];
 p_a2 = [0;anchor_distance;0];
 g = 9.81;
-m = 5.08;   % Mass [kg]
-%m = 15.07  % lander
-
 
 %compute initial state from jump param
 x0 = computeStateFromCartesian(p0);
@@ -70,11 +80,9 @@ for i=1:length(x)
     [X(i), Y(i), Z(i)] = forwardKin(x(i,1), x(i,2), x(i,3));
 end
 
+% as an alternative you can call directly integrate dynamics
 %Ndyn = length(Fr1);
 % [~,~,x, time_sim] = integrate_dynamics(x0, 0, Tf/(N_dyn-1), N_dyn,Fr1, Fr2, Fleg,'rk4');
-% for i=1:length(x)    
-%     [X(i), Y(i), Z(i)] = forwardKin(x(1,i), x(2,i), x(3,i));
-% end
  
 
 figure(1)
@@ -112,43 +120,12 @@ plot(time_sim, x(:,3),'b'); hold on;grid on;
 plot(solution.time, solution.l2,'ro');
 ylabel('l2')
 
-
-% fprintf('original target is  : [%3.2f, %3.2f, %3.2f] \n',pf );
-% fprintf('the Matlab touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n',X(end), Y(end), Z(end), time_sim(end));
-% if MICHELE_APPROACH
-%     fprintf('expected optim target    : [%3.2f, %3.2f, %3.2f] \n',solution.achieved_target );
-%     fprintf('with error : %3.2f\n',norm([solution.achieved_target(1);solution.achieved_target(2);solution.achieved_target(3)] - [X(end); Y(end);Z(end)]));
-% end
-% fprintf('with error : %3.2f\n',norm(pf - [X(end); Y(end);Z(end)]));
-% %fprintf('with polar error : %3.2f\n',norm([theta_sim(end);phi_sim(end);l_sim(end)] - [solution.theta(end); solution.phi(end); solution.l(end)]));
-% [Tf_gazebo, end_gazebo_index] = max(time_gazebo); % there are nans in the log
-% fprintf('the Gazebo touchdown is at : [%3.2f, %3.2f, %3.2f] , for tf = %5.2f\n', traj_gazebo(1,end_gazebo_index),  traj_gazebo(2,end_gazebo_index), traj_gazebo(3,end_gazebo_index),Tf_gazebo);
-% fprintf('with error : %3.2f\n',norm(pf - [traj_gazebo(1,end_gazebo_index);  traj_gazebo(2,end_gazebo_index); traj_gazebo(3,end_gazebo_index)]));
-% 
-% 
-% % eval total energy sim
-% Ekin_sim=   (m*l_sim.^2/2).*(thetad_sim.^2 + sin(theta_sim).^2 .*phid_sim.^2) +m.*ld_sim.^2/2;
-% 
-% 
-% %compare with optim
-% % figure(2)
-% % plot(time_sim, Ekin_sim,'b.');hold on;grid on;
-% % plot(time, solution.energy.Ekin,'r');
-% % ylabel('Ekin') 
-% % legend('sim', 'opt')
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
 figure(3)
 
 title('Matlab Animation - simplified model');
 xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
-
-
-
 
 axis equal; hold on;
 %anchor 1    
@@ -207,7 +184,10 @@ h(8) = animatedline('color','b', 'linewidth',3);
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
 
-h(9) = plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
+
+if strcmp(test_type, 'obstacle_avoidance')  
+    h(9) = plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
+end
 view(60,27);
 
 
@@ -232,8 +212,6 @@ end
 h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 
 
-
-
 axis equal
 matlab_final_point = [X(end);Y(end);Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
@@ -245,7 +223,7 @@ fprintf('error norm[%3.4f %3.4f %3.4f] \n',matlab_final_point - solution.achieve
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 
-%sanity check functions
+%sanity check fir function computation 
 % figure
 % plot(optim_time, Fr1,'o'); hold on; grid on;
 % Fr1_log = [];
@@ -256,9 +234,10 @@ fprintf('error norm[%3.4f %3.4f %3.4f] \n',matlab_final_point - solution.achieve
 % end
 % plot(time_sim,Fr1_log, 'r');
 
-figure
+figure(5)
 plot(optim_time, Fr1,'r-o'); hold on; grid on;
 plot(optim_time, Fr2,'b-o'); hold on; grid on;
+
 
 
 % this is needed because the intergration time t might be different from
@@ -313,8 +292,7 @@ function [value, isterminal, direction] = stopFun(t, x )
         else
             value = px;%stop when gets to wall
         end
-        
-    
+      
 
         %value =  (Z - target_height);
         %value =  (time(end) - t);    
