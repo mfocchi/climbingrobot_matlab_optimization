@@ -1,4 +1,4 @@
-function [p,pd] = computePositionVelocity(psi, l1, l2, psid,l1d, l2d)
+function [p,pd] = computePositionVelocity(params, psi, l1, l2, psid,l1d, l2d )
     px = zeros(1, length(psi));
     py = zeros(1, length(psi));
     pz = zeros(1, length(psi));
@@ -6,11 +6,11 @@ function [p,pd] = computePositionVelocity(psi, l1, l2, psid,l1d, l2d)
     pdy = zeros(1, length(psi));
     pdz = zeros(1, length(psi));
     
-    if nargin >3
+    if nargin >4
 
         
         for i=1:length(psi)    
-            [px(i), py(i), pz(i), pdx(i), pdy(i), pdz(i)] = forwardKin(psi(i), l1(i),l2(i), psid(i), l1d(i),l2d(i));
+            [px(i), py(i), pz(i), pdx(i), pdy(i), pdz(i)] = forwardKin(params, psi(i), l1(i),l2(i), psid(i), l1d(i),l2d(i));
         end 
         pd = [pdx;pdy;pdz];
     else
@@ -19,7 +19,7 @@ function [p,pd] = computePositionVelocity(psi, l1, l2, psid,l1d, l2d)
         py = zeros(1, length(psi));
         pz = zeros(1, length(psi));
         for i=1:length(psi)    
-            [px(i), py(i), pz(i)] = forwardKin(psi(i), l1(i),l2(i));
+            [px(i), py(i), pz(i)] = forwardKin(params, psi(i), l1(i),l2(i));
         end 
         
     end    

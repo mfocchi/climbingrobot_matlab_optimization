@@ -1,22 +1,20 @@
-function cost = cost(x, p0,  pf)
-
-    global  w1 w2 w3 w4 w5 w6  num_params N_dyn int_method  int_steps 
+function cost = cost(x, p0,  pf, params)
 
     Fleg = [ x(1); x(2); x(3)];
     Tf = x(4);
-    Fr_l = x(num_params+1:num_params+N_dyn); 
-    Fr_r = x(num_params+N_dyn+1:num_params+2*N_dyn); 
+    Fr_l = x(params.num_params+1:params.num_params+params.N_dyn); 
+    Fr_r = x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn); 
 
     % check they are column vectors
     p0 = p0(:);
     pf = pf(:);
     % variable intergration step
-    dt_dyn = Tf / (N_dyn-1); 
+    dt_dyn = Tf / (params.N_dyn-1); 
     
 
     % single shooting
-    state0 =  computeStateFromCartesian(p0);
-    [states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
+    state0 =  computeStateFromCartesian(params,p0);
+    [states, t] = computeRollout(state0, 0,dt_dyn, params.N_dyn, Fr_l, Fr_r,Fleg,params.int_method,params.int_steps,params);
 
     psi = states(1,:);
     l1 = states(2,:);
@@ -24,7 +22,7 @@ function cost = cost(x, p0,  pf)
     psid = states(4,:);
     l1d = states(5,:);
     l2d = states(6,:); 
-    [p, pd ]= computePositionVelocity(psi, l1, l2, psid,l1d, l2d);
+    [p, pd ]= computePositionVelocity(params,psi, l1, l2, psid,l1d, l2d);
     
     p_0 = p(:,1);
     p_f = p(:,end);
@@ -55,5 +53,5 @@ function cost = cost(x, p0,  pf)
     %fprintf("tempo %f\n ", w6*Tf)
 
      
-    cost =   w4 *smooth ;% + w6*Tf;%
+    cost =   params.w4 *smooth ;% + w6*Tf;%
 end

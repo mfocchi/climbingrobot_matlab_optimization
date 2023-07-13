@@ -1,13 +1,12 @@
-function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, jump_clearance)
+function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, params)
 
-global     m num_params b  N_dyn FRICTION_CONE  contact_normal  int_method int_steps obstacle_avoidance
  
 % ineq are <= 0
 
 Fleg = [ x(1); x(2); x(3)];
 Tf = x(4);
-Fr_l = x(num_params+1:num_params+N_dyn); 
-Fr_r = x(num_params+N_dyn+1:num_params+2*N_dyn); 
+Fr_l = x(params.num_params+1:params.num_params+params.N_dyn); 
+Fr_r = x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn); 
 
 
 % check they are column vectors
@@ -18,36 +17,36 @@ pf = pf(:);
 ineq = zeros(1,0);
 
 % number of constraints
-number_of_constr.wall_constraints = N_dyn;
+number_of_constr.wall_constraints = params.N_dyn;
 number_of_constr.retraction_force_constraints = 0;% already included in bounds %4*N_dyn; %unilateral and actuation for 2 ropes
 
-if FRICTION_CONE
+if params.FRICTION_CONE
     number_of_constr.force_constraints  = 3;
 else
     number_of_constr.force_constraints  = 2; %unilateral and actuation
 end
 number_of_constr.initial_final_constraints = 1;
 
-if obstacle_avoidance
+if params.obstacle_avoidance
    number_of_constr.via_point = 0;
 else
    number_of_constr.via_point = 1;
 end
 
 % variable intergration step
-dt_dyn = Tf / (N_dyn-1);
+dt_dyn = Tf / (params.N_dyn-1);
 
 
 % single shooting
-state0 =  computeStateFromCartesian(p0);
-[states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
+state0 =  computeStateFromCartesian(params, p0);
+[states, t] = computeRollout(state0, 0,dt_dyn, params.N_dyn, Fr_l, Fr_r,Fleg,params.int_method,params.int_steps,params);
 psi = states(1,:);
 l1 = states(2,:);
 l2 = states(3,:);
 psid = states(4,:);
 l1d = states(5,:);
 l2d = states(6,:); 
-p = computePositionVelocity(psi, l1, l2); %only position
+p = computePositionVelocity(params, psi, l1, l2); %only position
    
 % I assume px py pz  are row vectors
 p_0 = p(:, 1);
@@ -68,7 +67,7 @@ solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 % 1 -N_dyn  constraint to do not enter the wall, p_x >=0 
 
-if obstacle_avoidance
+if params.obstacle_avoidance
     
     center = [0, 3,-4.5];
     a_y =1;
@@ -78,7 +77,7 @@ if obstacle_avoidance
      %px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
      %-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
 
-    for i=1:N_dyn 
+    for i=1:params.N_dyn 
         arg  = sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2);
         %%%add ineq only if inside sphere
         if imag(arg) == 0
@@ -91,7 +90,7 @@ if obstacle_avoidance
     end
 else
 
-    for i=1:N_dyn 
+    for i=1:params.N_dyn 
         ineq = [ineq -p(1,i) ];   
         %ineq = [ineq -psi(i) ]; 
     end
@@ -107,20 +106,20 @@ end
 % unilaterality
 
 if number_of_constr.retraction_force_constraints>0
-    for i=1:N_dyn     
+    for i=1:params.N_dyn     
          ineq = [ineq  Fr_l(i) ]; % Fr_l <0
 
     end 
-    for i=1:N_dyn     
+    for i=1:params.N_dyn     
          ineq = [ineq  Fr_r(i) ]; % Fr_r <0
 
     end 
 
     % max force
-    for i=1:N_dyn 
+    for i=1:params.N_dyn 
       ineq = [ineq -Fr_max - Fr_l(i)];    % -Fr_max -Fr_l <0
     end
-    for i=1:N_dyn 
+    for i=1:params.N_dyn 
       ineq = [ineq -Fr_max - Fr_r(i)];    % -Fr_max -Fr_r <0
     end
 end
@@ -130,10 +129,10 @@ end
 % length(ineq)
 
 % constraints on impulse force
-contact_tang_y = cross(cross(contact_normal, [0;1;0]),contact_normal); 
-contact_tang_z = cross(cross(contact_normal, [0;0;1]),contact_normal); 
+contact_tang_y = cross(cross(params.contact_normal, [0;1;0]),params.contact_normal); 
+contact_tang_z = cross(cross(params.contact_normal, [0;0;1]),params.contact_normal); 
 % compute components
-Fun = contact_normal'*Fleg;
+Fun = params.contact_normal'*Fleg;
 Futy = contact_tang_y'*Fleg;
 Futz = contact_tang_z'*Fleg;
 Fut_norm = sqrt(Futy^2 +Futz^2);
@@ -147,7 +146,7 @@ ineq = [ineq  (-Fun + Fun_min)]  ; %(Fun >fmin )
 %max force 
 ineq = [ineq  (norm(Fleg) -Fleg_max)]   ;%(Fun < fun max ) actuation
 
-if FRICTION_CONE
+if params.FRICTION_CONE
     ineq = [ineq  (Fut_norm -mu*Fun)]; %friction constraints
 end
 % 
@@ -173,7 +172,7 @@ end
 %5 - jump clearance
 
 if number_of_constr.via_point >0       
-    ineq = [ineq (-p(1,N_dyn/2) +jump_clearance) ];   
+    ineq = [ineq (-p(1,params.N_dyn/2) +params.jump_clearance) ];   
 
 end
 

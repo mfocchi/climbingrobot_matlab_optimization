@@ -1,5 +1,4 @@
 clear all ; close all ; clc
-global m  g w1 w2 w3 w4 w5 w6 num_params FRICTION_CONE b p_a1 p_a2 T_th N_dyn int_method int_steps contact_normal obstacle_avoidance
 
 %cd to actual dir if you are not already there
 filePath = matlab.desktop.editor.getActiveFilename;
@@ -7,7 +6,7 @@ pathparts = strsplit(filePath,filesep);
 dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
-obstacle_avoidance = false;
+
 
 %possible settings
 test_type='normal' ;
@@ -22,19 +21,21 @@ if strcmp(test_type, 'obstacle_avoidance')
     %FINAL TARGET
     pf= [0.5; 4;-3];
     Fleg_max = 500;
-    obstacle_avoidance = true;
-    m = 5.08;   % Mass [kg]
-    jump_clearance = 1;
+    Fr_max = 90; % Fr is negative
+    params.m = 5.08;   % Mass [kg]
+    params.jump_clearance = 1;
+    params.obstacle_avoidance  = false;
 elseif  strcmp(test_type, 'landing_test')
     %jump params
     % INITIAL POINT
     p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
     %FINAL TARGET
     pf= [0.5; 4;-4];
-    m = 15.07;
+    params.m = 15.07;
     Fleg_max = 600;
     Fr_max = 300;
-    jump_clearance = 1.5;
+    params.jump_clearance = 1.5;
+    params.obstacle_avoidance  = false;
 else %normal
     %jump params
     % INITIAL POINT
@@ -42,69 +43,74 @@ else %normal
     %FINAL TARGET
     pf= [0.5; 4;-4];
     Fleg_max = 300;
-    jump_clearance = 1;
-    m = 5.08;   % Mass [kg]
+    Fr_max = 90; % Fr is negative
+    params.jump_clearance = 1;
+    params.m = 5.08;   % Mass [kg]
+    params.obstacle_avoidance  = false;
 end
-
-% physical limits
-Fr_max = 90; % Fr is negative
-mu = 0.8;
-T_th = 0.05;
-contact_normal =[1;0;0];
-
-
-% optim parameters
-w1 = 1 ; % green initial cost (not used)
-w2 = 1; %red final cost (not used)
-w3 = 1 ; % slacks energy weight E
-w4 = 1; % diff Fr1/2 smothing
-w5 = 1; %ekinf (important! energy has much higher values!)
-w6 = 1; %Fr work
-%accurate
-int_method = 'rk4';
-int_steps = 5; %0 means normal intergation
-N_dyn = 30; %dynamic constraints (discretization) 
-FRICTION_CONE = 1;
-constr_tolerance = 1e-3;
-dt=0.001; % only to evaluate solution
-
-%faster
-% int_method = 'euler';
-% int_steps = 5; %0 means normal intergation
-% N_dyn = 40; %dynamic constraints (discretization) 
-% FRICTION_CONE = 0;
+ 
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
-b = anchor_distance;
-p_a1 = [0;0;0];
-p_a2 = [0;anchor_distance;0];
-g = 9.81;
+params.num_params = 4;   
+
+%accurate
+params.int_method = 'rk4';
+params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
+params.FRICTION_CONE = 1;
+params.int_steps = cast(5,"int64"); %0 means normal intergation
+
+%faster
+% params.int_method = 'euler';
+% params.int_steps = cast(5,"int64"); %0 means normal intergation
+% params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
+% params.FRICTION_CONE = 1;
+
+params.constr_tolerance = 1e-3;
+params.max_feval = 10000;
+
+params.contact_normal =[1;0;0];
+params.b = anchor_distance;
+params.p_a1 = [0;0;0];
+params.p_a2 = [0;anchor_distance;0];
+params.g = 9.81;
+params.m = 5.08;   % Mass [kg]
+params.w1 =1; % green initial cost (not used)
+params.w2=1;%red final cost (not used)
+params.w3=1;
+params.w4=1;% diff Fr1/2 smothing
+params.w5=1; %ekinf (important! energy has much higher values!)
+params.w6=1;%Fr work
+params.contact_normal =[1;0;0];
 
 
+% physical limits
+params.T_th =  0.05;
+mu = 0.8;
 
+dt=0.001; % only to evaluate solution
 
 %compute initial state from jump param
-x0 = computeStateFromCartesian(p0);
+x0 = computeStateFromCartesian(params, p0);
 
 %pendulum period
-T_pend = 2*pi*sqrt(x0(2)/g)/4; % half period TODO replace with linearized x0(2) = l10
-num_params = 4;    
-Fr_l0 = 0*ones(1,N_dyn);
-Fr_r0 = 0*ones(1,N_dyn);
+T_pend = 2*pi*sqrt(x0(2)/params.g)/4; % half period TODO replace with linearized x0(2) = l10
+  
+Fr_l0 = 0*ones(1,params.N_dyn);
+Fr_r0 = 0*ones(1,params.N_dyn);
 x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,N_dyn), -Fr_max*ones(1,N_dyn)];
-ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,N_dyn),            0*ones(1,N_dyn)];
+lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,params.N_dyn), -Fr_max*ones(1,params.N_dyn)];
+ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,params.N_dyn),            0*ones(1,params.N_dyn)];
 
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-'MaxFunctionEvaluations', 10000, 'ConstraintTolerance', constr_tolerance);
+'MaxFunctionEvaluations', params.max_feval, 'ConstraintTolerance', params.constr_tolerance);
 
 tic
-[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, jump_clearance) , options);
+[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, params) , options);
 toc
 % evaluate constraint violation 
-[c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fleg_max, Fr_max, mu, jump_clearance);
+[c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fleg_max, Fr_max, mu, params);
 solution = eval_solution(x, dt,  p0, pf) ;
 solution.cost = final_cost;
 solution.T_th = T_th;
@@ -132,7 +138,7 @@ fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_c
 DEBUG = true;
 
 if (DEBUG)
-    eval_constraints(c, num_constr, constr_tolerance)  
+    eval_constraints(c, num_constr, params.constr_tolerance)  
     figure
     ylabel('Fr-X')
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;

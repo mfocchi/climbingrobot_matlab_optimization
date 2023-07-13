@@ -1,6 +1,4 @@
-function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,Fr_r, Fleg, method)
-    
- 
+function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,Fr_r, Fleg, method, params)
     
     %verify is a column vector
     x0 = x0(:);
@@ -8,8 +6,8 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,
     x_ = x0;
     x_vec = x0;
     t_vec = t_; 
-    switch method 
-        case 'euler'    
+    
+    if strcmp(method, 'euler')
             % forwatd euler
             for i=1:n_steps-1               
                 x_ = x_ + dt* dynamics(t_, x_, Fr_l(i), Fr_r(i), Fleg); % we have time invariant dynamics so t wont count
@@ -17,10 +15,10 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,
                 x_vec = [x_vec x_];
                 t_vec = [t_vec t_];
             end
-        case 'rk4'
+    elseif   strcmp(method, 'rk4')
             %https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/
             h = dt;
-            F = @(t, x, u1, u2, u3) dynamics(t, x, u1, u2, u3); % we have  time invariant dynamics so t wont count
+            F = @(t, x, u1, u2, u3) dynamics(t, x, u1, u2, u3, params); % we have  time invariant dynamics so t wont count
             for i=1:n_steps-1                 
                 k_1 = F(t_      , x_           ,Fr_l(i), Fr_r(i), Fleg);
                 k_2 = F(t_+0.5*h, x_+ 0.5*h*k_1,Fr_l(i), Fr_r(i), Fleg);
@@ -31,7 +29,7 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,
                 x_vec = [x_vec x_];
                 t_vec = [t_vec t_];
             end
-        otherwise  
+    else  
             disp('Unknown method.')
     end  
 
