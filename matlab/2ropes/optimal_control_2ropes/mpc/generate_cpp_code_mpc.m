@@ -1,7 +1,9 @@
 clc; clear all;
 
+%need TO USE MATLAB R2023a
+load('test_matlab2.mat')
 addpath('../');
-load('nominal_traj_normal_test.mat')
+
 
 Fr_max = 50; % Fr is negative (max variation)
 constr_tolerance = 1e-3;
@@ -13,7 +15,7 @@ mpc_N = cast(0.4*length(solution.time), "int64");
 anchor_distance = 5;
 %accurate
 params.int_method = 'rk4';
-params.int_steps = cast(5,"int64"); %0 means normal intergation
+params.int_steps = 5.; %0 means normal intergation
 params.contact_normal =[1;0;0];
 params.b = anchor_distance;
 params.p_a1 = [0;0;0];
@@ -43,7 +45,7 @@ Fr_l0 = solution.Fr_l(:,start_mpc:start_mpc+mpc_N-1);
 Fr_r0 = solution.Fr_r(:,start_mpc:start_mpc+mpc_N-1);
 
 % sanity check
-[x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
+%[x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
 %Solution for Matlab 2020b: -50.0000  -50.0000  -41.5962   50.0000   50.0000   50.0000   14.5843   -6.8346  -13.1779   -9.7423   -3.2233         0   50.0000   50.0000   40.0472  -50.0000  -50.0000  -49.5350  -14.7668
 % 6.6934   13.2390    9.8314    3.2192         0
 
@@ -75,3 +77,8 @@ for i=1:10
 end
 %-50.0000  -50.0000  -41.5668   50.0000   50.0000   50.0000   14.5522   -6.8755  -13.2075   -9.7575   -3.2269         0   50.0000   50.0000   40.0215  -50.0000  -50.0000  -49.5403  -14.7362
 % 6.7288   13.2729    9.8438    3.2253         0
+
+system('python3 test_mpc_mex.py');
+
+copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/
+copyfile optimize_cpp_mpc_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/

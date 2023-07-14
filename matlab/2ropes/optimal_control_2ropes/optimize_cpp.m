@@ -1,5 +1,5 @@
 
-function [problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
+function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
     %make it column vector
     p0 = p0(:);
     pf = pf(:);
@@ -13,7 +13,7 @@ function [problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu
 
     %pendulum period
     T_pend = 2*pi*sqrt(x0(2)/params.g)/4; % half period TODO replace with linearized x0(2) = l10
-    params.num_params = 4;    
+ 
     Fr_l0 = 0*ones(1,params.N_dyn);
     Fr_r0 = 0*ones(1,params.N_dyn);
     x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r

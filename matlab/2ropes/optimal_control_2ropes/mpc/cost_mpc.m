@@ -14,19 +14,24 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
     
     delta_Fr_l = x(1:mpc_N); 
     delta_Fr_r = x(mpc_N+1:2*mpc_N); 
-    
-    ref_com_mpc = ref_com(:, 1:mpc_N);
-       
-       
+    % compute actual state
+    ref_com_mpc = ref_com(:, 1:mpc_N);             
     [p, pd, t] = eval_pos_vel_mpc(state0,  actual_t,  Fr_l0, Fr_r0,delta_Fr_l, delta_Fr_r, mpc_N, params);
-    
-    
+       
     %p has mpc_N +1 elements 
-    % track
-    tracking = sum (vecnorm(ref_com_mpc - p).^2);
+    % cartesian track
+    tracking_cart= sum (vecnorm(ref_com_mpc - p).^2);
     
+    % %state tracking (is worse than cart tracking)
+    % tracking_state = 0.;
+    % for i=1:mpc_N
+    %     state_ref = computeStateFromCartesian(params, ref_com_mpc(:,i));
+    %     state = computeStateFromCartesian(params, p(:,i));
+    %     tracking_state = tracking_state + norm(state_ref(2:3) -state(2:3));%consider only l1 l2
+    % end
+
     % smoothnes: minimize jerky control action
     smooth = sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
          
-    cost =  params.w1* tracking;% + w2 *smooth ;
+    cost =  params.w1* tracking_cart;% + w2 *smooth ;
 end

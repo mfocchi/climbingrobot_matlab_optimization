@@ -18,15 +18,13 @@ params.jump_clearance = 1;
 params.m = 5.08;   % Mass [kg]
 params.obstacle_avoidance  = false;
 anchor_distance = 5;
-params.num_params = 4;   
+params.num_params = 4.;   
 
 %accurate
 params.int_method = 'rk4';
-params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
+params.N_dyn = 30.; %dynamic constraints (number of knowts in the discretization) 
 params.FRICTION_CONE = 1;
-params.int_steps = cast(5,"int64"); %0 means normal intergation
-params.max_feval = 10000;
-
+params.int_steps = 5.; %0 means normal intergation
 params.contact_normal =[1;0;0];
 params.b = anchor_distance;
 params.p_a1 = [0;0;0];
@@ -39,7 +37,6 @@ params.w3=1;
 params.w4=1;% diff Fr1/2 smothing
 params.w5=1; %ekinf (important! energy has much higher values!)
 params.w6=1;%Fr work
-params.contact_normal =[1;0;0];
 params.T_th =  0.05;
 
 %jump params
@@ -53,7 +50,7 @@ pf= [0.5, 4,-4];
 % check)
 %solution.Tf =1.2175
 %solution.achieved_target(normal test) =0.5197  3.9967 -4.0008
-[problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
+%[problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
 
 
 % generates the cpp code
@@ -61,10 +58,14 @@ pf= [0.5, 4,-4];
 cfg = coder.config('mex');
 cfg.IntegrityChecks = false;
 cfg.SaturateOnIntegerOverflow = false;
-codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 2 -report
+codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
 
 %it gives a slightly different result than optimal_control_2ropes:
 %solution.Tf = 1.3234
 %solution.achieved_target(normal test) = 0.5971     3.9923  -4.0035
-[problem_solved, solution] = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params) 
-save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params) 
+%save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+system('python3 test_mex.py');
+
+copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/
+copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
