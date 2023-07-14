@@ -1,16 +1,15 @@
-function  plot_curve(solution, solution_constr, p0,pf,  mu, plot_energy, color_input, full_update)
+function  plot_curve(solution, solution_constr, p0,pf,  mu, plot_energy, color_input, full_update, params)
 
-global p_a1 p_a2 obstacle_avoidance
 
 if full_update
     % anchor1  line
-    plot3([p_a1(1) p0(1)],[p_a1(2) p0(2)],[p_a1(3) p0(3)],'k--');   hold on ;
+    plot3([params.p_a1(1) p0(1)],[params.p_a1(2) p0(2)],[params.p_a1(3) p0(3)],'k--');   hold on ;
     %anchor 1
-    plot3(p_a1(1),p_a1(2),p_a1(3),'Marker','*','Color','k','MarkerSize',10);
+    plot3(params.p_a1(1),params.p_a1(2),params.p_a1(3),'Marker','*','Color','k','MarkerSize',10);
     % anchor2  line
-    plot3([p_a2(1) p0(1)],[p_a2(2) p0(2)],[p_a2(3) p0(3)],'k--');   hold on ;
+    plot3([params.p_a2(1) p0(1)],[params.p_a2(2) p0(2)],[params.p_a2(3) p0(3)],'k--');   hold on ;
     %anchor 1
-    plot3(p_a2(1),p_a2(2),p_a2(3),'Marker','*','Color','k','MarkerSize',10);
+    plot3(params.p_a2(1),params.p_a2(2),params.p_a2(3),'Marker','*','Color','k','MarkerSize',10);
         
     
     %initial
@@ -81,7 +80,7 @@ plot3(pf(1), pf(2), pf(3), 'Marker', '.', 'Color','r', 'MarkerSize',60) ;
 force_scale = 0.2;
 arrow3d_points(p0,p0 + solution.Fleg*force_scale,'color','r');grid on;hold on;
 
-if obstacle_avoidance
+if params.obstacle_avoidance
     plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
 end
 

@@ -66,8 +66,6 @@ params.int_steps = cast(5,"int64"); %0 means normal intergation
 % params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 % params.FRICTION_CONE = 1;
 
-params.constr_tolerance = 1e-3;
-params.max_feval = 10000;
 
 params.contact_normal =[1;0;0];
 params.b = anchor_distance;
@@ -82,9 +80,6 @@ params.w4=1;% diff Fr1/2 smothing
 params.w5=1; %ekinf (important! energy has much higher values!)
 params.w6=1;%Fr work
 params.contact_normal =[1;0;0];
-
-
-% physical limits
 params.T_th =  0.05;
 mu = 0.8;
 
@@ -104,26 +99,26 @@ ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,params.N_dyn),
 
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-'MaxFunctionEvaluations', params.max_feval, 'ConstraintTolerance', params.constr_tolerance);
+'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',1e-3);
 
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, params) , options);
 toc
 % evaluate constraint violation 
 [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fleg_max, Fr_max, mu, params);
-solution = eval_solution(x, dt,  p0, pf) ;
+solution = eval_solution(x, dt,  p0, pf, params) ;
 solution.cost = final_cost;
-solution.T_th = T_th;
+solution.T_th = params.T_th;
 problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
 % EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
 % EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
 %EXITFLAG == 0 max number of iterations
 
 if problem_solved
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', true);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', true, params);
 else 
     fprintf(2,"Problem didnt converge!\n")
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', true);
+    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', true, params);
 end
 
  

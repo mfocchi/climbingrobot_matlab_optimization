@@ -1,23 +1,23 @@
-function solution = eval_solution(x,  dt, p0, pf)
+function solution = eval_solution(x,  dt, p0, pf, params)
 
-global m g   num_params  N_dyn  int_method int_steps
+
 %eval trajectory
 Fleg = [ x(1); x(2); x(3)];
 Tf = x(4);
-Fr_l = x(num_params+1:num_params+N_dyn); 
-Fr_r = x(num_params+N_dyn+1:num_params+2*N_dyn); 
+Fr_l = x(params.num_params+1:params.num_params+params.N_dyn); 
+Fr_r = x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn); 
 
-dt_dyn = Tf / (N_dyn-1); 
+dt_dyn = Tf / (params.N_dyn-1); 
 % single shooting
-state0 =  computeStateFromCartesian(p0);
-[states, t] = computeRollout(state0, 0,dt_dyn, N_dyn, Fr_l, Fr_r,Fleg,int_method,int_steps);
+state0 =  computeStateFromCartesian(params, p0);
+[states, t] = computeRollout(state0, 0,dt_dyn, params.N_dyn, Fr_l, Fr_r,Fleg,params.int_method,params.int_steps, params);
 psi = states(1,:);
 l1 = states(2,:);
 l2 = states(3,:);
 psid = states(4,:);
 l1d = states(5,:);
 l2d = states(6,:); 
-[p, pd ]= computePositionVelocity(psi, l1, l2, psid,l1d, l2d);
+[p, pd ]= computePositionVelocity(params, psi, l1, l2, psid,l1d, l2d);
    
 p_0 = p(:, 1);
 p_f = p(:,end);
@@ -64,19 +64,19 @@ solution.U0 = 0;
 solution.Uf = 0;
 
 % kinetic energy at the beginning
-solution.Ekin0x = m/2*pd(1,1)'*pd(1,1);
-solution.Ekin0y = m/2*pd(2,1)'*pd(2,1);
-solution.Ekin0z = m/2*pd(3,1)'*pd(3,1);
-solution.Ekin0 = m/2*pd(:,1)'*pd(:,1);
+solution.Ekin0x = params.m/2*pd(1,1)'*pd(1,1);
+solution.Ekin0y = params.m/2*pd(2,1)'*pd(2,1);
+solution.Ekin0z = params.m/2*pd(3,1)'*pd(3,1);
+solution.Ekin0 = params.m/2*pd(:,1)'*pd(:,1);
 
-solution.Ekinfx = m/2*pd(1,end)'*pd(1,end);
-solution.Ekinfy = m/2*pd(2,end)'*pd(2,end);
-solution.Ekinfz = m/2*pd(3,end)'*pd(3,end);
-solution.Ekinf = m/2*pd(:,end)'*pd(:,end);
+solution.Ekinfx = params.m/2*pd(1,end)'*pd(1,end);
+solution.Ekinfy = params.m/2*pd(2,end)'*pd(2,end);
+solution.Ekinfz = params.m/2*pd(3,end)'*pd(3,end);
+solution.Ekinf = params.m/2*pd(:,end)'*pd(:,end);
 
 
 for i =1:length(t)
-    solution.Ekin(i) = m/2*pd(:,i)'*pd(:,i);
+    solution.Ekin(i) = params.m/2*pd(:,i)'*pd(:,i);
     solution.intEkin = solution.intEkin +  solution.Ekin(i)*dt;
 end
     

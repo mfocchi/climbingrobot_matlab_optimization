@@ -37,7 +37,7 @@ function [dxdt] = dynamics(t, x, Fr_l, Fr_r,Fleg, params) % because we have time
     Ftot = params.m*[0;0;-params.g] + J*[Fr_l;Fr_r]; 
 
     if norm(Fleg)>0
-       Ftot= Ftot+ evalImpulse(t,Fleg); 
+       Ftot= Ftot+ evalImpulse(t,Fleg,params); 
     end    
 
     y = inv(A_dyn)*(inv(params.m)*Ftot - b_dyn);
