@@ -17,7 +17,7 @@ function  state = computeStateFromCartesian(params, p,pd)
         n_par = (params.p_a1(:) - params.p_a2(:))/norm(params.p_a1(:) - params.p_a2(:));
         n_perp = eye(3) - n_par*n_par'; 
         
-        phid = cross(n_par, n_perp)'*pd / cross(n_par,n_perp)'*(params.p_a1(:)-params.p_a2(:));
+        phid = cross(n_par, n_perp)'*pd / (cross(n_par,n_perp)'*(params.p_a1(:)-params.p_a2(:)));
         % for the speed I just project along rope axis
         l1d = (p(:) - params.p_a1(:))'*pd(:);
         l2d = (p(:) - params.p_a2(:))'*pd(:);        
