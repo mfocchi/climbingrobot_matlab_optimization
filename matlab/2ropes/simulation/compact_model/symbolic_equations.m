@@ -119,9 +119,9 @@ b = simplify(b,'Steps',50)
 % check everything is allright
 simplify( (A*[psidd; l1dd; l2dd] + b) - p_dd8)
 
+    latex(A)
 
-
-
+    latex(b)
 % Compute Lagrangian equations
 %
 % v_2 = simplify(sum(p_d.^2),'Steps',50);

@@ -2,7 +2,7 @@ clear all
 clc
 close all
 
-global delta_duration  Fleg  Fr1 Fr2   optim_time OPTIM  p_a1 p_a2 b   g m
+global delta_duration  Fleg  Fr1 Fr2  time  optim_time OPTIM  p_a1 p_a2 b   g m
 
 %cd to actual dir
 filePath = matlab.desktop.editor.getActiveFilename;
@@ -50,11 +50,11 @@ else %fixed inputs
     delta_duration = 0.05;
     %inputs
     Fleg = [200;0;0];
-    Fr1 = ones(length(time)) * -40;
-    Fr2 = ones(length(time)) * -30;
+    Fr1 = ones(1, length(time)) * -40;
+    Fr2 = ones(1, length(time)) * -30;
     force_scaling = 20;
     %jump params
-    p0 = [0.005; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.0; 2.5; -6]; % there is singularity for px = 0!
     m = 5.08;   % Mass [kg]
 end     
 
@@ -84,41 +84,6 @@ end
 %Ndyn = length(Fr1);
 % [~,~,x, time_sim] = integrate_dynamics(x0, 0, Tf/(N_dyn-1), N_dyn,Fr1, Fr2, Fleg,'rk4');
  
-
-figure(1)
-subplot(3,1,1)
-plot(time_sim, X,'b'); hold on;grid on;
-plot(solution.time, solution.p(1,:),'ro');
-ylabel('X')
-legend('sim', 'opt')
-
-subplot(3,1,2)
-plot(time_sim, Y,'b'); hold on;grid on;
-plot(solution.time, solution.p(2,:),'ro');
-ylabel('Y')
-
-subplot(3,1,3)
-plot(time_sim, Z,'b'); hold on;grid on;
-plot(solution.time, solution.p(3,:),'ro');
-ylabel('Z')
-
-% states
-figure(2)
-subplot(3,1,1)
-plot(time_sim, x(:,1),'b'); hold on;grid on;
-plot(solution.time, solution.psi,'ro');
-ylabel('psi')
-legend('sim', 'opt')
-
-subplot(3,1,2)
-plot(time_sim, x(:,2),'b'); hold on;grid on;
-plot(solution.time, solution.l1,'ro');
-ylabel('l1')
-
-subplot(3,1,3)
-plot(time_sim, x(:,3),'b'); hold on;grid on;
-plot(solution.time, solution.l2,'ro');
-ylabel('l2')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3D plot Animation
@@ -183,14 +148,10 @@ h(8) = animatedline('color','b', 'linewidth',3);
 %Pendulum sphere (red)
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
-
-
 if strcmp(test_type, 'obstacle_avoidance')  
     h(9) = plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
 end
 view(60,27);
-
-
 
 % Loop for animation
 for i = 1:length(X)    
@@ -210,9 +171,46 @@ end
 
 % plot target point (red)
 h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
-
-
 axis equal
+
+% OTHER PLOTS
+
+figure(1)
+subplot(3,1,1)
+plot(time_sim, X,'b'); hold on;grid on;
+plot(solution.time, solution.p(1,:),'ro');
+ylabel('X')
+legend('sim', 'opt')
+
+subplot(3,1,2)
+plot(time_sim, Y,'b'); hold on;grid on;
+plot(solution.time, solution.p(2,:),'ro');
+ylabel('Y')
+
+subplot(3,1,3)
+plot(time_sim, Z,'b'); hold on;grid on;
+plot(solution.time, solution.p(3,:),'ro');
+ylabel('Z')
+
+% states
+figure(2)
+subplot(3,1,1)
+plot(time_sim, x(:,1),'b'); hold on;grid on;
+plot(solution.time, solution.psi,'ro');
+ylabel('psi')
+legend('sim', 'opt')
+
+subplot(3,1,2)
+plot(time_sim, x(:,2),'b'); hold on;grid on;
+plot(solution.time, solution.l1,'ro');
+ylabel('l1')
+
+subplot(3,1,3)
+plot(time_sim, x(:,3),'b'); hold on;grid on;
+plot(solution.time, solution.l2,'ro');
+ylabel('l2')
+
+
 matlab_final_point = [X(end);Y(end);Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
 fprintf('Optim final point [%3.4f, %3.4f, %3.4f] \n', solution.achieved_target)
@@ -284,12 +282,13 @@ end
 function [value, isterminal, direction] = stopFun(t, x )
          global OPTIM 
         
-        %[px, py, pz] = forwardKin(x(1), x(2), x(3));
+        
          
         if OPTIM
             %value =  optim_time(end) - t;
             value =1; % stops at the end of time
         else
+            [px, py, pz] = forwardKin(x(1), x(2), x(3));
             value = px;%stop when gets to wall
         end
       
@@ -323,22 +322,22 @@ function [dxdt] = diffEq(t,x, Fr1, Fr2 ,Fleg)
     [px, py, pz]  = forwardKin(psi, l1, l2);  
     pz2b = pz*2*b;
     px2b = px*2*b;
-    px_l1 = px/l1;
-    n_pz_l1 =  -pz/l1;
-    px_l1_sinpsi = px/l1/sin(psi);
-    py2b = py*2*b;
+    px_l1 = px/l1;%
+    n_pz_l1 =  -pz/l1;%
+    px_l1_sinpsi = px/l1/sin(psi);%
+    py2b = py*2*b;%
     
     % mass equation and rope constraints 
     A_dyn = [l1*n_pz_l1,   px_l1 - (l1*sin(psi)*(py2b/(b^2*l1) - py2b^2/(2*b^2*l1^3)))/(2*px_l1_sinpsi),  (l2*py2b*sin(psi))/(2*b^2*l1*px_l1_sinpsi),
                       0,                                                                           l1/b,                                       -l2/b,
-               l1*px_l1, (l1*cos(psi)*(py2b/(b^2*l1) - py2b^2/(2*b^2*l1^3)))/(2*px_l1_sinpsi) - n_pz_l1, -(l2*py2b*cos(psi))/(2*b^2*l1*px_l1_sinpsi)];
+               l1*px_l1, (l1*cos(psi)*(py2b/(b^2*l1) - py2b^2/(2*b^2*l1^3)))/(2*px_l1_sinpsi) - n_pz_l1, -(l2*py2b*cos(psi))/(2*b^2*l1*px_l1_sinpsi)]
     
-    
+
     b_dyn =  [2*l1d*n_pz_l1*psid - l1*psid^2*px_l1 - (sin(psi)*(4*l1^4*l1d^2 - 8*l1^3*l2*l1d*l2d + 4*l1^2*l2^2*l2d^2 - 6*l1^2*l1d^2*py2b - 2*l1^2*l2d^2*py2b + 8*l1*l2*l1d*l2d*py2b + 3*l1d^2*py2b^2))/(4*b^2*l1^3*px_l1_sinpsi) - (py2b^2*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2)^2)/(16*b^4*l1^5*px_l1_sinpsi^3) + (psid*py2b*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^2*px_l1_sinpsi) + (l1d*py2b*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^3*px_l1_sinpsi),
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                (l1d^2 - l2d^2)/b,
                l1*n_pz_l1*psid^2 + 2*l1d*psid*px_l1 + (cos(psi)*(4*l1^4*l1d^2 - 8*l1^3*l2*l1d*l2d + 4*l1^2*l2^2*l2d^2 - 6*l1^2*l1d^2*py2b - 2*l1^2*l2d^2*py2b + 8*l1*l2*l1d*l2d*py2b + 3*l1d^2*py2b^2))/(4*b^2*l1^3*px_l1_sinpsi) + (py2b^2*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2)^2)/(16*b^4*l1^5*px_l1_sinpsi^3) - (l1d*py2b*cos(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^3*px_l1_sinpsi) + (psid*py2b*sin(psi)*(l1d*b^2 - l1d*l1^2 + 2*l2d*l1*l2 - l1d*l2^2))/(2*b^2*l1^2*px_l1_sinpsi)];
  
-        
+    
 
     J =  computeJacobian([px, py, pz]);
     Ftot = [m*[0;0;-g] + J*[Fr1(t);Fr2(t)] + Fleg(t)]; 
