@@ -1,0 +1,85 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[conference]{IEEEtran}
+% include the list of acronyms, math commands and new commands used in this paper
+\input{includes/used_packages.tex}
+\input{includes/acronyms.tex}
+\input{includes/math_commands.tex}
+\input{includes/newcommands.tex}
+
+
+\title{CLIO: a Novel Robotic Solution for Exploration and Rescue Missions in Hostile Mountain Environments}
+\author{Michele Focchi$^{1}$, Mohamed Bensaadallah$^{2}$, Marco Frego$^{3}$, Angelika Peer$^{3}$, \\Daniele Fontanelli$^{4}$, Andrea Del Prete$^{4}$, Luigi Palopoli$^{1}$
+\thanks{$^1$ The authors are with the Dipartimento di Ingegneria and Scienza dell'Informazione (DISI), University of Trento. Email:  \href{mailto:name.surname@unitn.it}{name.surname@unitn.it}}
+\thanks{$^2$ The author is with the Department of Electronics, University of Batna 2, Algeria. Email: \href{mailto:m.bensaadallah@univ-batna2.dz}{m.bensaadallah@univ-batna2.dz}}
+\thanks{$^3$ The authors are with the Faculty of Science and Technology, Free University of Bozen-Bolzano. Email:  \href{mailto:name.surname@unibz.it}{name.surname@unibz.it}}
+\thanks{$^4$ The authors are with Dipartimento di Ingegneria Industriale (DII), University of Trento Email:  \href{mailto:name.surname@unitn.it}{name.surname@unitn.it}. The publication was created with the co-financing of the European Union FSE-REACT-EU, PON Research and Innovation 2014-2020 DM1062 / 2021.} }
+
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}%150-250 word abstract
+  Rescue missions in mountain environments are hardly achievable by
+  standard legged robots---because of the high slopes---or by flying
+  robots---because of limited payload capacity.  We present a novel
+  concept for a rope-aided climbing robot, which can negotiate
+  up-to-vertical slopes and carry heavy payloads.  The robot is
+  attached to the mountain through a rope, and is equipped with a leg
+  to push against the mountain and initiate jumping maneuvers.
+  Between jumps, a hoist is used to wind/unwind the rope to move
+  vertically and affect the lateral motion.  This simple (yet
+  effective) two-fold actuation allows the system to achieve high
+  safety and energy efficiency. Indeed, the rope prevents the robot
+  from falling, while compensating for most of its weight, drastically
+  reducing the effort required by the leg actuator. We also present an
+  optimal control strategy to generate point-to-point trajectories
+  overcoming an obstacle.  We achieve fast computation time ($<$1 s)
+  thanks to the use of a custom simplified robot model.  We validated
+  the generated optimal movements in Gazebo simulations with a
+  complete robot model, showing the effectiveness of the proposed
+  approach, and confirming the interest of our concept.  Finally, we
+  performed a reachability analysis showing that the region of
+  achievable targets is strongly affected by the friction properties
+  of the foot-wall contact.
+\end{abstract}
+
+\begin{IEEEkeywords}
+	Planning, Control, Climbing Robot, Trajectory optimization    
+\end{IEEEkeywords}
+
+\section{Introduction}\label{sec:introduction}
+\input{sections/intro}
+
+\section{Robot Description}\label{sec:robot}
+\input{sections/robot}
+
+
+\section{Motion Planning}\label{sec:motionP}
+\input{sections/motion}
+
+
+%\section{Motion Control} \label{sec:motionC}
+%\input{sections/control}
+
+
+\section{Simulation Results}\label{sec:results}
+\input{sections/results}
+
+
+
+
+
+\section{Conclusions}
+\label{sec:conclusion}
+\input{sections/conclusions}
+\small
+\bibliographystyle{IEEEtran}
+\bibliography{references/references}
+
+%\section{Acknowledgements}
+%The publication was created with the co-financing of the European Union FSE-REACT-EU, PON Research and Innovation 2014-2020 DM1062 / 2021.
+
+\end{document}
+

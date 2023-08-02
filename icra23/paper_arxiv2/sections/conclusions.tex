@@ -1,0 +1,29 @@
+We presented a  robotic solution for exploration and rescue 
+missions in mountain environments such as canyons, lunar craters, etc. 
+It could be employed in civil applications in scaling maintenance activity, e.g., to detach from the
+mountain walls dangerous boulders,  needed to mitigate the hydro-geological risk.
+%or loose and potentially unstable vegetation (a.k.a. scaling) or to apply landslide protection networks
+%maintenance costs in scaling application
+This would create additional market opportunities for a possible business.
+Our platform combines the use of a rope of adjustable length with a jumping mechanism.
+We validated the result of the optimization carried out using a simplified model 
+with a fully-detailed model  simulation in Gazebo,
+obtaining  $5\%$ discrepancy on a 16 $m$ jump.
+% limitations
+The main limitations of the actual work are the limited \textit{reachability} with 
+the single anchor arrangement and the lack of descriptiveness (in terms of angular dynamics) of the simplified model.
+This prevents to devise planning strategies that optimize also the orientation of the robot at the landing. 
+To address the first issue, we plan to investigate a solution with two ropes with more than one anchor point to increase the reachable region on the wall;
+while, for the second issue, we plan to release the point-mass approximation and considering the robot as a rigid body with
+non-trivial mass geometry. In this case, the thrust action has to be combined with a way to control the rotation of the body 
+and in order to ensure the proper alignment of the leg  to guarantee a safe landing.  
+Last, we are working on the design of a landing controller to dissipate the excess of kinetic energy at landing, 
+avoiding rebounces. All these steps are preparatory to the development of a working prototype.
+%
+Many important future directions have been opened by this research.
+Whilst avoiding obstacles is a well-known problem for motion planning in horizontal terrain, 
+the jump motion pattern determined by the ropes makes the motion-planning
+problem non-standard, calling for new approaches.
+Much work has to be done also in the area of motion control in order to
+ensure that the planned trajectory is closely tracked during the flight. 
+
