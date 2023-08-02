@@ -5,7 +5,7 @@ load('test_matlab2.mat')
 addpath('../')
 DEBUG_DYNAMICS = false;
 DEBUG_MPC_MACHINERY = false;
-DISTURBED_VARIALES = 'state' % 'cartesian'
+DISTURBED_VARIALES = 'state' % 'cartesian' %TODO
 
 
 Fr_max = 50; % Fr is negative (max variation)

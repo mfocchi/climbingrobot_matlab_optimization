@@ -1,11 +1,16 @@
 clc; clear all;
 
-%need TO USE MATLAB R2023a
-load('test_matlab2.mat')
 addpath('../');
 
 
+load('test_matlab2.mat')
 Fr_max = 50; % Fr is negative (max variation)
+
+%load('test_matlab2landingClearance.mat')
+%Fr_max = 150; % Fr is negative (max variation)
+
+
+
 constr_tolerance = 1e-3;
 dt=0.001; % only to evaluate solution
 N_dyn = length(solution.time);
@@ -28,7 +33,7 @@ params.mpc_dt = solution.Tf / (N_dyn-1);
 
 
 samples = length(solution.time) - mpc_N+1;
-start_mpc = 3;
+start_mpc = 4;
 actual_t = solution.time(start_mpc);
 actual_state = [solution.psi(:,start_mpc);solution.l1(:,start_mpc);solution.l2(:,start_mpc); solution.psid(:,start_mpc); solution.l1d(:,start_mpc); solution.l2d(:,start_mpc)];
 
@@ -58,7 +63,7 @@ coder.cstructname(params, 'param')
 % If var is an entry-point (top-level) function input argument, place coder.cstructname at the beginning of the function, before any control flow statements
 %https://it.mathworks.com/help/simulink/slref/coder.cstructname.html
 %https://it.mathworks.com/help/coder/ug/primary-function-input-specification.html
-codegen -config cfg  optimize_cpp_mpc -args { zeros(6,1), 0,  coder.typeof(1,[3 Inf]), coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]) ,  0, zeros(1,1,'int64'),coder.cstructname(params, 'param') } -nargout 3 -report 
+%codegen -config cfg  optimize_cpp_mpc -args { zeros(6,1), 0,  coder.typeof(1,[3 Inf]), coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]) ,  0, zeros(1,1,'int64'),coder.cstructname(params, 'param') } -nargout 3 -report 
 
 % Driver script to show codegen, SWIG, and Python (does not work)
 %cfg = coder.config('dll');

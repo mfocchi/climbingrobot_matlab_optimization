@@ -83,6 +83,8 @@ params.contact_normal =[1;0;0];
 params.T_th =  0.05;
 mu = 0.8;
 
+constr_tolerance = 1e-3;
+
 dt=0.001; % only to evaluate solution
 
 %compute initial state from jump param
@@ -99,7 +101,7 @@ ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,params.N_dyn),
 
 
 options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',1e-3);
+'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',constr_tolerance);
 
 tic
 [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, params) , options);
@@ -133,7 +135,7 @@ fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_c
 DEBUG = true;
 
 if (DEBUG)
-    eval_constraints(c, num_constr, params.constr_tolerance)  
+    eval_constraints(c, num_constr, constr_tolerance)  
     figure
     ylabel('Fr-X')
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;
@@ -143,7 +145,7 @@ if (DEBUG)
     legend({'min','max','Frl','Frr'});
     
         
-%     
+%     othing 
 %     figure
 %     subplot(3,1,1)
 %     plot(solution.time, solution.psi,'r');hold on; grid on;
@@ -201,6 +203,25 @@ solution.Fleg
 solution.Tf
 disp('target')
 solution.achieved_target
+
+
+% Fleg 27 iterazioni
+%   120.3777
+%   -37.6587
+%   -65.7212
+% 
+% Tf    1.2175
+% 
+% target
+%     0.5197
+%     3.9967
+% %    -4.0008
+% cost:  -180.000000
+% final_kin_energy:  84.553207
+% final_error_real:  0.020000
+% final_error_discrete:  0.020000
+% max_integration_error:  0.000000
+
 
 if strcmp(test_type, 'obstacle_avoidance')
     save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
