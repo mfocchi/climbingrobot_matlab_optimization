@@ -1027,13 +1027,6 @@ The previous analysis was to give an intuitive grasp on the problem.
 However, it is convenient to evaluate with accuracy the margin of stability, which is the amount of tolerable  external centroidal forces 
 for maintenance operations. 
 
-\subsection{Feasible Polytope}
-The  feasible centroidal forces and moments than can be tolerated while satisfying stability 
-constraints can be respresented by a set called Contact Wrench Cone. The first step is to compute the gravito inertial 
-wrench for a certain robot configuration and see if it belongs to the CWC. The feasibility margin, i.e. the smallest distance between the gravito inertial wrench and the boundaries represented by the CWC facets.
-can give an idea of the amount of external forces /moments that can be tolerated by the system before losing stability \cite{romeo}. 
-The CWC can be seen as a compact representation of the unilateral constraints  at the rope forces and unilateral /friction constraints at the contact forces projected at the CoM by means of a Minkowski sum operation. To compute the CWC we can employ the analytical formulation introduced in  https://arxiv.org/abs/1501.04719, then get the  vertex based formulation by mean of the double description algorithm  \cite{dd}
-then esily compute the margin as in \cite{rome}. WIth respect to \cite{rome} we decided to neglect the limits posed by the actuators that believe to be less limiting than the friction ones. 
 
 
 \section{Motion Planning }
