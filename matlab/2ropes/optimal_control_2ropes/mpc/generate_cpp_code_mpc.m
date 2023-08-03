@@ -4,7 +4,7 @@ addpath('../');
 
 % normal test
 load('test_matlab2.mat')
-Fr_max = 50; % Fr is negative (max variation)
+Fr_max = 100; % Fr is negative (max variation)
 mass =5.08;
 
 % landing test

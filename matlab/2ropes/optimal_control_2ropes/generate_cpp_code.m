@@ -65,12 +65,14 @@ pf= [0.5, 4,-4];
 cfg = coder.config('mex');
 cfg.IntegrityChecks = false;
 cfg.SaturateOnIntegerOverflow = false;
-codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
+%codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
 
 %it gives a slightly different result than optimal_control_2ropes:
 %solution.Tf = 1.3234
 %solution.achieved_target(normal test) = 0.5971     3.9923  -4.0035
-solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params) 
+solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params);
+solution.Tf
+solution.achieved_target
 
 
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
