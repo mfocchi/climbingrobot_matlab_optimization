@@ -31,7 +31,6 @@ params['b'] = anchor_distance
 params['p_a1'] = matlab.double([0.,0.,0.]).reshape(3,1)
 params['p_a2'] = matlab.double([0.,params['b'],0.]).reshape(3,1)
 params['g'] = 9.81
-params['m']= 5.08
 params['w1']= 1.
 params['w2']= 1.
 params['w3']= 1.

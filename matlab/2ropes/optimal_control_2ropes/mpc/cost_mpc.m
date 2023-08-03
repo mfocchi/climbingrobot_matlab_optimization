@@ -20,7 +20,9 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
        
     %p has mpc_N +1 elements 
     % cartesian track
-    tracking_cart= sum (vecnorm(ref_com_mpc - p).^2);
+    norm_order = 2;
+    row_column_wise =1; %1 column /2 row wise
+    tracking_cart= sum (vecnorm(ref_com_mpc - p, norm_order, row_column_wise).^2); 
     
     % %state tracking (is worse than cart tracking)
     % tracking_state = 0.;
@@ -31,7 +33,7 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
     % end
 
     % smoothnes: minimize jerky control action
-    smooth = sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
+    smooth = sum(diff(delta_Fr_l).^2)+ sum(diff(delta_Fr_r).^2);  % this creates tracking errors sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
          
-    cost =  params.w1* tracking_cart;% + w2 *smooth ;
+    cost =  params.w1* tracking_cart +params.w2 *smooth ;
 end

@@ -24,7 +24,7 @@ if strcmp(test_type, 'obstacle_avoidance')
     Fr_max = 90; % Fr is negative
     params.m = 5.08;   % Mass [kg]
     params.jump_clearance = 1;
-    params.obstacle_avoidance  = false;
+    params.obstacle_avoidance  = true;
 elseif  strcmp(test_type, 'landing_test')
     %jump params
     % INITIAL POINT
@@ -72,7 +72,6 @@ params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
-params.m = 5.08;   % Mass [kg]
 params.w1 =1; % green initial cost (not used)
 params.w2=1;%red final cost (not used)
 params.w3=1;

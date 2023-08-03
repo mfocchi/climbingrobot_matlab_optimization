@@ -6,9 +6,9 @@ addpath('../')
 DEBUG_DYNAMICS = false;
 DEBUG_MPC_MACHINERY = false;
 DISTURBED_VARIALES = 'state' % 'cartesian' %TODO
+USEGENCODE = true % need to run gen_cpp_code_mpc
 
-
-Fr_max = 50; % Fr is negative (max variation)
+Fr_max = 100; % Fr is negative (max variation)
 constr_tolerance = 1e-3;
 dt=0.001; % only to evaluate solution
 N_dyn = length(solution.time);
@@ -25,8 +25,8 @@ params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
 params.m = 5.08;   % Mass [kg]
-params.w1 =1;
-params.w2=1;
+params.w1 =1; % tracking
+params.w2= 0.000001; % smooth term 
 params.mpc_dt = solution.Tf / (N_dyn-1);
 
 samples = length(solution.time) - mpc_N+1;
@@ -79,9 +79,12 @@ for i=start_mpc:samples
              %%%%%%%%%%%%%%%%%%%%%%%
 
              %Optimization
-             [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
-             %[x, EXITFLAG, final_cost] = optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
-
+             if USEGENCODE
+                  % use generated code
+                [x, EXITFLAG, final_cost] = optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
+             else
+                [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
+             end
              delta_Fr_l = x(1:mpc_N);
              delta_Fr_r = x(mpc_N+1:2*mpc_N);
         end
@@ -119,16 +122,22 @@ for i=start_mpc:samples
         % plot(mpc_time, mpc_p(3,:), 'bo-'); grid on;hold on;  ylabel('Z')
 
         % plot states
-        subplot(3,1,1)    
+        subplot(3,2,1)    
         plot(solution.time(start_mpc:end), solution.psi(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(1,:), 'bo-'); grid on;hold on; ylabel('psi')
-        subplot(3,1,2)       
+        subplot(3,2,3)       
         plot(solution.time(start_mpc:end), solution.l1(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(2,:), 'bo-'); grid on;hold on; ylabel('l1')
-        subplot(3,1,3)   
+        subplot(3,2,5)   
         plot(solution.time(start_mpc:end), solution.l2(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(3,:), 'bo-'); grid on;hold on;  ylabel('l2')
-
+        subplot(3,2,2)           
+        plot(mpc_time, delta_Fr_l, 'bo-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;  
+        xlim([min(mpc_time), max(mpc_time)]);
+   
+        subplot(3,2,4)   
+        plot(mpc_time, delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        xlim([min(mpc_time), max(mpc_time)]);
    
         pause(0.3)
 

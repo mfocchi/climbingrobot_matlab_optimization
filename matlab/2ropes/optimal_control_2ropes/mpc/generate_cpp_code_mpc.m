@@ -2,13 +2,15 @@ clc; clear all;
 
 addpath('../');
 
-
+% normal test
 load('test_matlab2.mat')
 Fr_max = 50; % Fr is negative (max variation)
+mass =5.08;
 
+% landing test
 %load('test_matlab2landingClearance.mat')
 %Fr_max = 150; % Fr is negative (max variation)
-
+%mass = 15.07;
 
 
 constr_tolerance = 1e-3;
@@ -26,9 +28,9 @@ params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
-params.m = 5.08;   % Mass [kg]
-params.w1 =1;
-params.w2=1;
+params.m = mass;   % Mass [kg]
+params.w1 =1; % tracking
+params.w2= 0.000001; % smooth term 
 params.mpc_dt = solution.Tf / (N_dyn-1);
 
 
@@ -80,8 +82,8 @@ for i=1:10
     [x, EXITFLAG, final_cost] =  optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
     toc
 end
-%-50.0000  -50.0000  -41.5668   50.0000   50.0000   50.0000   14.5522   -6.8755  -13.2075   -9.7575   -3.2269         0   50.0000   50.0000   40.0215  -50.0000  -50.0000  -49.5403  -14.7362
-% 6.7288   13.2729    9.8438    3.2253         0
+%-50.0000  -36.1202  -11.3723    9.8112   22.1869   26.0825   24.4092   20.6530   17.4251   15.4886   15.0052   15.1206   50.0000   35.6135   11.1281   -9.7612  -21.9726  -25.8132  -24.1730  -20.5217  -17.4323
+% -15.6382  -15.2330  -15.3745
 
 system('python3 test_mpc_mex.py');
 
