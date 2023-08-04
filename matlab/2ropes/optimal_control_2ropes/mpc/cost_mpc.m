@@ -35,5 +35,5 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
     % smoothnes: minimize jerky control action
     smooth = sum(diff(delta_Fr_l).^2)+ sum(diff(delta_Fr_r).^2);  % this creates tracking errors sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
          
-    cost =  params.w1* tracking_cart +params.w2 *smooth ;
+    cost =  params.w1* tracking_cart +params.w2 *smooth + 10*params.w1* norm(ref_com_mpc(:,mpc_N) - p(:,mpc_N));
 end

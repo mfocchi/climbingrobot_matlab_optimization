@@ -74,6 +74,12 @@ solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params);
 solution.Tf
 solution.achieved_target
 
+subplot(2,1,1)           
+plot(solution.time, solution.Fr_l, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
+
+subplot(2,1,2)   
+plot(solution.time, solution.Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+
 
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 %system('python3 test_mex.py');

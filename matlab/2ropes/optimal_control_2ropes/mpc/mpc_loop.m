@@ -9,7 +9,7 @@ DISTURBED_VARIALES = 'state' % 'cartesian' %TODO
 USEGENCODE = true % need to run gen_cpp_code_mpc
 
 Fr_max = 100; % Fr is negative (max variation)
-constr_tolerance = 1e-3;
+
 dt=0.001; % only to evaluate solution
 N_dyn = length(solution.time);
 mpc_N = cast(0.6*length(solution.time), "int64");
@@ -73,7 +73,7 @@ for i=start_mpc:samples
              % actual_state(1:3) = act_state_pos_noise(1:3);
 
              %ADD NOISE ON state
-             actual_state(1:3) = actual_state(1:3) +[0.;0.1; 0.0];
+             actual_state(1:3) = actual_state(1:3) +[0.;0.1; 0.0]; %make the disturbance suvh that the robot is pulling
 
              
              %%%%%%%%%%%%%%%%%%%%%%%
@@ -87,6 +87,7 @@ for i=start_mpc:samples
              end
              delta_Fr_l = x(1:mpc_N);
              delta_Fr_r = x(mpc_N+1:2*mpc_N);
+             
         end
         
         % predict new state
@@ -128,17 +129,29 @@ for i=start_mpc:samples
         subplot(3,2,3)       
         plot(solution.time(start_mpc:end), solution.l1(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(2,:), 'bo-'); grid on;hold on; ylabel('l1')
+        
         subplot(3,2,5)   
         plot(solution.time(start_mpc:end), solution.l2(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(3,:), 'bo-'); grid on;hold on;  ylabel('l2')
+        
         subplot(3,2,2)           
-        plot(mpc_time, delta_Fr_l, 'bo-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;  
+        plot(mpc_time, delta_Fr_l, 'go-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;  
+        plot(mpc_time, Fr_l0, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
         xlim([min(mpc_time), max(mpc_time)]);
    
         subplot(3,2,4)   
         plot(mpc_time, delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        plot(mpc_time, Fr_r0, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
         xlim([min(mpc_time), max(mpc_time)]);
    
+        subplot(3,2,6)
+        plot(mpc_time, Fr_l0 + delta_Fr_l, 'go-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        plot(mpc_time, Fr_r0 + delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        plot(mpc_time, ones(1,length(mpc_time))*(-Fr_max), 'r'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        plot(mpc_time, ones(1,length(mpc_time))*0., 'r'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        legend('Fl + deltaFl','Fr + deltaFr');
+        
+        
         pause(0.3)
 
     else
