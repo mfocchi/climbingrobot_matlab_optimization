@@ -79,7 +79,7 @@ coder.cstructname(params, 'param')
 % check performances in matlab
 for i=1:10
     tic
-    [x, EXITFLAG, final_cost] =  optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);
+    [x, EXITFLAG, final_cost] =  optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% zeros(1,mpc_N), zeros(1,mpc_N));
     toc
 end
 %-50.0000  -36.1202  -11.3723    9.8112   22.1869   26.0825   24.4092   20.6530   17.4251   15.4886   15.0052   15.1206   50.0000   35.6135   11.1281   -9.7612  -21.9726  -25.8132  -24.1730  -20.5217  -17.4323
