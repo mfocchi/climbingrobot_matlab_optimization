@@ -23,7 +23,7 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
     norm_order = 2;
     row_column_wise =1; %1 column /2 row wise
     tracking_cart= sum (vecnorm(ref_com_mpc - p, norm_order, row_column_wise).^2); 
-    
+    terminal_cost = norm(ref_com_mpc(:,mpc_N) - p(:,mpc_N));
     % %state tracking (is worse than cart tracking)
     % tracking_state = 0.;
     % for i=1:mpc_N
@@ -35,5 +35,5 @@ function cost = cost_mpc(x, state0,  actual_t, ref_com, Fr_l0, Fr_r0,mpc_N, para
     % smoothnes: minimize jerky control action
     smooth = sum(diff(delta_Fr_l).^2)+ sum(diff(delta_Fr_r).^2);  % this creates tracking errors sum(delta_Fr_l.^2) + sum(delta_Fr_r.^2);
          
-    cost =  params.w1* tracking_cart +params.w2 *smooth + 10*params.w1* norm(ref_com_mpc(:,mpc_N) - p(:,mpc_N));
+    cost =  params.w1* tracking_cart +params.w2 *smooth;% + params.w3* terminal_cost; % creates issues in gazebo
 end

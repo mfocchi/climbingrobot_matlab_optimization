@@ -16,11 +16,10 @@ function [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, re
         options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
         'MaxFunctionEvaluations', 5000, 'ConstraintTolerance', constr_tolerance);
 
-        %optim (comment this for sanity check test) 
+        % use constraint on force
         [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_state, actual_t, ref_com, Fr_l0, Fr_r0, mpc_N,params),  x0,[],[],[],[],lb,ub, @(x) constraints_mpc(x, Fr_max, Fr_l0, Fr_r0, mpc_N), options);
 
-        
-        
+               
         %[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost_mpc(x, actual_state, actual_t, ref_com, Fr_l0, Fr_r0, mpc_N,params),  x0,[],[],[],[],lb,ub, [], options);%,  @(x) constraints_mpc(x, actual_com, ref_com, Fr_l0, Fr_r0 ) , options);
 
 end

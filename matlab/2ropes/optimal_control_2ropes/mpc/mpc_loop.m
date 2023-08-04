@@ -84,10 +84,10 @@ for i=start_mpc:samples
              if USEGENCODE
                   % use generated code
                   tic
-                  [x, EXITFLAG, final_cost] = optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params)% bootstrap  delta_Fr_l, delta_Fr_r);
+                  [x, EXITFLAG, final_cost] = optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% bootstrap  delta_Fr_l, delta_Fr_r);
                   toc
              else
-                [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params, delta_Fr_l, delta_Fr_r);
+                [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% bootstrap  delta_Fr_l, delta_Fr_r);
              end
              delta_Fr_l = x(1:mpc_N);
              delta_Fr_r = x(mpc_N+1:2*mpc_N);
