@@ -7,6 +7,7 @@ DEBUG_DYNAMICS = false;
 DEBUG_MPC_MACHINERY = false;
 DISTURBED_VARIALES = 'state' % 'cartesian' %TODO
 USEGENCODE = true % need to run gen_cpp_code_mpc
+PROPELLERS = true;
 
 Fr_max = 100; % Fr is negative (max variation)
 
@@ -43,6 +44,17 @@ if DEBUG_DYNAMICS
 end
 delta_Fr_l = zeros(1,mpc_N);
 delta_Fr_r = zeros(1,mpc_N);
+extra_forces= zeros(1,mpc_N);
+
+mpc_fun   = 'optimize_cpp_mpc'
+if PROPELLERS
+    mpc_fun=append(mpc_fun,'_propellers')
+end
+%Optimization
+if USEGENCODE
+    mpc_fun=append(mpc_fun,'_mex' )
+end
+mpc_fun_handler = str2func(mpc_fun);
 
 
 for i=start_mpc:samples
@@ -54,11 +66,8 @@ for i=start_mpc:samples
     if ~DEBUG_DYNAMICS
         
         %debug mpc machinery
-        if DEBUG_MPC_MACHINERY
-            delta_Fr_l = zeros(1,mpc_N);
-            delta_Fr_r = zeros(1,mpc_N);
-        else
-
+        if ~DEBUG_MPC_MACHINERY
+            
              %ADD NOISE ON position   
              %compute position relative to actualstate      
              % [act_p] = computePositionVelocity(params, actual_state(1), actual_state(2), actual_state(3));
@@ -75,34 +84,30 @@ for i=start_mpc:samples
              % actual_state(1:3) = act_state_pos_noise(1:3);
 
              %ADD NOISE ON state
-             actual_state(1:3) = actual_state(1:3) +[0.;0.1; 0.0]; %make the disturbance suvh that the robot is pulling
-
+             actual_state(1:3) = actual_state(1:3) +[0.05;0.1; 0.0]; %make the disturbance suvh that the robot is pulling
+             
              
              %%%%%%%%%%%%%%%%%%%%%%%
-
-             %Optimization
-             if USEGENCODE
-                  % use generated code
-                  tic
-                  [x, EXITFLAG, final_cost] = optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% bootstrap  delta_Fr_l, delta_Fr_r);
-                  toc
-             else
-                [x, EXITFLAG, final_cost] = optimize_cpp_mpc(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% bootstrap  delta_Fr_l, delta_Fr_r);
-             end
+            
+             tic
+             [x, EXITFLAG, final_cost] = mpc_fun_handler(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% bootstrap  delta_Fr_l, delta_Fr_r);
+              toc
              delta_Fr_l = x(1:mpc_N);
              delta_Fr_r = x(mpc_N+1:2*mpc_N);
-             
+             if PROPELLERS
+                 extra_forces = x(2*mpc_N+1:3*mpc_N);
+             end
         end
         
         % predict new state
-        [mpc_states, t] = computeRollout(actual_state, actual_t,params.mpc_dt, mpc_N, Fr_l0 + delta_Fr_l, Fr_r0 + delta_Fr_r,[0;0;0],params.int_method,params.int_steps, params);
+        [mpc_states, t] = computeRollout(actual_state, actual_t,params.mpc_dt, mpc_N, Fr_l0 + delta_Fr_l, Fr_r0 + delta_Fr_r,[0;0;0],params.int_method,params.int_steps, params, extra_forces);
  
             
         % predict new traj
-        [mpc_p, mpc_pd, mpc_time] = eval_pos_vel_mpc(actual_state,  actual_t, Fr_l0, Fr_r0,delta_Fr_l ,delta_Fr_r, mpc_N, params);
+        [mpc_p, mpc_pd, mpc_time] = eval_pos_vel_mpc(actual_state,  actual_t, Fr_l0, Fr_r0,delta_Fr_l ,delta_Fr_r, mpc_N, params, extra_forces);
 
         %update dynamics (this emulates the real dynamics with noise)
-        [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, params.mpc_dt/(params.int_steps-1), params.int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,params.int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,params.int_steps),[0;0;0], params.int_method, params); 
+        [actual_state, actual_t] = integrate_dynamics(actual_state ,actual_t, params.mpc_dt/(params.int_steps-1), params.int_steps, (Fr_l0(1) + delta_Fr_l(1))*ones(1,params.int_steps),  (Fr_r0(1) + delta_Fr_r(1))*ones(1,params.int_steps),[0;0;0], params.int_method, params, extra_forces); 
 
 
         %actual_com = computePositionVelocity(actual_state(1), actual_state(2), actual_state(3));   
@@ -130,6 +135,7 @@ for i=start_mpc:samples
         subplot(3,2,1)    
         plot(solution.time(start_mpc:end), solution.psi(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(1,:), 'bo-'); grid on;hold on; ylabel('psi')
+        
         subplot(3,2,3)       
         plot(solution.time(start_mpc:end), solution.l1(start_mpc:end), 'ro-'); grid on;hold on;
         plot(mpc_time, mpc_states(2,:), 'bo-'); grid on;hold on; ylabel('l1')
@@ -142,19 +148,27 @@ for i=start_mpc:samples
         plot(mpc_time, delta_Fr_l, 'go-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;  
         plot(mpc_time, Fr_l0, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
         xlim([min(mpc_time), max(mpc_time)]);
+        legend({'deltaFrl', 'Fr_l0'})
    
         subplot(3,2,4)   
         plot(mpc_time, delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
         plot(mpc_time, Fr_r0, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
         xlim([min(mpc_time), max(mpc_time)]);
-   
+        legend({'deltaFrr', 'Fr_r0'})
+        
         subplot(3,2,6)
         plot(mpc_time, Fr_l0 + delta_Fr_l, 'go-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
-        plot(mpc_time, Fr_r0 + delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+        plot(mpc_time, Fr_r0 + delta_Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;       
         plot(mpc_time, ones(1,length(mpc_time))*(-Fr_max), 'r'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
         plot(mpc_time, ones(1,length(mpc_time))*0., 'r'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
-        legend('Fl + deltaFl','Fr + deltaFr');
         
+        string_legend = {'Fl + deltaFl','Fr + deltaFr','min Fr', 'maxFr'};
+        
+        if PROPELLERS
+            plot(mpc_time, extra_forces, 'ko-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+            string_legend{5} = 'propeller';
+        end
+        legend(string_legend);
         
         pause(0.3)
 

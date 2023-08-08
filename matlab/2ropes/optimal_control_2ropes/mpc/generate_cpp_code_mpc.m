@@ -4,7 +4,7 @@ addpath('../');
 
 % normal test
 load('test_matlab2.mat')
-Fr_max = 100; % Fr is negative (max variation)
+Fr_max = 100; % Fr is negative (max variation) WE DO NOT CONSTRAINT THE MAX
 mass =5.08;
 
 % landing test
@@ -66,6 +66,10 @@ coder.cstructname(params, 'param')
 %https://it.mathworks.com/help/simulink/slref/coder.cstructname.html
 %https://it.mathworks.com/help/coder/ug/primary-function-input-specification.html
 %codegen -config cfg  optimize_cpp_mpc -args { zeros(6,1), 0,  coder.typeof(1,[3 Inf]), coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]) ,  0, zeros(1,1,'int64'),coder.cstructname(params, 'param') } -nargout 3 -report 
+%codegen -config cfg  optimize_cpp_mpc_no_constraints -args { zeros(6,1), 0,  coder.typeof(1,[3 Inf]), coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]) ,  0, zeros(1,1,'int64'),coder.cstructname(params, 'param') } -nargout 3 -report 
+%codegen -config cfg  optimize_cpp_mpc_propellers -args { zeros(6,1), 0,  coder.typeof(1,[3 Inf]), coder.typeof(1,[1 Inf]), coder.typeof(1,[1 Inf]) ,  0, zeros(1,1,'int64'),coder.cstructname(params, 'param') } -nargout 3 -report 
+
+
 
 % Driver script to show codegen, SWIG, and Python (does not work)
 %cfg = coder.config('dll');
@@ -82,10 +86,13 @@ for i=1:10
     [x, EXITFLAG, final_cost] =  optimize_cpp_mpc_mex(actual_state, actual_t, ref_com, Fr_l0, Fr_r0, Fr_max, mpc_N, params);% zeros(1,mpc_N), zeros(1,mpc_N));
     toc
 end
-%-50.0000  -36.1202  -11.3723    9.8112   22.1869   26.0825   24.4092   20.6530   17.4251   15.4886   15.0052   15.1206   50.0000   35.6135   11.1281   -9.7612  -21.9726  -25.8132  -24.1730  -20.5217  -17.4323
-% -15.6382  -15.2330  -15.3745
+%optimize_cpp_mpc_mex unit test
+% -49.4214  -22.9852    0.2963    3.2071    6.9494   11.0391   11.5331   12.9415   19.0685   24.4259   25.7462   25.8806   34.2098   35.0223   16.7722   -2.6196  -15.0529  -19.4382
+%-19.0498  -16.6146  -14.7696  -13.5718  -12.7079  -12.2642
 
 system('python3 test_mpc_mex.py');
 
 copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/
 copyfile optimize_cpp_mpc_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
+copyfile optimize_cpp_mpc_no_constraints_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
+copyfile optimize_cpp_mpc_propellers_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
