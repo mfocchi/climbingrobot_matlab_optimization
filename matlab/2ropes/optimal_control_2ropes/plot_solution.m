@@ -11,9 +11,9 @@ function plot_solution(solution,p0, pf,Fleg_max,Fr_max,mu, params)
     
     figure
     subplot(2,1,1)           
-    plot(solution.time, solution.Fr_l, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
+    plot(solution.time, solution.Fr_l, 'ko-'); grid on;hold on;  ylabel('Frl'); grid on;hold on;
     subplot(2,1,2)   
-    plot(solution.time, solution.Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+    plot(solution.time, solution.Fr_r, 'bo-'); grid on;hold on;  ylabel('Frr'); grid on;hold on;
 
     
 end

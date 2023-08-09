@@ -32,9 +32,10 @@ Fr_max = 90; % Fr is negative
 % params.jump_clearance = 0.3;
 
 % %landing test
-% mass = 15.0246; 
+% mass =  15.07; 
 % Fleg_max =  600;
 % Fr_max = 300; % Fr is negative
+
 
 mu = 0.8;
 
@@ -66,12 +67,17 @@ params.T_th =  0.05;
 
 % it should give the same result as optimal control 2 ropes (for sanity
 % check)
-%solution.Tf =1.2175
-%solution.achieved_target(normal test) =0.5197  3.9967 -4.0008
-% solution1 = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
-% solution1.Tf
-% solution1.achieved_target
-% plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params) 
+%(normal test)
+%solution1.Tf =1.2175
+%solution1.achieved_target =0.5197  3.9967 -4.0008
+%(landingtest)
+%solution1.Tf =1.6571
+%solution1.achieved_target  = 0.4576    3.9977   -4.0117
+
+solution1 = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
+solution1.Tf
+solution1.achieved_target
+plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params) 
 
 % generates the cpp code
 % run the mex generator after calling optimize_cpp otherwise he complains it is missing the pa1 

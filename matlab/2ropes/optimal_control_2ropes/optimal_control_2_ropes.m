@@ -23,7 +23,7 @@ if strcmp(test_type, 'obstacle_avoidance')
     Fleg_max = 600;
     Fr_max = 120; % Fr is negative
     params.m = 5.08;   % Mass [kg]
-    params.jump_clearance = 1;
+    params.jump_clearance = 0.3;
     params.obstacle_avoidance  = true;
 elseif  strcmp(test_type, 'landing_test')
     %jump params
@@ -34,7 +34,7 @@ elseif  strcmp(test_type, 'landing_test')
     params.m = 15.07;
     Fleg_max = 600;
     Fr_max = 300;
-    params.jump_clearance = 1.5;
+    params.jump_clearance = 1.;
     params.obstacle_avoidance  = false;
 else %normal
     %jump params
