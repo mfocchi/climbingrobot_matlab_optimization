@@ -21,7 +21,7 @@ if full_update
     min_y = min(min(solution.p(2,:)), pf(2))-3 ;
     max_y = max(max(solution.p(2,:)), pf(2)) +3 ;
 
-    min_z = min(min(p0(3,:)), min(pf(3,:)))-4;
+    min_z = min(min(p0(3)), min(pf(3)))-4;
     max_z = 2;
     
     
@@ -81,7 +81,7 @@ force_scale = 0.2;
 arrow3d_points(p0,p0 + solution.Fleg*force_scale,'color','r');grid on;hold on;
 
 if params.obstacle_avoidance
-    plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
+     plot_ellipsoid(params.obstacle_location,1.5, 1.5, 0.866,  min_z, max_z, min_y,max_y);
 end
 
 grid on;

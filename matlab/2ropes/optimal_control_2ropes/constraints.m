@@ -69,19 +69,23 @@ solution_constr.final_error_discrete = norm(p(:,end) - pf);
 
 if params.obstacle_avoidance
     
-    center = [0, 3,-4.5];
-    a_y =1;
-    a_z = 3;
-    radius = 1.5;
+    center = params.obstacle_location; %[0; 3;-7.5];
+    radii = [1.5, 1.5, 0.866];
+    
+    
+    a_y = radii(1)^2/radii(2)^2;
+    a_z = radii(1)^2/radii(3)^2;
+    radius = radii(1);
 
      %px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
      %-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
 
+    % better implementaiton with complex numbers for code generation
     for i=1:params.N_dyn 
-        arg  = sqrt(radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2);
+        arg  = radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2;
         %%%add ineq only if inside sphere
-        if imag(arg) == 0
-            ineq = [ineq  (-p(1, i) + center(1) + arg)  ];   
+        if arg > 0
+            ineq = [ineq  (-p(1, i) + center(1) + sqrt(arg) + params.jump_clearance)  ];   
         else 
             ineq = [ineq -p(1,i) ];   
 

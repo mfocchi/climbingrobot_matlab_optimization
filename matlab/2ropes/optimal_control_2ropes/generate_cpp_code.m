@@ -7,23 +7,41 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
+%jump params
+% INITIAL POINT
+p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
+
+%FINAL TARGET
+pf= [0.5, 4,-4];
+
+params.jump_clearance = 1;
+
+
+
+
 % normal test
 mass = 5.08; 
 Fleg_max = 300;
 Fr_max = 90; % Fr is negative
+
+
+% obstacle avoidance (remember to set params.obstacle_avoidance = true params.FRICTION_CONE = 0)
+% Fleg_max =  600;
+% Fr_max = 120; % Fr is negative
+% pf= [0.5, 4,-10];
+% params.jump_clearance = 0.3;
 
 % %landing test
 % mass = 15.0246; 
 % Fleg_max =  600;
 % Fr_max = 300; % Fr is negative
 
-
-
 mu = 0.8;
 
-params.jump_clearance = 1;
+
 params.m = mass;   % Mass [kg]
 params.obstacle_avoidance  = false;
+params.obstacle_location = [-0.5; 3;-7.5];
 anchor_distance = 5;
 params.num_params = 4.;   
 
@@ -45,27 +63,22 @@ params.w5=1; %ekinf (important! energy has much higher values!)
 params.w6=1;%Fr work
 params.T_th =  0.05;
 
-%jump params
-% INITIAL POINT
-p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
-
-%FINAL TARGET
-pf= [0.5, 4,-4];
 
 % it should give the same result as optimal control 2 ropes (for sanity
 % check)
 %solution.Tf =1.2175
 %solution.achieved_target(normal test) =0.5197  3.9967 -4.0008
-
-%[problem_solved, solution] = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
-
+% solution1 = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
+% solution1.Tf
+% solution1.achieved_target
+% plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params) 
 
 % generates the cpp code
 % run the mex generator after calling optimize_cpp otherwise he complains it is missing the pa1 
-cfg = coder.config('mex');
-cfg.IntegrityChecks = false;
-cfg.SaturateOnIntegerOverflow = false;
-%codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
+% cfg = coder.config('mex');
+% cfg.IntegrityChecks = false;
+% cfg.SaturateOnIntegerOverflow = false;
+% codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
 
 %it gives a slightly different result than optimal_control_2ropes:
 %solution.Tf = 1.3234
@@ -73,12 +86,7 @@ cfg.SaturateOnIntegerOverflow = false;
 solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params);
 solution.Tf
 solution.achieved_target
-
-subplot(2,1,1)           
-plot(solution.time, solution.Fr_l, 'ko-'); grid on;hold on;  ylabel('deltaFrl'); grid on;hold on;
-
-subplot(2,1,2)   
-plot(solution.time, solution.Fr_r, 'bo-'); grid on;hold on;  ylabel('deltaFrr'); grid on;hold on;
+plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params) 
 
 
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');

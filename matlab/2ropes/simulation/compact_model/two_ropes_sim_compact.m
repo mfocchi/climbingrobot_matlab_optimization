@@ -15,7 +15,7 @@ cd(actual_dir);
 OPTIM = true;
 %possible settings
 test_type='normal'; 
-%test_type='obstacle_avoidance'; 
+%test_type='obstacle_avoidance';  
 %test_type='landing_test';
 
 if OPTIM %inputs from optim
@@ -148,8 +148,8 @@ h(8) = animatedline('color','b', 'linewidth',3);
 %Pendulum sphere (red)
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
-if strcmp(test_type, 'obstacle_avoidance')  
-    h(9) = plot_sphere([0, 3,-4.5],1.5, 1, 3,  min_z, max_z, min_y,max_y);
+if strcmp(test_type, 'obstacle_avoidance')   
+    h(9) = plot_ellipsoid([-0.5, 3,-4.5],1.5, 1.5, 0.866,  min_z, max_z, min_y,max_y);
 end
 view(60,27);
 
