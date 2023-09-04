@@ -39,9 +39,9 @@ elseif  strcmp(test_type, 'landing_test')
 else %normal
     %jump params
     % INITIAL POINT
-    p0 = [0.28;  2.5; -6.10104]; % there is singularity for px = 0!
+    p0 = [0.22;  2.47; -6.19]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.28; 4;-4];
+    pf= [0.22; 4;-4];
     Fleg_max = 300;
     Fr_max = 90; % Fr is negative
     params.jump_clearance = 1;
@@ -202,29 +202,29 @@ solution.Tf
 disp('target')
 solution.achieved_target
 
-%normal solution (72 iterations)
+%normal solution (47 iterations)
 % Fleg
-%   121.6719
-%   -40.0742
-%   -40.6729
+% 
+% ans =
+% 
+%   108.3236
+%    25.8836
+%   -80.4388
 % 
 % Tf
+% 
+% ans =
+% 
 %     1.6571
 % 
 % target
-%     0.2833
-%     3.9814
-%    -4.0066
 % 
-% cost:  3227.446617
+% ans =
 % 
-% final_kin_energy:  231.351375
-% 
-% final_error_real:  0.020000
-% 
-% final_error_discrete:  0.020000
-% 
-% max_integration_error:  0.000000
+%     0.2447
+%     4.0033
+%    -4.0034
+
    
 if strcmp(test_type, 'obstacle_avoidance')
     save('../simulation/explicit_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
@@ -239,7 +239,10 @@ else
     Fr_r = solution.Fr_r;
     Fr_l = solution.Fr_l;
     Fleg= solution.Fleg;
-    save('../simulation/explicit_model/tests/test_irim.mat','p','l1','l2','time','Fr_r','Fr_l','Fleg', 'mu');
+    Tf = solution.Tf;
+    T_th = solution.T_th;
+    achieved_target = solution.achieved_target;
+    save('../simulation/explicit_model/tests/test_irim.mat','p','l1','l2','time','Fr_r','Fr_l','Fleg', 'mu', 'Tf', 'T_th', 'achieved_target');
 end
 
 

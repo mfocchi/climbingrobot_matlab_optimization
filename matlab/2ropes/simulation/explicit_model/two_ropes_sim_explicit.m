@@ -212,19 +212,6 @@ if OPTIM
     plot(optim_time, Fr2,'b-o'); hold on; grid on;
 end
 
-figure(1)
-subplot(3,1,1)
-plot(time_sim, X,'b'); hold on;grid on;
-ylabel('X')
-%legend('sim', 'opt')
-
-subplot(3,1,2)
-plot(time_sim, Y,'b'); hold on;grid on;
-ylabel('Y')
-
-subplot(3,1,3)
-plot(time_sim, Z,'b'); hold on;grid on;
-ylabel('Z')
 
 matlab_final_point = [X(end);Y(end);Z(end)];
 gazebo_final_point =[-0.00298  1.55479 -2.21499];
@@ -238,17 +225,61 @@ fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
 % fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
 
 
-%sanity check fir function computation 
-% figure
-% plot(optim_time, Fr1,'o'); hold on; grid on;
-% Fr1_log = [];
-% for i=1:length(time_sim)
-%    t = time_sim(i);
-%    Fr1_log = [Fr1_log Fr1Fun(t)]
-%     
-% end
-% plot(time_sim,Fr1_log, 'r');
+%%%%PLOTS for paper
+%%
+loadFigOptions
+load('tests/test_irim_gazebo.mat');
+figure(2)
+ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
+plot( solution.time, solution.p(1,:),'r', 'linewidth', 4);hold on;
+plot( time_sim, X,'b'); 
+plot( time_gazebo, actual_com(1,:),'k'); 
+ylabel('$p_\mathrm{x} [\mathrm{m}]$','interpreter','latex')
+set(ha(1),'XtickLabel',[])
+xlim([0,  solution.time(end)])
 
+lgd=legend({'$\mathrm{opt}$', ...
+    '$\mathrm{sim~mat}$', ...
+    '$\mathrm{sim~gaz}$',},...
+        'Location','northwest',...
+        'interpreter','latex',...
+        'Orientation','horizontal');
+lgd.FontSize = 25;
+
+ha(2) = axes('position',[four_xgraph four_y2 four_w small_h]);
+plot( solution.time, solution.p(2,:),'r', 'linewidth', 4);hold on;
+plot(time_sim, Y,'b'); 
+plot(time_gazebo, actual_com(2,:),'k'); 
+ylabel('$p_\mathrm{y} [\mathrm{m}]$','interpreter','latex')
+set(ha(2),'XtickLabel',[])
+xlim([0,  solution.time(end)])
+
+ha(3) = axes('position',[four_xgraph four_y3 four_w small_h]);
+plot(  solution.time, solution.p(3,:),'r', 'linewidth', 4);hold on;
+plot(time_sim, Z,'b'); 
+plot(time_gazebo, actual_com(3,:),'k'); 
+ylabel('$p_\mathrm{z} [\mathrm{m}]$','interpreter','latex')
+set(ha(3),'XtickLabel',[])
+xlim([0,  solution.time(end)])
+
+ha(4) = axes('position',[four_xgraph four_y4 four_w small_h]);
+plot( solution.time, Fr_l0,'r');hold on; hold on;
+plot( solution.time, Fr_r0,'b');hold on;
+ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
+xlabel('t $[\mathrm{s}]$','interpreter','latex')
+xlim([0,  solution.time(end)])
+
+lgd=legend({'left','right'},...
+        'Location','southwest',...
+        'interpreter','latex',...
+        'Orientation','horizontal');
+lgd.FontSize = 25;
+
+% save the plot
+set(gcf, 'Paperunits' , 'centimeters')
+set(gcf, 'PaperSize', [30 20]);
+set(gcf, 'PaperPosition', [0 0 30 20]);
+print(gcf, '-dpdf','irim_validation.pdf','-painters')
 
 
 
