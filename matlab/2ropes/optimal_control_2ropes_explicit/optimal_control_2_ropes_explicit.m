@@ -9,22 +9,22 @@ cd(actual_dir);
 
 
 %possible settings
-test_type='normal' ;
-%test_type='obstacle_avoidance' ;
+test_type='normal' ; %THIS IS FOR IRIM 23
+%test_type='obstacle_avoidance' ;  
 %test_type='landing_test'; 
 
 
 if strcmp(test_type, 'obstacle_avoidance')
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.28;  2.5; -6.10104]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.5; 4;-3];
-    Fleg_max = 500;
-    Fr_max = 90; % Fr is negative
+    pf= [0.28; 4;-10];
+    Fleg_max = 600;
+    Fr_max = 120; % Fr is negative
     params.m = 5.08;   % Mass [kg]
-    params.jump_clearance = 1;
-    params.obstacle_avoidance  = false;
+    params.jump_clearance = 0.3;
+    params.obstacle_avoidance  = true;
 elseif  strcmp(test_type, 'landing_test')
     %jump params
     % INITIAL POINT
@@ -39,9 +39,9 @@ elseif  strcmp(test_type, 'landing_test')
 else %normal
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.28;  2.5; -6.10104]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.2; 4;-4];
+    pf= [0.28; 4;-4];
     Fleg_max = 300;
     Fr_max = 90; % Fr is negative
     params.jump_clearance = 1;
@@ -51,6 +51,7 @@ end
  
 
 %WORLD FRAME ATTACHED TO ANCHOR 1
+params.obstacle_location = [-0.5; 3;-7.5];
 anchor_distance = 5;
 params.num_params = 4;   
 
@@ -196,33 +197,49 @@ end
 
 disp('Fleg')
 solution.Fleg
+disp('Tf')
 solution.Tf
 disp('target')
 solution.achieved_target
 
-% Fleg (35)
-%   118.7806
-%   -12.4740
-%   -59.7951
+%normal solution (72 iterations)
+% Fleg
+%   121.6719
+%   -40.0742
+%   -40.6729
+% 
 % Tf
-%     1.1971
+%     1.6571
 % 
 % target
-%     0.5044
-%     4.0177
-%    -3.9944
-
-% cost:  -180.000000
-% final_kin_energy:  301.678698
-% final_error_real:  0.019095
-% final_error_discrete:  0.019095
+%     0.2833
+%     3.9814
+%    -4.0066
+% 
+% cost:  3227.446617
+% 
+% final_kin_energy:  231.351375
+% 
+% final_error_real:  0.020000
+% 
+% final_error_discrete:  0.020000
+% 
 % max_integration_error:  0.000000
    
-% if strcmp(test_type, 'obstacle_avoidance')
-%     save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-% elseif strcmp(test_type, 'landing_test')  
-%     save('../simulation/compact_model/tests/test_matlab2landingClearance.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-% else
-%     save('../simulation/compact_model/tests/test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');    
-% end
+if strcmp(test_type, 'obstacle_avoidance')
+    save('../simulation/explicit_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+elseif strcmp(test_type, 'landing_test')  
+       save('../simulation/explicit_model/tests/test_matlab2landingClearance.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+else
+    save('../simulation/explicit_model/tests/test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');    
+    p = solution.p;
+    l1 = solution.l1;
+    l2 = solution.l2;
+    time = solution.time;
+    Fr_r = solution.Fr_r;
+    Fr_l = solution.Fr_l;
+    Fleg= solution.Fleg;
+    save('../simulation/explicit_model/tests/test_irim.mat','p','l1','l2','time','Fr_r','Fr_l','Fleg', 'mu');
+end
+
 
