@@ -18,6 +18,9 @@ test_type='normal'; %IRIM
 %test_type='obstacle_avoidance';  
 %test_type='landing_test';
 
+
+load('tests/test_irim_gazebo.mat');
+
 if OPTIM %inputs from optim
     if strcmp(test_type, 'obstacle_avoidance')
         load ('tests/test_matlab2obstacle.mat');
@@ -101,8 +104,10 @@ Z = x(:,3);
 % 3D plot Animation
 figure(3)
 
-title('Matlab Animation - simplified model');
-xlabel('X ') ; ylabel('Y ') ; zlabel('Z ');
+%title('Matlab Animation - reduced order model');
+%xlabel('X ') ; 
+ylabel('Y ') ; 
+zlabel('Z ');
 
 axis equal; hold on;
 %anchor 1    
@@ -185,7 +190,12 @@ end
 h(13) = plot3(X(end),Y(end), Z(end),'.r', 'MarkerSize',40);
 axis equal
 
-
+view(113,61); 
+%save the plot
+set(gcf, 'Paperunits' , 'centimeters')
+set(gcf, 'PaperSize', [20 21]);
+set(gcf, 'PaperPosition', [0 0 20 21]);
+print(gcf, '-dpdf',strcat('irim_optimal_trajectory.pdf'),'-painters')
 
 
 
@@ -214,21 +224,26 @@ end
 
 
 matlab_final_point = [X(end);Y(end);Z(end)];
-gazebo_final_point =[-0.00298  1.55479 -2.21499];
+[Tf_gazebo, end_gazebo_index] = max(time_gazebo); % there are nans in the log
+gazebo_final_point = [actual_com(1,end_gazebo_index);actual_com(2,end_gazebo_index);actual_com(3,end_gazebo_index)];
+jump_length  = norm(p0 -solution.path_length);
 if OPTIM
-    fprintf('Optim final point [%3.4f, %3.4f, %3.4f] \n', solution.achieved_target)
-    fprintf('error norm[%3.4f %3.4f %3.4f] \n',matlab_final_point - solution.achieved_target)
+    fprintf('expected Optim target [%3.4f, %3.4f, %3.4f] \n', solution.achieved_target)
+    fprintf('matlab touch down point [%3.4f, %3.4f, %3.4f] \n', matlab_final_point)
+    fprintf('error norm matlab: %3.4f perc: %3.4f\n',norm(matlab_final_point - solution.achieved_target), norm(matlab_final_point - solution.achieved_target)/jump_length*100)
 end
-fprintf('Matlab final point [%3.4f, %3.4f, %3.4f] \n', matlab_final_point)
-fprintf('Gazebo final point [%3.4f, %3.4f, %3.4f] \n', gazebo_final_point)
+fprintf('Gazebo touch down point [%3.4f, %3.4f, %3.4f] \n', gazebo_final_point)
+fprintf('error norm gazebo :  %3.4f perc: %3.4f \n',norm(gazebo_final_point - solution.achieved_target), norm(gazebo_final_point - solution.achieved_target)/jump_length*100)
 fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
-% fprintf('jump length %3.2f\n',norm(p0'-matlab_final_point))
+
+
+
+
 
 
 %%%%PLOTS for paper
 %%
 loadFigOptions
-load('tests/test_irim_gazebo.mat');
 figure(2)
 ha(1) = axes('position',[four_xgraph four_y1 four_w small_h]);
 plot( solution.time, solution.p(1,:),'r', 'linewidth', 4);hold on;
@@ -265,11 +280,12 @@ xlim([0,  solution.time(end)])
 ha(4) = axes('position',[four_xgraph four_y4 four_w small_h]);
 plot( solution.time, Fr_l0,'r');hold on; hold on;
 plot( solution.time, Fr_r0,'b');hold on;
+plot( solution.time, -Fr_max*ones(1,length(Fr_r0)),'k');hold on;
 ylabel('$F_r [\mathrm{N}]$','interpreter','latex')
 xlabel('t $[\mathrm{s}]$','interpreter','latex')
 xlim([0,  solution.time(end)])
 
-lgd=legend({'left','right'},...
+lgd=legend({'left','right', 'max'},...
         'Location','southwest',...
         'interpreter','latex',...
         'Orientation','horizontal');
