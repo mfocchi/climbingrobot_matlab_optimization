@@ -2,18 +2,19 @@
 
 function out = getMaxFeasiblePoint(baseline, mu, wall_clearance, rope_length)
 
-
-p_anchor1 = [0;-5;0];
-p_anchor2 = [0;5;0];
-
+anchor_distance = 10;
+p_anchor1 = [0;0;0]
+p_anchor2 = [0;anchor_distance;0];
+% take many steps around right anchor point (other is simmetric)
+steps=  anchor_distance + 0.15*anchor_distance *linspace(-1, 1, 30)
 
 g_vec = [0;0;-9.81];
 mass = 7;
 min_feet_force = 0;
 
-for step=3:0.1:7
+for i=1:length(steps)
     % base pos
-    p_base = [wall_clearance; 0+step; -rope_length];
+    p_base = [wall_clearance; steps(i); -rope_length];
 
     %old model base frame orientation
     % [theta, phi, l] = computePolarVariables(p_base);
@@ -26,7 +27,7 @@ for step=3:0.1:7
     %a rotation of (pi/2 -psi) about the y axis
     wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
                0, 1,          0, 
-            -sin(pi/2-psi), 0, cos(pi/2-psi)]
+            -sin(pi/2-psi), 0, cos(pi/2-psi)];
 
 
     pf1 = [0; -baseline/2; -wall_clearance];
@@ -101,6 +102,7 @@ for step=3:0.1:7
 
     if EXITFLAG == -2
         break;
+        %it exist from the for loop when the point is no longer feasible
         
     end
 

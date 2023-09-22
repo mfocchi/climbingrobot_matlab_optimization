@@ -1,8 +1,18 @@
 function a = plot_static_region(x_vec, y_vec, z_vec, mu, colormap_vector , label, colorbar_limits)
+    
+
+    anchor_distance = 10;
+    p_anchor1 = [0;0;0];
+    p_anchor2 = [0;anchor_distance;0];
+    
     figure;hold on;
+    
+    
     h = scatter3(x_vec,y_vec,z_vec,150, colormap_vector,'filled');hold on ;
+    h2 = scatter3(x_vec,(y_vec-anchor_distance)*-1,z_vec,150, colormap_vector,'filled');hold on ;
     alpha = 0.5;
-    set(h, 'MarkerEdgeAlpha', alpha, 'MarkerFaceAlpha', alpha);    
+    set(h, 'MarkerEdgeAlpha', alpha, 'MarkerFaceAlpha', alpha);   
+    set(h2, 'MarkerEdgeAlpha', alpha, 'MarkerFaceAlpha', alpha);    
     % colomap and bar
     colormap(jet);
     a= colorbar('Location','eastoutside');
@@ -19,19 +29,19 @@ function a = plot_static_region(x_vec, y_vec, z_vec, mu, colormap_vector , label
     %a.Position = a.Position - [.02 0 0 0];
 
 
-    p_anchor1 = [0;-5;0];
-    p_anchor2 = [0;5;0];
-    %anchor 1    
-    plot3(p_anchor1(1),p_anchor1(2),p_anchor1(3),'Marker','*','Color','k','MarkerSize',30);
-    %anchor2    
-    plot3(p_anchor2(1),p_anchor2(2),p_anchor2(3),'Marker','*','Color','k','MarkerSize',30);
+
+    % plot world
+    plot3(0,0,0,'.k', 'MarkerSize',40);grid on;hold on;
+    % plot anchors
+    plot3(p_anchor1(1),p_anchor1(2),p_anchor1(3),'.m', 'MarkerSize',60);grid on;hold on;
+    plot3(p_anchor2(1),p_anchor2(2),p_anchor2(3),'.y', 'MarkerSize',60);grid on;hold on;
     
     min_x= 0;
     max_x=2;
     min_z = -10;
     max_z = 1;
-    min_y = -7;
-    max_y = 7;
+    min_y = -2;
+    max_y = 12;
     
     %     drawing a wall at X = 0 
     p1 = [0 min_y min_z];

@@ -234,4 +234,4 @@ end
 set(gcf, 'Paperunits' , 'centimeters')
 set(gcf, 'PaperSize', [25 20]);
 set(gcf, 'PaperPosition', [0 0 25 20]);
-print(gcf, '-dpdf',strcat('static_analysis.pdf'),'-painters')
+print(gcf, '-dpdf',strcat('static_analysis_3 points.pdf'),'-painters')
