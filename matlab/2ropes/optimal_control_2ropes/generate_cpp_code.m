@@ -47,7 +47,7 @@ anchor_distance = 5;
 params.num_params = 4.;   
 
 %accurate
-params.int_method = 'rk4';
+params.int_method = 'rk4'; % Eul
 params.N_dyn = 30.; %dynamic constraints (number of knowts in the discretization) 
 params.FRICTION_CONE = 1;
 params.int_steps = 5.; %0 means normal intergation

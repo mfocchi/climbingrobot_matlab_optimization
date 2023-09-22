@@ -11,7 +11,7 @@ function [x_, t_, x_vec,  t_vec] = integrate_dynamics(x0, t0, dt, n_steps, Fr_l,
         extra_forces = zeros(1,n_steps);
     end    
     
-    if strcmp(method, 'euler')
+    if strcmp(method, 'eul')
             % forwatd euler
             for i=1:n_steps-1               
                 x_ = x_ + dt* dynamics(t_, x_, Fr_l(i), Fr_r(i), Fleg, params, extra_forces(i)); % we have time invariant dynamics so t wont count

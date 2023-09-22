@@ -61,7 +61,7 @@ params.FRICTION_CONE = 1;
 params.int_steps = cast(5,"int64"); %0 means normal intergation
 
 %faster
-% params.int_method = 'euler';
+% params.int_method = 'eul';
 % params.int_steps = cast(5,"int64"); %0 means normal intergation
 % params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 % params.FRICTION_CONE = 1;
