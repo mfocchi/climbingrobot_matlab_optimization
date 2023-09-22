@@ -74,10 +74,10 @@ params.T_th =  0.05;
 %solution1.Tf =1.6571
 %solution1.achieved_target  = 0.4576    3.9977   -4.0117
 
-solution1 = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
-solution1.Tf
-solution1.achieved_target
-plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params) 
+% solution1 = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params) 
+% solution1.Tf
+% solution1.achieved_target
+% plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params) 
 
 % generates the cpp code
 % run the mex generator after calling optimize_cpp otherwise he complains it is missing the pa1 
@@ -88,11 +88,12 @@ plot_solution(solution1, p0, pf, Fleg_max, Fr_max, mu, params)
 
 %it gives a slightly different result than optimal_control_2ropes:
 %solution.Tf = 1.3234
-%solution.achieved_target(normal test) = 0.5971     3.9923  -4.0035
+%solution.solution_constr.p(:,end)(normal test) = 0.5971     3.9923  -4.0035
+%solution.achieved_target 0.6343     3.9919   -4.0024
 solution = optimize_cpp_mex(p0,  pf, Fleg_max, Fr_max, mu, params);
 solution.Tf
 solution.achieved_target
-plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params) 
+plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params); 
 
 
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');

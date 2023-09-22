@@ -29,11 +29,20 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, mu, params)
 
     solution = eval_solution(x, dt,  p0, pf, params) ;
     solution.T_th = params.T_th;
-    problem_solved = (EXITFLAG == 1) || (EXITFLAG ==2) ;
+    solution.cost = final_cost;
+    solution.problem_solved = EXITFLAG ;%(EXITFLAG == 1) || (EXITFLAG == 2);
+    % 1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
+    % 0 Number of iterations exceeded options.MaxIterations or number of function evaluations exceeded options.MaxFunctionEvaluations.
+    % -1 Stopped by an output function or plot function.
+    % -2 No feasible point was found.
+    % 2 Change in x was less than options.StepTolerance (Termination tolerance on x, a scalar, the default is 1e-10) and maximum constraint violation was less than options.ConstraintTolerance.
+    solution.optim_output = output;  
+
+    % evaluate constraint violation 
+    [c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,Fleg_max, Fr_max, mu, params);
+    solution.c = c;    
+    solution.solution_constr = solution_constr;
+   
     
-    %save('test_matlab2.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
-
-
-
 end
 

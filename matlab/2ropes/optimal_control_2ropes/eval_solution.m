@@ -7,10 +7,33 @@ Tf = x(4);
 Fr_l = x(params.num_params+1:params.num_params+params.N_dyn); 
 Fr_r = x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn); 
 
-dt_dyn = Tf / (params.N_dyn-1); 
+
+
+% resample inputs 
+n_samples = floor(Tf/dt);
+Fr_l_fine = zeros(1,n_samples);
+Fr_r_fine = zeros(1,n_samples);
+rough_count = 1;
+t_ = 0;
+for i=1: n_samples
+   t_= t_+dt;
+   if t_>= ((n_samples) *dt/(params.N_dyn-1))
+        rough_count = rough_count + 1;
+        t_ =0;
+    end  
+    Fr_l_fine(i) =  Fr_l(rough_count);
+    Fr_r_fine(i) =  Fr_r(rough_count);
+end
+
 % single shooting
+
+% course integration
+%dt_dyn = Tf / (params.N_dyn-1); 
+% fine integration 
+%[states_rough, t_rough] = computeRollout(p0, 0,dt_dyn, params.N_dyn, omega_l, omega_r, params);
 state0 =  computeStateFromCartesian(params, p0);
-[states, t] = computeRollout(state0, 0,dt_dyn, params.N_dyn, Fr_l, Fr_r,Fleg,params.int_method,params.int_steps, params);
+[states, t] = computeRollout(state0, 0,dt, n_samples, Fr_l_fine, Fr_r_fine,Fleg, params.int_method, 0, params);
+
 psi = states(1,:);
 l1 = states(2,:);
 l2 = states(3,:);
@@ -39,8 +62,8 @@ solution.initial_error = norm(p(:,1) -p0);
 solution.final_error_real = norm(p(:,end) -pf);
 
 solution.Fleg = Fleg;
-solution.Fr_l  = Fr_l;
-solution.Fr_r  = Fr_r;
+solution.Fr_l  = Fr_l_fine;
+solution.Fr_r  = Fr_r_fine;
 solution.p = p;
 solution.psi = psi;
 solution.l1 = l1;
