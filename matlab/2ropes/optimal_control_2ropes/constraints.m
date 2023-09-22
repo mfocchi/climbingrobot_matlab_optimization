@@ -52,7 +52,8 @@ p = computePositionVelocity(params, psi, l1, l2); %only position
 p_0 = p(:, 1);
 p_f = p(:,end);
  
-
+% init struct foc C++ code generation
+solution = struct;
 solution_constr.p = p;
 solution_constr.psi = psi;
 solution_constr.l1 = l1;
@@ -121,10 +122,10 @@ if number_of_constr.retraction_force_constraints>0
 
     % max force
     for i=1:params.N_dyn 
-      ineq = [ineq -Fr_max - Fr_l(i)];    % -Fr_max -Fr_l <0
+      ineq = [ineq (-Fr_max - Fr_l(i))];    % -Fr_max -Fr_l <0
     end
     for i=1:params.N_dyn 
-      ineq = [ineq -Fr_max - Fr_r(i)];    % -Fr_max -Fr_r <0
+      ineq = [ineq (-Fr_max - Fr_r(i))];    % -Fr_max -Fr_r <0
     end
 end
 
@@ -164,12 +165,12 @@ end
 fixed_slack = 0.02;%*norm(p0 - pf); 
 
 if number_of_constr.initial_final_constraints == 2
-    ineq= [ineq norm(p_0 - p0) - fixed_slack];
-    ineq= [ineq norm(p_f - pf) - fixed_slack];
+    ineq= [ineq (norm(p_0 - p0) - fixed_slack)];
+    ineq= [ineq (norm(p_f - pf) - fixed_slack)];
 end
 
 if number_of_constr.initial_final_constraints == 1
-        ineq= [ineq norm(p_f - pf) - fixed_slack];
+        ineq= [ineq (norm(p_f - pf) - fixed_slack)];
 end
 
 

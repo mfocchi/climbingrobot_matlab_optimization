@@ -85,43 +85,45 @@ p_dd7 =subs(p_dd6, {str2sym('(1 - (b^2 + l1^2 - l2^2)^2/(4*b^2*l1^2))^(1/2)')} ,
 p_dd8 =subs(p_dd7, {str2sym(' (b^2 + l1^2 - l2^2)')} ,  {str2sym('py2b') });
 
 
-syms px_l1  n_pz_l1 px_l1_sinpsi py2b            psidd l1dd l2dd A b real
+syms px_l1  n_pz_l1 px_l1_sinpsi py2b   psidd l1dd l2dd A b real
 select_1 = [1 0 0]
 select_2 = [0 1 0]
 select_3 = [0 0 1]
-A = sym(zeros(3,3));
-b = sym(zeros(3,1));
+A_dyn = sym(zeros(3,3));
+b_dyn = sym(zeros(3,1));
 coeff_psidd = coeffs(select_1*p_dd8, psidd) 
-A(1,1) = coeff_psidd*[0;1];
+A_dyn(1,1) = coeff_psidd*[0;1];
 coeff_l1dd = coeffs(coeff_psidd*[1;0], l1dd) 
-A(1,2) = coeff_l1dd*[0;1];
+A_dyn(1,2) = coeff_l1dd*[0;1];
 coeff_l2dd = coeffs(coeff_l1dd*[1;0], l2dd) 
-A(1,3) = coeff_l2dd*[0;1]
-b(1,1) = coeff_l2dd*[1;0]
+A_dyn(1,3) = coeff_l2dd*[0;1]
+b_dyn(1,1) = coeff_l2dd*[1;0]
 
 coeff_psidd2 = coeffs(select_2*p_dd8, psidd)  % is only one element cause this line does not contain psidd
-A(2,1) = 0;
+A_dyn(2,1) = 0;
 coeff_l1dd2 = coeffs(coeff_psidd2, l1dd) 
-A(2,2) = coeff_l1dd2*[0;1];
+A_dyn(2,2) = coeff_l1dd2*[0;1];
 coeff_l2dd2 = coeffs(coeff_l1dd2*[1;0], l2dd) 
-A(2,3) = coeff_l2dd2*[0;1]
-b(2,1) = coeff_l2dd2*[1;0]
+A_dyn(2,3) = coeff_l2dd2*[0;1]
+b_dyn(2,1) = coeff_l2dd2*[1;0]
 
 coeff_psidd = coeffs(select_3*p_dd8, psidd) 
-A(3,1) = coeff_psidd*[0;1];
+A_dyn(3,1) = coeff_psidd*[0;1];
 coeff_l1dd = coeffs(coeff_psidd*[1;0], l1dd) 
-A(3,2) = coeff_l1dd*[0;1];
+A_dyn(3,2) = coeff_l1dd*[0;1];
 coeff_l2dd = coeffs(coeff_l1dd*[1;0], l2dd) 
-A(3,3) = coeff_l2dd*[0;1]
-b(3,1) = coeff_l2dd*[1;0]
+A_dyn(3,3) = coeff_l2dd*[0;1]
+b_dyn(3,1) = coeff_l2dd*[1;0]
 
-b = simplify(b,'Steps',50)
+b_dyn = simplify(b_dyn,'Steps',50)
 % check everything is allright
-simplify( (A*[psidd; l1dd; l2dd] + b) - p_dd8)
+simplify( (A_dyn*[psidd; l1dd; l2dd] + b_dyn) - p_dd8)
 
-    latex(A)
+pretty(A_dyn)
+sympref("PolynomialDisplayStyle","ascend");
+pretty(b_dyn)
 
-    latex(b)
+latex(b_dyn)
 % Compute Lagrangian equations
 %
 % v_2 = simplify(sum(p_d.^2),'Steps',50);
