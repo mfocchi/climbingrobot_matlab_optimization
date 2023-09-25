@@ -27,12 +27,11 @@ end
 
 % single shooting
 
-% course integration
-%dt_dyn = Tf / (params.N_dyn-1); 
-% fine integration 
-%[states_rough, t_rough] = computeRollout(p0, 0,dt_dyn, params.N_dyn, omega_l, omega_r, params);
 state0 =  computeStateFromCartesian(params, p0);
-[states, t] = computeRollout(state0, 0,dt, n_samples, Fr_l_fine, Fr_r_fine,Fleg, params.int_method, 0, params);
+
+% course integration
+dt_dyn = Tf / (params.N_dyn-1); 
+[states, t] = computeRollout(state0, 0,dt_dyn, params.N_dyn, Fr_l, Fr_r,Fleg,params.int_method,params.int_steps, params);
 
 psi = states(1,:);
 l1 = states(2,:);
@@ -42,8 +41,16 @@ l1d = states(5,:);
 l2d = states(6,:); 
 [p, pd ]= computePositionVelocity(params, psi, l1, l2, psid,l1d, l2d);
    
-p_0 = p(:, 1);
-p_f = p(:,end);
+% fine integration 
+[states_fine, t_fine] = computeRollout(state0, 0,dt, n_samples, Fr_l_fine, Fr_r_fine,Fleg, params.int_method, 0, params);
+psi_fine = states_fine(1,:);
+l1_fine = states_fine(2,:);
+l2_fine = states_fine(3,:);
+psid_fine = states_fine(4,:);
+l1d_fine = states_fine(5,:);
+l2d_fine = states_fine(6,:); 
+[p_fine, pd_fine ]= computePositionVelocity(params, psi_fine, l1_fine, l2_fine, psid_fine,l1d_fine, l2d_fine);
+   
 
 % init struct foc C++ code generation
 solution = struct;
@@ -62,8 +69,8 @@ solution.initial_error = norm(p(:,1) -p0);
 solution.final_error_real = norm(p(:,end) -pf);
 
 solution.Fleg = Fleg;
-solution.Fr_l  = Fr_l_fine;
-solution.Fr_r  = Fr_r_fine;
+solution.Fr_l  = Fr_l;
+solution.Fr_r  = Fr_r;
 solution.p = p;
 solution.psi = psi;
 solution.l1 = l1;
@@ -72,8 +79,21 @@ solution.psid = psid;
 solution.l1d = l1d;
 solution.l2d = l2d;
 solution.time = t;
+
+solution.Fr_l_fine  = Fr_l_fine;
+solution.Fr_r_fine  = Fr_r_fine;
+solution.p_fine = p_fine;
+solution.psi_fine = psi_fine;
+solution.l1_fine = l1_fine;
+solution.l2_fine = l2_fine;
+solution.psid_fine = psid_fine;
+solution.l1d_fine = l1d_fine;
+solution.l2d_fine = l2d_fine;
+solution.time_fine = t_fine;
+
+
 solution.Tf = Tf;
-solution.achieved_target =  p(:,end);
+solution.achieved_target =  p_fine(:,end);
 
 
 solution.Etot = 0;
@@ -87,19 +107,19 @@ solution.U0 = 0;
 solution.Uf = 0;
 
 % kinetic energy at the beginning
-solution.Ekin0x = params.m/2*pd(1,1)'*pd(1,1);
-solution.Ekin0y = params.m/2*pd(2,1)'*pd(2,1);
-solution.Ekin0z = params.m/2*pd(3,1)'*pd(3,1);
-solution.Ekin0 = params.m/2*pd(:,1)'*pd(:,1);
+solution.Ekin0x = params.m/2*pd_fine(1,1)'*pd_fine(1,1);
+solution.Ekin0y = params.m/2*pd_fine(2,1)'*pd_fine(2,1);
+solution.Ekin0z = params.m/2*pd_fine(3,1)'*pd_fine(3,1);
+solution.Ekin0 = params.m/2*pd_fine(:,1)'*pd_fine(:,1);
 
-solution.Ekinfx = params.m/2*pd(1,end)'*pd(1,end);
-solution.Ekinfy = params.m/2*pd(2,end)'*pd(2,end);
-solution.Ekinfz = params.m/2*pd(3,end)'*pd(3,end);
-solution.Ekinf = params.m/2*pd(:,end)'*pd(:,end);
+solution.Ekinfx = params.m/2*pd_fine(1,end)'*pd_fine(1,end);
+solution.Ekinfy = params.m/2*pd_fine(2,end)'*pd_fine(2,end);
+solution.Ekinfz = params.m/2*pd_fine(3,end)'*pd_fine(3,end);
+solution.Ekinf = params.m/2*pd_fine(:,end)'*pd_fine(:,end);
 
 
 for i =1:length(t)
-    solution.Ekin(i) = params.m/2*pd(:,i)'*pd(:,i);
+    solution.Ekin(i) = params.m/2*pd_fine(:,i)'*pd_fine(:,i);
     solution.intEkin = solution.intEkin +  solution.Ekin(i)*dt;
 end
     
