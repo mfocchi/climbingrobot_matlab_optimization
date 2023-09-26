@@ -97,7 +97,7 @@ solution.achieved_target =  p_fine(:,end);
 
 
 solution.Etot = 0;
-solution.Ekin = zeros(1, length(t));
+solution.Ekin = zeros(1, length(t_fine));
 solution.Ekin0x = 0;
 solution.Ekin0y = 0;
 solution.Ekin0z = 0;
@@ -118,7 +118,7 @@ solution.Ekinfz = params.m/2*pd_fine(3,end)'*pd_fine(3,end);
 solution.Ekinf = params.m/2*pd_fine(:,end)'*pd_fine(:,end);
 
 
-for i =1:length(t)
+for i =1:length(t_fine)
     solution.Ekin(i) = params.m/2*pd_fine(:,i)'*pd_fine(:,i);
     solution.intEkin = solution.intEkin +  solution.Ekin(i)*dt;
 end

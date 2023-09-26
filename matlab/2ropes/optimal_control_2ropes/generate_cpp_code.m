@@ -95,6 +95,9 @@ solution.Tf
 solution.achieved_target
 plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params); 
 
+[impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
+E = impulse_work+hoist_work_fine;
+
 %this is to save the result for simulation in matlab
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 %system('python3 test_mex.py');
