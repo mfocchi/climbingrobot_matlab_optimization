@@ -17,13 +17,13 @@ test_type='normal' ;
 if strcmp(test_type, 'obstacle_avoidance')
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.5; 0.5; -6]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.5; 4;-10];
-    Fleg_max = 600;
-    Fr_max = 120; % Fr is negative
+    pf= [0.5; 4.5;-6];
+    Fleg_max = 300;
+    Fr_max = 90; % Fr is negative
     params.m = 5.08;   % Mass [kg]
-    params.jump_clearance = 0.3;
+    params.jump_clearance = 1;
     params.obstacle_avoidance  = true;
 elseif  strcmp(test_type, 'landing_test')
     %jump params

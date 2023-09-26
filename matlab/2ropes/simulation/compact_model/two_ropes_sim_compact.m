@@ -149,7 +149,7 @@ h(8) = animatedline('color','b', 'linewidth',3);
 % h(7) = animatedline('Marker','o','Color','k','MarkerFaceColor','r','MarkerSize',10);
 
 if strcmp(test_type, 'obstacle_avoidance')   
-    h(9) = plot_ellipsoid([-0.5, 3,-4.5],1.5, 1.5, 0.866,  min_z, max_z, min_y,max_y);
+    h(9) = plot_ellipsoid([-0.5, 2.5,-6],1.5, 1.5, 0.866,  min_z, max_z, min_y,max_y);
 end
 view(60,27);
 

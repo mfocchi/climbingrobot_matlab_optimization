@@ -14,22 +14,17 @@ p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
 %FINAL TARGET
 pf= [0.5, 4,-4];
 
+% obstacle avoidance (remember to set params.obstacle_avoidance = true )
+% p0 = [0.5, 0.5, -6]; 
+% pf= [0.5, 4.5,-6];
+
+
 params.jump_clearance = 1;
-
-
-
 
 % normal test
 mass = 5.08; 
 Fleg_max = 300;
 Fr_max = 90; % Fr is negative
-
-
-% obstacle avoidance (remember to set params.obstacle_avoidance = true params.FRICTION_CONE = 0)
-% Fleg_max =  600;
-% Fr_max = 120; % Fr is negative
-% pf= [0.5, 4,-10];
-% params.jump_clearance = 0.3;
 
 % %landing test
 % mass =  15.07; 
@@ -42,7 +37,7 @@ mu = 0.8;
 
 params.m = mass;   % Mass [kg]
 params.obstacle_avoidance  = false;
-params.obstacle_location = [-0.5; 3;-7.5];
+params.obstacle_location = [-0.5; 2.5;-6];
 anchor_distance = 5;
 params.num_params = 4.;   
 
@@ -95,10 +90,12 @@ solution.Tf
 solution.achieved_target
 plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params); 
 
-[impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
-E = impulse_work+hoist_work_fine;
+% [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
+% E = impulse_work+hoist_work_fine;
 
 %this is to save the result for simulation in matlab
+%save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
+
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 %system('python3 test_mex.py');
 
