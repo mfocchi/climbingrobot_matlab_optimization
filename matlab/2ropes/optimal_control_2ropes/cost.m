@@ -42,8 +42,10 @@ function cost = cost(x, p0,  pf, params)
     %minimize the final kin energy at contact
     Ekinfcost=  params.m/2 * (params.contact_normal'*pd(:,end))*params.contact_normal'*pd(:,end);
       
-    % minimize hoist work / energy consumption (doe
+    % minimize hoist work / energy consumption for the hoist work we integrathe the power on a rough grid
     hoist_work = sum(abs(Fr_l.*l1d)*dt_dyn) + sum(abs(Fr_r.*l2d)*dt_dyn);  %assume the motor is not regenreating
+    
+     
     
     % smoothnes: minimize jerky control action TODO this is wrong! it goes
     % to -180 and stays there! with sum(abs(diff(Fr_r))) +
@@ -59,7 +61,7 @@ function cost = cost(x, p0,  pf, params)
      
     %cost =  0.001 * params.w1 *Ekinfcost +   params.w4 *smooth ;% converge
     %super slowly
-   % cost =  params.w1 *hoist_work +   params.w4 *smooth ;% 72 iter
-    cost =    params.w4 *smooth ;% 27 iter
+    cost =  params.w2 *hoist_work +   params.w1 *smooth ;% 72 iter
+   % cost =    params.w4 *smooth ;% 27 iter
    % cost =    params.w4 *smooth_correct ;% 96 iter
 end

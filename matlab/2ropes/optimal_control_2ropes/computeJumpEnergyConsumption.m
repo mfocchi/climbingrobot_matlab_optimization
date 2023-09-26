@@ -10,7 +10,7 @@ function [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsump
     %for the hoist work we integrathe the ppowet on a rough grid
     hoist_work = 0;
     for i=1:length(solution.time)
-        hoist_work = hoist_work + (abs(solution.Fr_l(i).*solution.l2d(i)) + abs(solution.Fr_l(i).*solution.l2d(i)))* dt_dyn;  %assume the motor is not regenreating
+        hoist_work = hoist_work + (abs(solution.Fr_l(i).*solution.l1d(i)) + abs(solution.Fr_r(i).*solution.l2d(i)))* dt_dyn;  %assume the motor is not regenreating
     end
     
     
@@ -18,7 +18,7 @@ function [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsump
     dt = solution.time_fine(2)-solution.time_fine(1);
     hoist_work_fine = 0;
     for i=1:length(solution.time_fine)
-        hoist_work_fine = hoist_work_fine + (abs(solution.Fr_l_fine(i).*solution.l2d_fine(i)) + abs(solution.Fr_l_fine(i).*solution.l2d_fine(i)))* dt;  %assume the motor is not regenreating
+        hoist_work_fine = hoist_work_fine + (abs(solution.Fr_l_fine(i).*solution.l1d_fine(i)) + abs(solution.Fr_r_fine(i).*solution.l2d_fine(i)))* dt;  %assume the motor is not regenreating
     end
     
 %     impulse_workWh = J_TO_Wh*impulse_work

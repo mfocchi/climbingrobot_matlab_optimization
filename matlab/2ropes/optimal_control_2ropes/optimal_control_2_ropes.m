@@ -58,7 +58,7 @@ params.num_params = 4;
 params.int_method = 'rk4';
 params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 params.FRICTION_CONE = 1;
-params.int_steps = cast(5,"int64"); %0 means normal intergation
+params.int_steps = 5.; %0 means normal intergation
 
 %faster
 % params.int_method = 'eul';
@@ -72,12 +72,12 @@ params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
-params.w1 =1; % green initial cost (not used)
-params.w2=1;%red final cost (not used)
-params.w3=1;
-params.w4=1;% diff Fr1/2 smothing
-params.w5=1; %ekinf (important! energy has much higher values!)
-params.w6=1;%Fr work
+params.w1=1; % diff Fr1/2 smothing
+params.w2=0; %hoist work
+params.w3=0; %(not used)
+params.w4=0;% %(not used)
+params.w5=0; %  %(not used0 ekinf (important! energy has much higher values!)
+params.w6=0;%  %(not used)
 params.contact_normal =[1;0;0];
 params.T_th =  0.05;
 mu = 0.8;

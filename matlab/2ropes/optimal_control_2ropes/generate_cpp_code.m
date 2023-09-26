@@ -51,12 +51,12 @@ params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
-params.w1 =1; % green initial cost (not used)
-params.w2=1;%red final cost (not used)
-params.w3=1;
-params.w4=1;% diff Fr1/2 smothing
-params.w5=1; %ekinf (important! energy has much higher values!)
-params.w6=1;%Fr work
+params.w1=1; % diff Fr1/2 smothing
+params.w2=100.; %hoist work
+params.w3=0; %(not used)
+params.w4=0;% %(not used)
+params.w5=0; %  %(not used0 ekinf (important! energy has much higher values!)
+params.w6=0;%  %(not used)
 params.T_th =  0.05;
 
 
@@ -90,8 +90,8 @@ solution.Tf
 solution.achieved_target
 plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params); 
 
-% [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
-% E = impulse_work+hoist_work_fine;
+ [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
+ E = impulse_work+hoist_work_fine;
 
 %this is to save the result for simulation in matlab
 %save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
