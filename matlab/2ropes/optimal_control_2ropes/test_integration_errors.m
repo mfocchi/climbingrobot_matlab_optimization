@@ -81,7 +81,7 @@ for n_test =1:size(tests,1)
 
     fprintf(1,"number of iterations: %i\n", solution.optim_output.iterations);
     %fprintf(1,"number of func evaluations: %i\n", solution.optim_output.funcCount);
-    fprintf('max_integration_error:  %f\n', norm(solution.p_fine(:,end) - solution.solution_constr.p(:,end)));
-    fprintf('max_error:  %f\n\n', norm(solution.p_fine(:,end) - pf(:)));
+    fprintf('integration_error:  %f\n', norm(solution.p_fine(:,end) - solution.solution_constr.p(:,end)));
+    fprintf('absolute error:  %f\n\n', norm(solution.p_fine(:,end) - pf(:)));
 
 end

@@ -92,7 +92,7 @@ end
 
 system('python3 test_mpc_mex.py');
 
-copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/
-copyfile optimize_cpp_mpc_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
-copyfile optimize_cpp_mpc_no_constraints_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
-copyfile optimize_cpp_mpc_propellers_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
+copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller/
+copyfile optimize_cpp_mpc_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
+copyfile optimize_cpp_mpc_no_constraints_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
+copyfile optimize_cpp_mpc_propellers_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/

@@ -238,6 +238,22 @@ fprintf('Touchdown at s t [%3.4f] \n', time_sim(end))
 % end
 % plot(time_sim,Fr1_log, 'r');
 
+p = solution.p;
+psi = solution.psi;
+l1 = solution.l1;
+l2 = solution.l2;
+time = solution.time;
+Fr_l = solution.Fr_l;
+Fr_r = solution.Fr_r;
+Fleg = solution.Fleg;
+T_th = solution.T_th
+Tf = solution.Tf
+
+%this is input for gazebo validation test
+%save('tests/validation.mat','time', 'p','psi','l1','l2','Fr_l', 'Fr_r','Fleg','T_th','Tf');
+%this is matlab validation test
+%save('tests/matlab_validation.mat', 'solution', 'time_sim', 'X', 'Y','Z', 'mu','Fleg_max', 'Fr_max', 'p0','pf');    
+
 
 
 
@@ -274,7 +290,7 @@ function [fleg] = FlegFun(t)
 global   Fleg  delta_duration 
 
     if (t <= delta_duration)
-        fleg = Fleg;
+        fleg = Fleg(:);
     else
         fleg = [0;0;0];
     end

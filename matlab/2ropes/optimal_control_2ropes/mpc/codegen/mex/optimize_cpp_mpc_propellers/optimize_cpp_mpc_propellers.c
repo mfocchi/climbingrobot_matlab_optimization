@@ -16,16 +16,17 @@
 #include "computeForwardDifferences.h"
 #include "diff.h"
 #include "driver.h"
+#include "dynamics.h"
 #include "factoryConstruct.h"
 #include "factoryConstruct1.h"
 #include "factoryConstruct2.h"
-#include "integrate_dynamics.h"
 #include "optimize_cpp_mpc_propellers_data.h"
 #include "optimize_cpp_mpc_propellers_emxutil.h"
 #include "optimize_cpp_mpc_propellers_internal_types.h"
 #include "optimize_cpp_mpc_propellers_types.h"
 #include "rt_nonfinite.h"
 #include "setProblemType.h"
+#include "strcmp.h"
 #include "updateWorkingSetForNewQP.h"
 #include "vecnorm.h"
 #include "xcopy.h"
@@ -58,11 +59,39 @@ static emlrtMCInfo c_emlrtMCI = { 37,  /* lineNo */
 };
 
 /* Function Declarations */
-static const mxArray *b_emlrt_marshallOut(const emxArray_real_T *u);
+static const mxArray *b_emlrt_marshallOut(const char_T u[15]);
+static const mxArray *c_emlrt_marshallOut(const char_T u[66]);
+static const mxArray *d_emlrt_marshallOut(const emxArray_real_T *u);
 static void disp(const mxArray *b, emlrtMCInfo *location);
 
 /* Function Definitions */
-static const mxArray *b_emlrt_marshallOut(const emxArray_real_T *u)
+static const mxArray *b_emlrt_marshallOut(const char_T u[15])
+{
+  static const int32_T iv[2] = { 1, 15 };
+
+  const mxArray *m;
+  const mxArray *y;
+  y = NULL;
+  m = emlrtCreateCharArray(2, &iv[0]);
+  emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 15, m, &u[0]);
+  emlrtAssign(&y, m);
+  return y;
+}
+
+static const mxArray *c_emlrt_marshallOut(const char_T u[66])
+{
+  static const int32_T iv[2] = { 1, 66 };
+
+  const mxArray *m;
+  const mxArray *y;
+  y = NULL;
+  m = emlrtCreateCharArray(2, &iv[0]);
+  emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 66, m, &u[0]);
+  emlrtAssign(&y, m);
+  return y;
+}
+
+static const mxArray *d_emlrt_marshallOut(const emxArray_real_T *u)
 {
   const mxArray *m;
   const mxArray *y;
@@ -163,12 +192,6 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
 {
   static const int32_T iv[2] = { 1, 72 };
 
-  static const int32_T iv1[2] = { 1, 66 };
-
-  static const int32_T iv2[2] = { 1, 15 };
-
-  static const int32_T iv3[2] = { 1, 15 };
-
   static const char_T u[72] = { 'c', 'o', 's', 't', '_', 'm', 'p', 'c', ':', 'w',
     'r', 'o', 'n', 'g', ' ', 'r', 'e', 'f', '_', 'c', 'o', 'm', ' ', 'i', 'n',
     'p', 'u', 't', ' ', 'l', 'e', 'n', 'g', 't', 'h', ':', ' ', 'r', 'e', 'f',
@@ -176,16 +199,16 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
     'l', 'o', 'n', 'g', 'e', 'r', ' ', 't', 'h', 'a', 'n', ' ', 'm', 'p', 'c',
     '_', 'N' };
 
-  static const char_T b_u[66] = { 'e', 'v', 'a', 'l', '_', 'p', 'o', 's', '_',
+  static const char_T cv[66] = { 'e', 'v', 'a', 'l', '_', 'p', 'o', 's', '_',
     'm', 'p', 'c', ':', 'w', 'r', 'o', 'n', 'g', ' ', 'i', 'n', 'p', 'u', 't',
     ' ', 'l', 'e', 'n', 'g', 't', 'h', ':', ' ', 'i', 'n', 'p', 'u', 't', ' ',
     's', 'h', 'o', 'u', 'l', 'd', ' ', 'b', 'e', ' ', 'l', 'o', 'n', 'g', 'e',
     'r', ' ', 't', 'h', 'a', 'n', ' ', 'm', 'p', 'c', '_', 'N' };
 
-  static const char_T c_u[15] = { 'U', 'n', 'k', 'n', 'o', 'w', 'n', ' ', 'm',
+  static const char_T cv1[15] = { 'U', 'n', 'k', 'n', 'o', 'w', 'n', ' ', 'm',
     'e', 't', 'h', 'o', 'd', '.' };
 
-  static const char_T b[3] = { 'r', 'k', '4' };
+  static const char_T b[3] = { 'e', 'u', 'l' };
 
   emxArray_real_T *b_p;
   emxArray_real_T *b_ref_com;
@@ -198,9 +221,6 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
   emxArray_real_T *px;
   emxArray_real_T *py;
   emxArray_real_T *states_rough;
-  const mxArray *b_y;
-  const mxArray *c_y;
-  const mxArray *d_y;
   const mxArray *m;
   const mxArray *y;
   int64_T b_i;
@@ -215,9 +235,9 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
   real_T b_px;
   real_T b_py;
   real_T b_x;
+  real_T b_y;
   real_T d;
   real_T dt_step;
-  real_T e_y;
   real_T varargout_1;
   int32_T b_loop_ub;
   int32_T i;
@@ -226,7 +246,6 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
   int32_T i4;
   int32_T loop_ub;
   int32_T nx;
-  boolean_T guard1 = false;
   boolean_T p;
   emlrtHeapReferenceStackEnterFcnR2012b(emlrtRootTLSGlobal);
 
@@ -253,7 +272,7 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
     emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 72, m, &u[0]);
     emlrtAssign(&y, m);
     disp(y, &emlrtMCI);
-    emlrtDisplayR2012b(b_emlrt_marshallOut(ref_com), "ref_com", &emlrtRTEI,
+    emlrtDisplayR2012b(d_emlrt_marshallOut(ref_com), "ref_com", &emlrtRTEI,
                        emlrtRootTLSGlobal);
   } else {
     if (1L > mpc_N) {
@@ -335,9 +354,8 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
       }
     }
 
-    guard1 = false;
     if (p) {
-      guard1 = true;
+      disp(c_emlrt_marshallOut(cv), &b_emlrtMCI);
     } else {
       nx = Fr_r0->size[1];
       p = false;
@@ -350,7 +368,7 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
       }
 
       if (p) {
-        guard1 = true;
+        disp(c_emlrt_marshallOut(cv), &b_emlrtMCI);
       } else {
         /*  check vectors are row and extract first mpc_N elements */
         if (1L > mpc_N) {
@@ -401,6 +419,49 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
           }
 
           if (memcmp(&params_int_method[0], &b[0], 3) == 0) {
+            /*  forwatd euler */
+            b_i = 1L;
+            while (b_i <= mpc_N - 1L) {
+              dynamics(unusedU0, px->data[(int32_T)b_i - 1], py->data[(int32_T)
+                       b_i - 1], params_b, params_p_a1, params_p_a2, params_g,
+                       params_m, x->data[i + (int32_T)b_i], dv);
+              for (i2 = 0; i2 < 6; i2++) {
+                unusedU0[i2] += params_mpc_dt * dv[i2];
+              }
+
+              /*  we have time invariant dynamics so t wont count */
+              i2 = b_states_rough->size[0] * b_states_rough->size[1];
+              b_states_rough->size[0] = 6;
+              b_states_rough->size[1] = states_rough->size[1] + 1;
+              emxEnsureCapacity_real_T(b_states_rough, i2);
+              b_loop_ub = states_rough->size[1];
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
+                for (i4 = 0; i4 < 6; i4++) {
+                  nx = i4 + 6 * i2;
+                  b_states_rough->data[nx] = states_rough->data[nx];
+                }
+              }
+
+              for (i2 = 0; i2 < 6; i2++) {
+                b_states_rough->data[i2 + 6 * states_rough->size[1]] =
+                  unusedU0[i2];
+              }
+
+              i2 = states_rough->size[0] * states_rough->size[1];
+              states_rough->size[0] = 6;
+              states_rough->size[1] = b_states_rough->size[1];
+              emxEnsureCapacity_real_T(states_rough, i2);
+              b_loop_ub = b_states_rough->size[0] * b_states_rough->size[1];
+              for (i2 = 0; i2 < b_loop_ub; i2++) {
+                states_rough->data[i2] = b_states_rough->data[i2];
+              }
+
+              b_i++;
+              if (*emlrtBreakCheckR2012bFlagVar != 0) {
+                emlrtBreakCheckR2012b(emlrtRootTLSGlobal);
+              }
+            }
+          } else if (b_strcmp(params_int_method)) {
             /* https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/ */
             /*  we have  time invariant dynamics so t wont count */
             b_i = 1L;
@@ -408,27 +469,27 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
               b_px = px->data[(int32_T)b_i - 1];
               b_py = py->data[(int32_T)b_i - 1];
               b_x = x->data[i + (int32_T)b_i];
-              c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                     unusedU0, b_px, b_py, b_x, k_1);
+              dynamics(unusedU0, b_px, b_py, params_b, params_p_a1, params_p_a2,
+                       params_g, params_m, b_x, k_1);
               a_tmp = 0.5 * params_mpc_dt;
               for (i2 = 0; i2 < 6; i2++) {
                 b_unusedU0[i2] = unusedU0[i2] + a_tmp * k_1[i2];
               }
 
-              c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                     b_unusedU0, b_px, b_py, b_x, k_2);
+              dynamics(b_unusedU0, b_px, b_py, params_b, params_p_a1,
+                       params_p_a2, params_g, params_m, b_x, k_2);
               for (i2 = 0; i2 < 6; i2++) {
                 b_unusedU0[i2] = unusedU0[i2] + a_tmp * k_2[i2];
               }
 
-              c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                     b_unusedU0, b_px, b_py, b_x, k_3);
+              dynamics(b_unusedU0, b_px, b_py, params_b, params_p_a1,
+                       params_p_a2, params_g, params_m, b_x, k_3);
               for (i2 = 0; i2 < 6; i2++) {
                 b_unusedU0[i2] = unusedU0[i2] + k_3[i2] * params_mpc_dt;
               }
 
-              c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                     b_unusedU0, b_px, b_py, b_x, dv);
+              dynamics(b_unusedU0, b_px, b_py, params_b, params_p_a1,
+                       params_p_a2, params_g, params_m, b_x, dv);
               for (i2 = 0; i2 < 6; i2++) {
                 unusedU0[i2] += 0.16666666666666666 * (((k_1[i2] + 2.0 * k_2[i2])
                   + 2.0 * k_3[i2]) + dv[i2]) * params_mpc_dt;
@@ -466,11 +527,7 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
               }
             }
           } else {
-            c_y = NULL;
-            m = emlrtCreateCharArray(2, &iv2[0]);
-            emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 15, m, &c_u[0]);
-            emlrtAssign(&c_y, m);
-            disp(c_y, &c_emlrtMCI);
+            disp(b_emlrt_marshallOut(cv1), &c_emlrtMCI);
           }
         } else {
           dt_step = params_mpc_dt / (params_int_steps - 1.0);
@@ -505,34 +562,50 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
 
               /* verify is a column vector */
               if (memcmp(&params_int_method[0], &b[0], 3) == 0) {
+                /*  forwatd euler */
+                i2 = (int32_T)(params_int_steps - 1.0);
+                for (nx = 0; nx < i2; nx++) {
+                  dynamics(dv, pdz->data[nx], pdx->data[nx], params_b,
+                           params_p_a1, params_p_a2, params_g, params_m,
+                           pdy->data[nx], unusedU0);
+                  for (i4 = 0; i4 < 6; i4++) {
+                    dv[i4] += dt_step * unusedU0[i4];
+                  }
+
+                  /*  we have time invariant dynamics so t wont count */
+                  if (*emlrtBreakCheckR2012bFlagVar != 0) {
+                    emlrtBreakCheckR2012b(emlrtRootTLSGlobal);
+                  }
+                }
+              } else if (b_strcmp(params_int_method)) {
                 /* https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/ */
                 /*  we have  time invariant dynamics so t wont count */
                 i2 = (int32_T)(params_int_steps - 1.0);
                 for (nx = 0; nx < i2; nx++) {
                   d = pdz->data[nx];
                   b_x = pdx->data[nx];
-                  e_y = pdy->data[nx];
-                  c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                         dv, d, b_x, e_y, k_1);
+                  b_y = pdy->data[nx];
+                  dynamics(dv, d, b_x, params_b, params_p_a1, params_p_a2,
+                           params_g, params_m, b_y, k_1);
                   a_tmp = 0.5 * dt_step;
                   for (i4 = 0; i4 < 6; i4++) {
                     b_unusedU0[i4] = dv[i4] + a_tmp * k_1[i4];
                   }
 
-                  c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                         b_unusedU0, d, b_x, e_y, k_2);
+                  dynamics(b_unusedU0, d, b_x, params_b, params_p_a1,
+                           params_p_a2, params_g, params_m, b_y, k_2);
                   for (i4 = 0; i4 < 6; i4++) {
                     b_unusedU0[i4] = dv[i4] + a_tmp * k_2[i4];
                   }
 
-                  c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                         b_unusedU0, d, b_x, e_y, k_3);
+                  dynamics(b_unusedU0, d, b_x, params_b, params_p_a1,
+                           params_p_a2, params_g, params_m, b_y, k_3);
                   for (i4 = 0; i4 < 6; i4++) {
                     b_unusedU0[i4] = dv[i4] + k_3[i4] * dt_step;
                   }
 
-                  c_anon(params_b, params_p_a1, params_p_a2, params_g, params_m,
-                         b_unusedU0, d, b_x, e_y, unusedU0);
+                  dynamics(b_unusedU0, d, b_x, params_b, params_p_a1,
+                           params_p_a2, params_g, params_m, b_y, unusedU0);
                   for (i4 = 0; i4 < 6; i4++) {
                     dv[i4] += 0.16666666666666666 * (((k_1[i4] + 2.0 * k_2[i4])
                       + 2.0 * k_3[i4]) + unusedU0[i4]) * dt_step;
@@ -543,11 +616,7 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
                   }
                 }
               } else {
-                d_y = NULL;
-                m = emlrtCreateCharArray(2, &iv3[0]);
-                emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 15, m, &c_u[0]);
-                emlrtAssign(&d_y, m);
-                disp(d_y, &c_emlrtMCI);
+                disp(b_emlrt_marshallOut(cv1), &c_emlrtMCI);
               }
 
               for (i2 = 0; i2 < 6; i2++) {
@@ -600,14 +669,14 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
         for (nx = 0; nx <= i2; nx++) {
           d = states_rough->data[6 * nx];
           b_x = states_rough->data[6 * nx + 1];
-          e_y = states_rough->data[6 * nx + 2];
+          b_y = states_rough->data[6 * nx + 2];
           b_px = params_b * params_b;
           b_py = b_x * b_x;
-          a_tmp = (b_px + b_py) - e_y * e_y;
-          e_y = muDoubleScalarSqrt(1.0 - a_tmp * a_tmp / (4.0 * b_px * b_py));
-          px->data[nx] = b_x * muDoubleScalarSin(d) * e_y;
+          a_tmp = (b_px + b_py) - b_y * b_y;
+          b_y = muDoubleScalarSqrt(1.0 - a_tmp * a_tmp / (4.0 * b_px * b_py));
+          px->data[nx] = b_x * muDoubleScalarSin(d) * b_y;
           py->data[nx] = a_tmp / (2.0 * params_b);
-          pdx->data[nx] = -b_x * muDoubleScalarCos(d) * e_y;
+          pdx->data[nx] = -b_x * muDoubleScalarCos(d) * b_y;
           if (*emlrtBreakCheckR2012bFlagVar != 0) {
             emlrtBreakCheckR2012b(emlrtRootTLSGlobal);
           }
@@ -632,14 +701,6 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
           b_p->data[3 * i2 + 2] = pdx->data[i2];
         }
       }
-    }
-
-    if (guard1) {
-      b_y = NULL;
-      m = emlrtCreateCharArray(2, &iv1[0]);
-      emlrtInitCharArrayR2013a(emlrtRootTLSGlobal, 66, m, &b_u[0]);
-      emlrtAssign(&b_y, m);
-      disp(b_y, &b_emlrtMCI);
     }
 
     emxFree_real_T(&b_states_rough);
@@ -731,11 +792,11 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
 
     nx = pdz->size[1];
     if (pdz->size[1] == 0) {
-      e_y = 0.0;
+      b_y = 0.0;
     } else {
-      e_y = pdz->data[0];
+      b_y = pdz->data[0];
       for (b_loop_ub = 2; b_loop_ub <= nx; b_loop_ub++) {
-        e_y += pdz->data[b_loop_ub - 1];
+        b_y += pdz->data[b_loop_ub - 1];
       }
     }
 
@@ -772,7 +833,7 @@ real_T b_anon(const real_T actual_state[6], const emxArray_real_T *ref_com,
     }
 
     emxFree_real_T(&pdz);
-    varargout_1 = params_w1 * b_py + params_w2 * ((b_x + e_y) + b_px);
+    varargout_1 = params_w1 * b_py + params_w2 * ((b_x + b_y) + b_px);
 
     /*  + params.w3* terminal_cost; % creates issues in gazebo */
   }
@@ -825,6 +886,7 @@ void optimize_cpp_mpc_propellers(const real_T actual_state[6], real_T actual_t,
   /*              delta_Fr_r0 = 0*ones(1,mpc_N); */
   /*          end */
   /*  init to zeros */
+  /* TODO generalize */
   /* opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r */
   /*  % does not always satisfy bounds */
   /*  use constraint on force */
@@ -865,7 +927,7 @@ void optimize_cpp_mpc_propellers(const real_T actual_state[6], real_T actual_t,
 
   idxFillStart = (int32_T)mpc_N;
   for (i = 0; i < idxFillStart; i++) {
-    lb->data[(i + (int32_T)mpc_N) + (int32_T)mpc_N] = -50.0;
+    lb->data[(i + (int32_T)mpc_N) + (int32_T)mpc_N] = -100.0;
   }
 
   emxInit_real_T(&ub, 2, true);
@@ -885,7 +947,7 @@ void optimize_cpp_mpc_propellers(const real_T actual_state[6], real_T actual_t,
 
   idxFillStart = (int32_T)mpc_N;
   for (i = 0; i < idxFillStart; i++) {
-    ub->data[(i + (int32_T)mpc_N) + (int32_T)mpc_N] = 50.0;
+    ub->data[(i + (int32_T)mpc_N) + (int32_T)mpc_N] = 100.0;
   }
 
   emxInit_real_T(&Hessian, 2, true);
