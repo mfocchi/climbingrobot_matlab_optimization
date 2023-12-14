@@ -11,6 +11,8 @@ p_anchor2 = [0;anchor_distance;0]
 baseline = 0.8;
 wall_clearance = 0.4;
 
+
+% IMPORTANT MAX ROPE FORCE OR FEET FORCE IS NOT CONSIDERED!
 mu = 0.8
 g_vec = [0;0;-9.81]
 mass = 5
@@ -18,29 +20,20 @@ force_scale =0.1
 min_feet_force = 0;
 % margin out of the vertical
 margin = 0.31;
-steps=  0.5*anchor_distance + [0, 3, 0.5*anchor_distance+ margin]
+steps=  0.5*anchor_distance + [0, 0.5*0.5*anchor_distance, 0.5*anchor_distance+ margin]
 figure
 
 for i=1:length(steps)
     % base pos
     p_base = [wall_clearance; steps(i); -5];
 
-    %old model base frame orientation
-    % [theta, phi, l] = computePolarVariables(p_base);
-    % wRb =   [cos(phi)*sin(theta), -sin(phi), cos(phi)*cos(theta) 
-    %          sin(phi)*sin(theta),  cos(phi), cos(theta)*sin(phi) 
-    %          -cos(theta),         0,          sin(theta)        ]
-
-    [psi] = computeTheta(p_base);
-    %new model base frame (psi is associated to the rope plane so we have
-    %a rotation of (pi/2 -psi) about the y axis
-    wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
-               0, 1,          0, 
-            -sin(pi/2-psi), 0, cos(pi/2-psi)]
         
-    pf1 = [0; -baseline/2; -wall_clearance];
-    pf2 = [0; baseline/2; -wall_clearance];
+    wRb = computeOrientation(p_base, p_anchor1, p_anchor2);
+        
+    pf1 = [-wall_clearance; -baseline/2; 0];
+    pf2 = [-wall_clearance; baseline/2; 0];
 
+    % feet position in WF
     w_pf1 = wRb*pf1 +p_base;
     w_pf2 = wRb*pf2 +p_base; 
 
@@ -48,10 +41,7 @@ for i=1:length(steps)
     w_pr1  = (p_base-p_anchor1)/norm(p_base-p_anchor1);
     w_pr2  = (p_base-p_anchor2)/norm(p_base-p_anchor2);
 
-
-
     % optim var are fl1(3x1), fl2(3x1), fr1 (scalar), fr2(scalar)
-
     % #∥Px−p∥2# 
     % # G =  Mt*M
     % # g = -MT*b
@@ -215,7 +205,7 @@ for i=1:length(steps)
     Tt = [wRb, p_base;
         zeros(1,3) 1];
     tt = hgtransform('Matrix', Tt);
-    %ht = triad('Parent',tt, 'linewidth', 6);
+    ht = triad('Parent',tt, 'linewidth', 6);
 
 
     %fundamental to see perpedicuolaity

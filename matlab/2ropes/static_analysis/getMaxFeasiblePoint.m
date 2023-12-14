@@ -15,20 +15,7 @@ min_feet_force = 0;
 for i=1:length(steps)
     % base pos
     p_base = [wall_clearance; steps(i); -rope_length];
-
-    %old model base frame orientation
-    % [theta, phi, l] = computePolarVariables(p_base);
-    % wRb =   [cos(phi)*sin(theta), -sin(phi), cos(phi)*cos(theta) 
-    %          sin(phi)*sin(theta),  cos(phi), cos(theta)*sin(phi) 
-    %          -cos(theta),         0,          sin(theta)        ]
-
-    [psi] = computeTheta(p_base);
-    %new model base frame (psi is associated to the rope plane so we have
-    %a rotation of (pi/2 -psi) about the y axis
-    wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
-               0, 1,          0, 
-            -sin(pi/2-psi), 0, cos(pi/2-psi)];
-
+    wRb = computeOrientation(p_base, p_anchor1, p_anchor2);
 
     pf1 = [0; -baseline/2; -wall_clearance];
     pf2 = [0; baseline/2; -wall_clearance];
