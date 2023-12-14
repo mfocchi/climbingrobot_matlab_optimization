@@ -90,8 +90,21 @@ solution.Tf
 solution.achieved_target
 plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params); 
 
- [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
- E = impulse_work+hoist_work_fine;
+
+switch solution.problem_solved
+    case 1 
+        fprintf(1,"Problem converged!\n")
+    case -2  
+        fprintf(2,"Problem didnt converge!\n")
+    case 2 
+        fprintf(1,"semidefinite solution (should modify the cost)\n")
+    case 0 
+        fprintf(2,"Max number of feval exceeded (10000)\n")
+end
+
+
+ % [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
+ % E = impulse_work+hoist_work_fine;
 
 %this is to save the result for simulation in matlab
 %save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
@@ -99,5 +112,5 @@ plot_solution(solution, p0, pf, Fleg_max, Fr_max, mu, params);
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 %system('python3 test_mex.py');
 
-copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/
-copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/codegen/
+copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller
+copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/climbingrobot_controller/codegen/

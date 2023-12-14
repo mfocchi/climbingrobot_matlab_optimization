@@ -81,7 +81,9 @@ if params.obstacle_avoidance
      %px > sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2);
      %-px + sqrt(radius.^2 - a_z*(pz-center(3)).^2 -a_y*(py-center(2)).^2)<0
 
-    % better implementaiton with complex numbers for code generation
+    % better implementaiton than the one with with complex numbers for code
+    % generation, we just check if the argument of the sqrt becomes
+    % negative
     for i=1:params.N_dyn 
         arg  = radius.^2 - a_z*( p(3, i) -center(3)).^2 -a_y*(p(2, i)-center(2)).^2;
         %%%add ineq only if inside sphere

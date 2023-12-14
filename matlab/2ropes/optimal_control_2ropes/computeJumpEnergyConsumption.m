@@ -1,6 +1,7 @@
 function [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution, params)
 
-
+    % this function is not used, is implemented just as a reference for python
+    % we compute energy consumption in python
     dt_dyn = solution.Tf / (params.N_dyn-1); 
     %%Energy consumption
     J_TO_Wh = 0.000277 %maps joule to Wh
