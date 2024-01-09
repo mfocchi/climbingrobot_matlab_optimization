@@ -34,20 +34,21 @@ H1_T_2 = [Rz(pi/2-alpha) , [0;0;0]
 % 3) move l1 along x'' axis
 H2_T_3 = [ eye(3), [l1;0;0]
           zeros(1, 3), 1]    
+      
 % thes last ywo trotations do no affect the position and are thee to have consistency in orientation with the gazebo model       
-% 4) rotate  -(pi/2-alpha) back Z''' axis to have base Y axis aligned with
-% anchors
+% 4) rotate  -(pi/2-alpha)  Z''' axis to have base Y axis aligned with
+% anchors line
 H3_T_4 = [Rz(-(pi/2-alpha)) , [0;0;0]
           zeros(1, 3), 1] 
 
-% 4) rotate  -(pi/2-alpha) back Z''' axis to have base Y axis aligned with
-% anchors      
+ % 5) rotate   back -pi/2 about Y'''' axis to have base X asis same as in
+ % gazebo   
 H4_T_b = [    0    0   -1    0
               0    1    0    0
               1    0    0    0
               0    0    0    1 ];    
- % 5) rotate   back -pi/2 about Y'''' axis to have base X asis sabe as in
- % gazebo
+
+ 
 H0_T_b =  simplify(H0_T_1 *H1_T_2*H2_T_3 * H3_T_4*H4_T_b);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
