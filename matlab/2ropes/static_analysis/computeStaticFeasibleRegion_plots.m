@@ -22,8 +22,8 @@ plot_static_region2D(max_feasible_pos_baseline(1,:), max_feasible_pos_baseline(2
     
 %save the plot
 set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [25 20]);
-set(gcf, 'PaperPosition', [0 0 25 20]);
+set(gcf, 'PaperSize', [20 20]);
+set(gcf, 'PaperPosition', [0 0 20 20]);
 print(gcf, '-dpdf',strcat('static_analysis_baseline.pdf'),'-painters')
 
 max_feasible_pos_clearance=[];
@@ -42,7 +42,7 @@ plot_static_region2D(max_feasible_pos_clearance(1,:), max_feasible_pos_clearance
 
 %save the plot
 set(gcf, 'Paperunits' , 'centimeters')
-set(gcf, 'PaperSize', [25 20]);
-set(gcf, 'PaperPosition', [0 0 25 20]);
+set(gcf, 'PaperSize', [20 20]);
+set(gcf, 'PaperPosition', [0 0 20 20]);
 print(gcf, '-dpdf',strcat('static_analysis_wall_clearance.pdf'),'-painters')
 

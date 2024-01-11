@@ -3,7 +3,7 @@ close all
 clear all
 clc
 
-anchor_distance = 10;
+anchor_distance = 5;
 p_anchor1 = [0;0;0]
 p_anchor2 = [0;anchor_distance;0]
 
@@ -172,6 +172,7 @@ for i=1:length(steps)
     plot3(w_pf2(1), w_pf2(2),w_pf2(3),'.b', 'MarkerSize',40);hold on;
     % plot base pos
     plot3(p_base(1), p_base(2),p_base(3),'.g', 'MarkerSize',40);hold on;
+    
     xlabel('$X$','interpreter', 'latex');
     ylabel('$Y$','interpreter', 'latex');
     zlabel('$Z$','interpreter', 'latex');
@@ -195,17 +196,17 @@ for i=1:length(steps)
 
 
     %plot world reference frame
-    Tt = [eye(3), [0;0;0];
-        zeros(1,3) 1];
-    tt = hgtransform('Matrix', Tt);
-    ht = triad('Parent',tt, 'linewidth', 6);
+%     Tt = [eye(3), [0;0;0];
+%         zeros(1,3) 1];
+%     tt = hgtransform('Matrix', Tt);
+%     ht = triad('Parent',tt, 'linewidth', 6);
 
 
     %plot base reference frame
-    Tt = [wRb, p_base;
-        zeros(1,3) 1];
-    tt = hgtransform('Matrix', Tt);
-    ht = triad('Parent',tt, 'linewidth', 6);
+%     Tt = [wRb, p_base;
+%         zeros(1,3) 1];
+%     tt = hgtransform('Matrix', Tt);
+%     ht = triad('Parent',tt, 'linewidth', 6);
 
 
     %fundamental to see perpedicuolaity
@@ -220,8 +221,12 @@ for i=1:length(steps)
 end
 
 
+ D ='$\mathcal{A}$'; 
+ annotation(gcf,'textbox',[0.3,0.3,0.3,0.3],'LineStyle','none','Color','r','string',D,'interpreter','latex');
+
+
 %save the plot
 set(gcf, 'Paperunits' , 'centimeters')
 set(gcf, 'PaperSize', [25 20]);
 set(gcf, 'PaperPosition', [0 0 25 20]);
-print(gcf, '-dpdf',strcat('static_analysis_3 points.pdf'),'-painters')
+print(gcf, '-dpdf',strcat('static_analysis_3_points.pdf'),'-painters')
