@@ -157,8 +157,9 @@ for i=1:length(steps)
     Xw = [p1(1) p2(1) p3(1) p4(1)];
     Yw = [p1(2) p2(2) p3(2) p4(2)];
     Zw = [p1(3) p2(3) p3(3) p4(3)];
-    h = fill3(Xw, Yw, Zw, 'b', 'FaceAlpha',.5  ); 
-    fill3([0.001,0.001,0.001,0.001] , [p_anchor1(2)-margin,p_anchor1(2)-margin , p_anchor2(2)+margin,  p_anchor2(2)+margin], [-7,0, 0, -7],'r', 'FaceAlpha',.5, 'EdgeColor','none'  );
+    h = fill3(Xw, Yw, Zw, 'b', 'FaceAlpha',.5  );
+    %draw feasible area
+    fill3([0.005,0.005,0.005,0.005] , [p_anchor1(2)-margin,p_anchor1(2)-margin , p_anchor2(2)+margin,  p_anchor2(2)+margin], [-7,0, 0, -7],'r', 'FaceAlpha',.5, 'EdgeColor','none'  );
 
 
 
@@ -222,11 +223,11 @@ end
 
 
  D ='$\mathcal{A}$'; 
- annotation(gcf,'textbox',[0.3,0.3,0.3,0.3],'LineStyle','none','Color','r','string',D,'interpreter','latex');
+ annotation(gcf,'textbox',[0.35,0.35,0.3,0.3],'LineStyle','none','Color','r','string',D,'interpreter','latex');
 
 
 %save the plot
 set(gcf, 'Paperunits' , 'centimeters')
 set(gcf, 'PaperSize', [25 20]);
 set(gcf, 'PaperPosition', [0 0 25 20]);
-print(gcf, '-dpdf',strcat('static_analysis_3_points.pdf'),'-painters')
+print(gcf, '-dpdf',strcat('static_analysis_3_points.pdf'))
