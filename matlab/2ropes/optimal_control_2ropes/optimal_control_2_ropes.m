@@ -8,6 +8,10 @@ actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
 
+USEGENCODE = true;
+COPYTOLOCOSIM = false;
+
+
 %possible settings
 test_type='normal' ;
 %test_type='obstacle_avoidance' ;
@@ -17,56 +21,66 @@ test_type='normal' ;
 if strcmp(test_type, 'obstacle_avoidance')
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 0.5; -6]; % there is singularity for px = 0!
+    p0 = [0.5, 0.5, -6]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.5; 4.5;-6];
+    pf= [0.5, 4.5, -6];
+    %intermediate jump
+    pf(2)= p0(2)+ (pf(2)-p0(2))/2;
+    pf(1) = 1.5;
+
     Fleg_max = 300;
     Fr_max = 90; % Fr is negative
+
+    % the order of params matters for code generation
+    params.jump_clearance = 1; % ensure at least this detachment from wall
     params.m = 5.08;   % Mass [kg]
-    params.jump_clearance = 1;
     params.obstacle_avoidance  = true;
+
 elseif  strcmp(test_type, 'landing_test')
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.5; 4;-4];
-    params.m = 15.07;
+    pf= [0.5, 4,-4];
+  
     Fleg_max = 600;
     Fr_max = 300;
-    params.jump_clearance = 1.;
+
+    % the order of params matters for code generation
+    params.jump_clearance = 1.; % ensure at least this detachment from wall
+    params.m = 15.07; 
     params.obstacle_avoidance  = false;
+
 else %normal
     %jump params
     % INITIAL POINT
-    p0 = [0.5; 2.5; -6]; % there is singularity for px = 0!
+    p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
     %FINAL TARGET
-    pf= [0.5; 4;-4];
+    pf= [0.5, 4,-4];
     Fleg_max = 300;
     Fr_max = 90; % Fr is negative
-    params.jump_clearance = 1;
+
+    % the order of params matters for code generation
+    params.jump_clearance = 1; % ensure at least this detachment from wall
     params.m = 5.08;   % Mass [kg]
     params.obstacle_avoidance  = false;
 end
  
-params.obstacle_location = [-0.5; 3;-7.5];
+params.obstacle_location = [-0.5; 2.5; -6];
+params.obstacle_size = [1.5; 1.5; 0.866];
+
 %WORLD FRAME ATTACHED TO ANCHOR 1
 anchor_distance = 5;
 params.num_params = 4;   
-
-%accurate
 params.int_method = 'rk4';
 params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 params.FRICTION_CONE = 1;
 params.int_steps = 5.; %0 means normal intergation
-
 %faster
 % params.int_method = 'eul';
 % params.int_steps = cast(5,"int64"); %0 means normal intergation
 % params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 % params.FRICTION_CONE = 1;
-
-
 params.contact_normal =[1;0;0];
 params.b = anchor_distance;
 params.p_a1 = [0;0;0];
@@ -80,61 +94,60 @@ params.w5=0; %  %(not used0 ekinf (important! energy has much higher values!)
 params.w6=0;%  %(not used)
 params.contact_normal =[1;0;0];
 params.T_th =  0.05;
+
 mu = 0.8;
 
-constr_tolerance = 1e-3;
-
-dt=0.001; % only to evaluate solution
-
-%compute initial state from jump param
-x0 = computeStateFromCartesian(params, p0);
-
-%pendulum period
-T_pend = 2*pi*sqrt(x0(2)/params.g)/4; % half period TODO replace with linearized x0(2) = l10
-  
-Fr_l0 = 0*ones(1,params.N_dyn);
-Fr_r0 = 0*ones(1,params.N_dyn);
-x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,  Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
-lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,params.N_dyn), -Fr_max*ones(1,params.N_dyn)];
-ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  0*ones(1,params.N_dyn),            0*ones(1,params.N_dyn)];
-
-
-options = optimoptions('fmincon','Display','iter','Algorithm','sqp',  ... % does not always satisfy bounds
-'MaxFunctionEvaluations', 10000, 'ConstraintTolerance',constr_tolerance);
-
-tic
-[x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, params) , options);
-toc
-% evaluate constraint violation 
-[c ceq, num_constr, solution_constr] = constraints(x, p0,  pf,  Fleg_max, Fr_max, mu, params);
-solution = eval_solution(x, dt,  p0, pf, params) ;
-solution.cost = final_cost;
-solution.T_th = params.T_th;
-problem_solved = (EXITFLAG == 1) || (EXITFLAG == 2);
-% EXITFLAG ==1 First-order optimality measure was less than options.OptimalityTolerance, and maximum constraint violation was less than options.ConstraintTolerance.
-% EXITFLAG == 2 Change in x was less than options.StepTolerance and maximum constraint violation was less than options.ConstraintTolerance.
-%EXITFLAG == 0 max number of iterations
-
-if problem_solved
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'r', true, params);
-else 
-    fprintf(2,"Problem didnt converge!\n")
-    plot_curve( solution,solution_constr, p0, pf, mu,  false, 'k', true, params);
+%gen code (run if you did some change in the cost)
+if ~isfile('optimize_cpp_mex.mexa64')
+    disp('Generating C++ code');
+    % generates the cpp code
+    % run the mex generator after calling optimize_cpp otherwise he complains it is missing the pa1 
+    cfg = coder.config('mex');
+    cfg.IntegrityChecks = false;
+    cfg.SaturateOnIntegerOverflow = false;
+    codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
+    if COPYTOLOCOSIM
+        disp("copying to locosim")  
+        copyfile codegen/mex/optimize_cpp/ ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/mex/optimize_cpp
+        copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
+    end
 end
 
+
+mpc_fun   = 'optimize_cpp';
+if USEGENCODE  
+    mpc_fun=append(mpc_fun,'_mex' );
+end
+mpc_fun_handler = str2func(mpc_fun);
+solution = mpc_fun_handler(p0,  pf, Fleg_max, Fr_max, mu, params);
+
+switch solution.problem_solved
+    case 1 
+        fprintf(2,"Problem converged!\n")
+        plot_curve( solution,solution.solution_constr, p0, pf, mu,  false, 'r', true, params);
+    case -2  
+        fprintf(2,"Problem didnt converge!\n")
+        plot_curve( solution,solution.solution_constr, p0, pf, mu,  false, 'k', true, params);
+    case 2 
+        fprintf(2,"semidefinite solution (should modify the cost)\n")
+        plot_curve( solution,solution.solution_constr, p0, pf, mu,  false, 'r', true, params);
+
+    case 0 
+        fprintf(2,"Max number of feval exceeded (10000)\n")
+end
  
 fprintf('Fleg:  %f %f %f \n\n',solution.Fleg(1), solution.Fleg(2), solution.Fleg(3))
 fprintf('cost:  %f\n\n',solution.cost)
 fprintf('final_kin_energy:  %f\n\n',solution.Ekinf)
 fprintf('final_error_real:  %f\n\n',solution.final_error_real)
-fprintf('final_error_discrete:  %f\n\n', solution_constr.final_error_discrete)
-fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution_constr.final_error_discrete)
+fprintf('final_error_discrete:  %f\n\n', solution.solution_constr.final_error_discrete)
+fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution.solution_constr.final_error_discrete)
 
 
-DEBUG = true;
+DEBUG = false;
 
 if (DEBUG)
-    eval_constraints(c, num_constr, constr_tolerance)  
+    eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance)  
     figure
     ylabel('Fr-X')
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;
@@ -143,8 +156,23 @@ if (DEBUG)
     plot(solution.time,solution.Fr_r,'b');
     legend({'min','max','Frl','Frr'});
     
-        
-%     othing 
+    figure
+    subplot(3,1,1)
+    plot(solution.time, solution.p(1,:),'r') ; hold on;   grid on; 
+    plot(solution.solution_constr.time, solution.solution_constr.p(1,:),'ob') ; hold on;    
+    ylabel('X')
+    
+    subplot(3,1,2)
+    plot(solution.time, solution.p(2,:),'r') ; hold on;  grid on;  
+    plot(solution.solution_constr.time, solution.solution_constr.p(2,:),'ob') ; hold on;    
+    ylabel('Y')
+    
+    subplot(3,1,3)
+    plot(solution.time, solution.p(3,:),'r') ; hold on; grid on;   
+    plot(solution.solution_constr.time, solution.solution_constr.p(3,:),'ob') ; hold on;
+    ylabel('Z')
+       
+
 %     figure
 %     subplot(3,1,1)
 %     plot(solution.time, solution.psi,'r');hold on; grid on;
@@ -176,32 +204,18 @@ if (DEBUG)
 %     plot(solution.time, solution.l2d,'r'); hold on; grid on;
 %     plot(solution_constr.time, solution_constr.l2d,'ob');
 %     ylabel('ld')
-        
-    
-    figure
-    subplot(3,1,1)
-    plot(solution.time, solution.p(1,:),'r') ; hold on;   grid on; 
-    plot(solution_constr.time, solution_constr.p(1,:),'ob') ; hold on;    
-    ylabel('X')
-    
-    subplot(3,1,2)
-    plot(solution.time, solution.p(2,:),'r') ; hold on;  grid on;  
-    plot(solution_constr.time, solution_constr.p(2,:),'ob') ; hold on;    
-    ylabel('Y')
-    
-    subplot(3,1,3)
-    plot(solution.time, solution.p(3,:),'r') ; hold on; grid on;   
-    plot(solution_constr.time, solution_constr.p(3,:),'ob') ; hold on;
-    ylabel('Z')
-       
+   
     
 end
 
-disp('Fleg')
-solution.Fleg
-solution.Tf
-disp('target')
-solution.achieved_target
+fprintf('Leg.inpulse force: %f %f %f\n', solution.Fleg);
+fprintf('Jump Duration: %f\n', solution.Tf);
+fprintf('Landing Target: %f %f %f\n', solution.achieved_target);
+
+[impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution,params);
+Energy_consumed = impulse_work+hoist_work_fine
+
+disp("THE RESULT WILL BE DIFFERENT THAN IN PYTHON BECAUSE THE MASS IS DIFFERET, USE TEST_MEX.PY and eval achieved_target, ETC")
 
 
 % Fleg 27 iterazioni

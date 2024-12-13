@@ -19,7 +19,7 @@ pf= [0.5, 4,-4];
 % pf= [0.5, 4.5,-6];
 
 
-params.jump_clearance = 1;
+
 
 % normal test
 mass = 5.08; 
@@ -34,10 +34,12 @@ Fr_max = 90; % Fr is negative
 
 mu = 0.8;
 
-
+% the order of params matters for code generation
+params.jump_clearance = 1;
 params.m = mass;   % Mass [kg]
 params.obstacle_avoidance  = false;
 params.obstacle_location = [-0.5; 2.5;-6];
+params.obstacle_size = [1.5; 1.5; 0.866];
 anchor_distance = 5;
 params.num_params = 4.;   
 
@@ -102,9 +104,11 @@ switch solution.problem_solved
         fprintf(2,"Max number of feval exceeded (10000)\n")
 end
 
-
- % [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
+% [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution ,params)
  % E = impulse_work+hoist_work_fine;
+
+%This is old stuff not used 
+ 
 
 %this is to save the result for simulation in matlab
 %save('../simulation/compact_model/tests/test_matlab2obstacle.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
@@ -112,5 +116,3 @@ end
 %save('../simulation/compact_model/tests/test_matlab2_cpp.mat','solution','mu','Fleg_max', 'Fr_max', 'p0','pf');
 %system('python3 test_mex.py');
 
-copyfile codegen ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/base_controllers/climbingrobot_controller
-copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/trento_lab_framework/locosim/robot_control/climbingrobot_controller/codegen/
