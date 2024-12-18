@@ -17,6 +17,8 @@ test_type='normal' ;
 %test_type='obstacle_avoidance' ;
 %test_type='landing_test'; 
 
+%TODO implement wall_inclination
+
 
 if strcmp(test_type, 'obstacle_avoidance')
     %jump params
@@ -66,6 +68,7 @@ else %normal
     params.obstacle_avoidance  = false;
 end
  
+Fr_min = 10; % Fr is negative
 params.obstacle_location = [-0.5; 2.5; -6];
 params.obstacle_size = [1.5; 1.5; 0.866];
 
@@ -95,6 +98,7 @@ params.w6=0;%  %(not used)
 params.contact_normal =[1;0;0];
 params.T_th =  0.05;
 
+
 mu = 0.8;
 
 %gen code (run if you did some change in the cost)
@@ -105,21 +109,21 @@ if ~isfile('optimize_cpp_mex.mexa64')
     cfg = coder.config('mex');
     cfg.IntegrityChecks = false;
     cfg.SaturateOnIntegerOverflow = false;
-    codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, coder.cstructname(params, 'param') } -nargout 1 -report
-    if COPYTOLOCOSIM
-        disp("copying to locosim")  
-        copyfile codegen/mex/optimize_cpp/ ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/mex/optimize_cpp
-        copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
-    end
+    codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, 0,  coder.cstructname(params, 'param') } -nargout 1 -report
 end
 
+if COPYTOLOCOSIM
+    fprintf(2,"copying to locosim\n")
+    copyfile codegen/mex/optimize_cpp/ ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/mex/optimize_cpp
+    copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
+end
 
 mpc_fun   = 'optimize_cpp';
 if USEGENCODE  
     mpc_fun=append(mpc_fun,'_mex' );
 end
 mpc_fun_handler = str2func(mpc_fun);
-solution = mpc_fun_handler(p0,  pf, Fleg_max, Fr_max, mu, params);
+solution = mpc_fun_handler(p0,  pf, Fleg_max, Fr_max, Fr_min,  mu, params);
 
 switch solution.problem_solved
     case 1 
@@ -208,12 +212,14 @@ if (DEBUG)
     
 end
 
-fprintf('Leg.inpulse force: %f %f %f\n', solution.Fleg);
-fprintf('Jump Duration: %f\n', solution.Tf);
-fprintf('Landing Target: %f %f %f\n', solution.achieved_target);
+fprintf('Leg impulse force: %f %f %f\n\n', solution.Fleg);
+fprintf('Jump Duration: %f\n\n', solution.Tf);
+fprintf('Landing Target: %f %f %f\n\n', solution.achieved_target);
 
 [impulse_work , hoist_work, hoist_work_fine] = computeJumpEnergyConsumption(solution,params);
-Energy_consumed = impulse_work+hoist_work_fine
+Energy_consumed = impulse_work+hoist_work_fine;
+fprintf('Energy_consumed [J]: %f \n\n', Energy_consumed);
+
 
 disp("THE RESULT WILL BE DIFFERENT THAN IN PYTHON BECAUSE THE MASS IS DIFFERET, USE TEST_MEX.PY and eval achieved_target, ETC")
 
