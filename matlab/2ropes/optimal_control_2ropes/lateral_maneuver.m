@@ -1,7 +1,7 @@
 
 close all 
 clear all
-%clc
+clc
 
 anchor_distance = 5;
 p_anchor1 = [0;0;0];
@@ -18,7 +18,7 @@ p_foot_2 = [-lower_landing_leg*sin(landing_joint); offset_base_y + lower_landing
 wall_normal = [1;0;0];
 
 %p_base = [0.5;3.5; -6];
-p_base = [0.5;  3.9579;-4.20128];
+p_base = [0.16932 ; 3.95809; -4.19946];
 
 
 orient_base = [0;0;0];
@@ -69,7 +69,7 @@ v_l1 = y_axis_base*y(1)
 v_l2 = y_axis_base*y(2)
 v_r1 = y(3)
 v_r2 = y(4)
-R = 0.15;
+R = 0.15/2;
 wheel_l = y(1)/R
 wheel_r = y(2)/R
 
