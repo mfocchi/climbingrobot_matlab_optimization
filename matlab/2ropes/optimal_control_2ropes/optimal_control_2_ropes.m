@@ -59,13 +59,12 @@ else %normal
     p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
     %FINAL TARGET
     pf= [0.5, 4,-4];
-    Fleg_max = 300;
+    Fleg_max = 600;
     Fr_max = 90; % Fr is negative
 
     % the order of params matters for code generation
     params.jump_clearance = 1; % ensure at least this detachment from wall
-    params.m = 5.08;   % Mass [kg]
-    params.obstacle_avoidance  = false;
+    params.m = 10.08;   % Mass [kg]
 end
  
 Fr_min = 10; % Fr is negative
