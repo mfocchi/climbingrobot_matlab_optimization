@@ -1,0 +1,99 @@
+function [X, Y, Z] = generateRockWallMapComplex(Lz, Ly, gridSize,wallHeight, seed, debug)
+
+if nargin == 2
+    gridSize = 100;        % Size of height map
+    wallHeight = 2;
+    debug = true
+     rng("default");
+end
+
+
+if nargin ==3
+     
+    wallHeight = 2;
+    debug = false
+     rng("default");
+end
+
+
+if nargin  ==4
+    debug = false
+     rng("default");
+end
+
+if nargin ==5
+    debug = false
+    rng(seed);
+end
+if nargin >5
+     rng(seed);
+end
+
+% 
+% Fractal noise / multi-scale Perlin-like structures for roughness.
+% 
+% Ridges / dihedrals with directional high gradients.
+% 
+% Random extrusions for pillars or bulges.
+
+
+
+frequencies = [1, 2, 4];
+weights = [0.5, 0.25, 0.15, 0.1];
+
+% Use convolution to smooth noise (low-pass filter)
+smoothKernel = fspecial('gaussian', [15, 15], 3);
+
+for i = 1:length(frequencies)
+    scale = frequencies(i);
+    noise = imresize(rand(floor(gridSize/scale)), [gridSize gridSize], 'bilinear');
+    X =  weights(i) * imfilter(noise, smoothKernel, 'replicate');
+end
+
+% Normalize and % Scale to realistic wall height (e.g., meters)
+
+X = X - min(X(:));
+X =X / max(X(:)) * wallHeight;
+
+% Create diagonal ridge (simulating a dihedral)
+% [x, y] = meshgrid(1:gridSize, 1:gridSize);
+% angle = pi/4;  % Dihedral angle
+% ridge = abs(sin(angle)*x + cos(angle)*y - gridSize/2) < 5;
+% Z(ridge) = Z(ridge) + 2.6;  % Raise ridge
+
+% Vertical ridge
+X(:, round(gridSize*0.3):15 +round(gridSize*0.3)) =X(:, round(gridSize*0.3):15 + round(gridSize*0.3)) + 3.5;
+
+
+numPillars = 10;
+for i = 1:numPillars
+    cz = randi(gridSize);
+    cy = randi(gridSize);
+    [Z, Y] = meshgrid(1:gridSize, 1:gridSize);
+    radius = randi([5, 10]);
+    bulge = exp(-((Z-cz).^2 + (Y-cy).^2)/(2*(radius^2)));
+    X = X + bulge * wallHeight;  % bump height
+end
+
+if debug
+
+    figure;
+    surf(X);
+    shading interp;
+    colormap(gray);
+    
+    axis equal;
+    title('Generated Rock Wall Height Map');
+    xlabel('Z');
+    ylabel('Y');
+    zlabel('Height (m)');
+
+end
+
+% Create physical grid in meters
+z = linspace(Lz, 0, gridSize);
+y = linspace(0, Ly, gridSize);
+[Z, Y] = meshgrid(z, y);  % X, Y are in meters
+
+
+end
