@@ -7,7 +7,7 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
-USEGENCODE = true;
+USEGENCODE = false;
 COPYTOLOCOSIM = false;
 
 %Initial position
@@ -27,7 +27,7 @@ params.int_method = 'rk4';
 params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
 params.FRICTION_CONE = 1;
 params.int_steps = 5.; %0 means normal intergation
-params.contact_normal =[1;0;0];
+
 params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
@@ -38,22 +38,26 @@ params.w3=0; %(not used)
 params.w4=0;% %(not used)
 params.w5=0; %  %(not used0 ekinf (important! energy has much higher values!)
 params.w6=0;%  %(not used)
-params.contact_normal =[1;0;0];
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
-params.jump_clearance = 1; % ensure at least this detachment from wall
+params.jump_clearance = 0; % ensure at least this detachment from wall 
 
 %generate mesh surface
-wallHeight = 1; %how              
+wallDepth = 1; %how              
 gridSize = 100;
 seed= "default";
 Lz = -20;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
-[params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallHeight, seed, false);
+[params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth, seed, false);
+
 
 % Interpolator (note: z must be increasing — here from -10 to 0)
 p0(1) = wallSurfaceEval(p0(3),p0(2),  params);
 pf(1) = wallSurfaceEval(pf(3),pf(2),  params);
+% compute consistent normal 
+params.contact_normal = wallNormalEval(p0(3),p0(2), params)
+
+%constraints(solution.x, p0,  pf,Fleg_max, Fr_max, mu, params);
 
 mu = 0.8;
 
@@ -95,10 +99,11 @@ fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 fprintf('final_error_discrete:  %f\n\n', solution.solution_constr.final_error_discrete)
 fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution.solution_constr.final_error_discrete)
 
+%-0.7472         0    0.7472   -0.8808         0    0.7849   -1.0812  
 DEBUG = true;
 
 if (DEBUG)
-    eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance)  
+    eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance, true)  
     figure
     ylabel('Fr-X')
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;
@@ -131,8 +136,9 @@ fprintf('Energy_consumed [J]: %f \n\n', solution.consumed_energy);
 fprintf('Average Poiwer [W]: %f \n\n', solution.average_power);
 
 %plot instantaneous power
-figure
-plot(solution.time_fine, solution.instantaneous_power);
+% figure
+% title("instantaneous_power")
+% plot(solution.time_fine, solution.instantaneous_power);
 
 if COPYTOLOCOSIM
     fprintf(2,"copying to locosim\n")
@@ -140,4 +146,4 @@ if COPYTOLOCOSIM
     copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen/
 end
 
-
+%1.384975

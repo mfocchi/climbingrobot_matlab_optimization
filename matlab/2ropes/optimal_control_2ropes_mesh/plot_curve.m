@@ -84,6 +84,10 @@ arrow3d_points(p0,p0 + solution.Fleg*force_scale,'color','r');grid on;hold on;
 
 if strcmp(params.obstacle_avoidance,'mesh')
     h=surf(params.mesh_x, params.mesh_y, params.mesh_z);
+    %plot normal at p0 (to properly visualize it as perpendicular to
+    %surface you need to set axis equal!
+    arrow3d_points(p0,p0 + params.contact_normal(:)*2,'color','k');grid on;hold on;
+    %surfnorm(params.mesh_x, params.mesh_y, params.mesh_z); % plots the     %normals (negative)
 end    
 
 grid on;

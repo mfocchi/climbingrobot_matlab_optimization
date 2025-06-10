@@ -26,10 +26,10 @@ else
 end
 number_of_constr.initial_final_constraints = 1;
 
-if params.obstacle_avoidance
-   number_of_constr.via_point = 0;
-else
+if  strcmp(   params.obstacle_avoidance, 'none')
    number_of_constr.via_point = 1;
+else
+   number_of_constr.via_point = 0;
 end
 
 % variable intergration step
@@ -114,10 +114,10 @@ end
 % length(ineq)
 
 % constraints on impulse force
-contact_tang_y = cross(cross(params.contact_normal, [0;1;0]),params.contact_normal); 
-contact_tang_z = cross(cross(params.contact_normal, [0;0;1]),params.contact_normal); 
+contact_tang_y = cross(cross(params.contact_normal(:), [0;1;0]),params.contact_normal(:)); 
+contact_tang_z = cross(cross(params.contact_normal(:), [0;0;1]),params.contact_normal(:)); 
 % compute components
-Fun = params.contact_normal'*Fleg;
+Fun = params.contact_normal(:)'*Fleg;
 Futy = contact_tang_y'*Fleg;
 Futz = contact_tang_z'*Fleg;
 Fut_norm = sqrt(Futy^2 +Futz^2);

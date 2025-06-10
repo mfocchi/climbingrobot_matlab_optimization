@@ -40,7 +40,7 @@ function cost = cost(x, p0,  pf, params)
     pf = pf(:);
     
     %minimize the final kin energy at contact
-    Ekinfcost=  params.m/2 * (params.contact_normal'*pd(:,end))*params.contact_normal'*pd(:,end);
+    Ekinfcost=  params.m/2 * (params.contact_normal(:)'*pd(:,end))*params.contact_normal(:)'*pd(:,end);
       
     % minimize hoist work / energy consumption for the hoist work we integrathe the power on a rough grid
     hoist_work = sum(abs(Fr_l.*l1d)*dt_dyn) + sum(abs(Fr_r.*l2d)*dt_dyn);  %assume the motor is not regenreating
