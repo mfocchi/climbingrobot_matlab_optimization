@@ -65,6 +65,7 @@ else %normal
     % the order of params matters for code generation
     params.jump_clearance = 1; % ensure at least this detachment from wall
     params.m = 10.08;   % Mass [kg]
+    params.obstacle_avoidance  = false;
 end
  
 Fr_min = 10; % Fr is negative
