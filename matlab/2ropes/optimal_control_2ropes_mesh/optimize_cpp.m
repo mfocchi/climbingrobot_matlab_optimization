@@ -31,6 +31,7 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     toc
 
     solution = eval_solution(x, dt,  p0, pf, params) ;
+    solution.x = x;
     solution.T_th = params.T_th;
     solution.cost = final_cost;
     solution.problem_solved = EXITFLAG ;%(EXITFLAG == 1) || (EXITFLAG == 2);
@@ -42,8 +43,8 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     solution.optim_output = output;  
 
     % evaluate constraint violation 
-    [c, ceq, num_constr, solution_constr] = constraints(x, p0,  pf,Fleg_max, Fr_max, mu, params);
-    solution.c = c; 
+    [cineq, ceq, num_constr, solution_constr] = constraints(x, p0,  pf,Fleg_max, Fr_max, mu, params);
+    solution.c = cineq; 
     solution.num_constr = num_constr;
     solution.solution_constr = solution_constr;
     solution.constr_tolerance = constr_tolerance;
