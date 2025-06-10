@@ -1,33 +1,38 @@
-function [X, Y, Z] = generateRockWallMap(Lz, Ly, gridSize,wallDepth,   seed, debug)
+function [X, Y, Z] = generateRockWallMap(Lz, Ly, gridSize,wallDepth, maxRidgeDepth,   seed, debug)
 
 if nargin == 2
     gridSize = 100;        % Size of height map
     wallDepth = 2;
+    maxRidgeDepth = 0.5;
     debug = true
      rng("default");
 end
-maxRidgeDepth = 0.5
 
 if nargin ==3
      
     wallDepth = 2;
+    maxRidgeDepth = 0.5;
     debug = false
      rng("default");
 end
 
 
 if nargin  ==4
+    maxRidgeDepth = 0.5;
     debug = false
      rng("default");
 end
 
+if nargin  ==5
+    debug = false
+     rng("default");
+end
 
-
-if nargin ==5
+if nargin ==6
     debug = false
     rng(seed);
 end
-if nargin >5
+if nargin >6
      rng(seed);
 end
 

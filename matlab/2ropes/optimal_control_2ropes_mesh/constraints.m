@@ -26,7 +26,7 @@ else
 end
 number_of_constr.initial_final_constraints = 1;
 
-if  strcmp(   params.obstacle_avoidance, 'none')
+if  strcmp(   params.obstacle_avoidance, 'mesh')
    number_of_constr.via_point = 1;
 else
    number_of_constr.via_point = 0;
@@ -76,7 +76,7 @@ solution_constr.final_error_discrete = norm(p(:,end) - pf);
      %p_x > wall_x + jump_clearance => p_x -wall_z- jump_clearance  >0 => -p_x +wall_z + jump_clearance  <0
      for i=1:params.N_dyn         
         wall_x = wallSurfaceEval(p(3, i), p(2, i),params);
-        ineq = [ineq (-p(1,i)+params.jump_clearance+wall_x) ];  
+        ineq = [ineq (-p(1,i)+wall_x) ];  
         %fprintf('debug wall: %f %f \n',p(1,i),params.jump_clearance +wall_x); 
      end
    else

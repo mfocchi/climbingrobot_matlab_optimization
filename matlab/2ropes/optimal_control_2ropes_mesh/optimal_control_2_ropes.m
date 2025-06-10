@@ -7,7 +7,7 @@ dirpath= pathparts(1:end-1);
 actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
-USEGENCODE = false;
+USEGENCODE = true;
 COPYTOLOCOSIM = false;
 
 %Initial position
@@ -40,15 +40,16 @@ params.w5=0; %  %(not used0 ekinf (important! energy has much higher values!)
 params.w6=0;%  %(not used)
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
-params.jump_clearance = 0; % ensure at least this detachment from wall 
+params.jump_clearance = 1.0; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
 
 %generate mesh surface
 wallDepth = 1; %how              
 gridSize = 100;
+maxRidgeDepth = 0.5;
 seed= "default";
 Lz = -20;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
-[params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth, seed, false);
+[params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
 
 
 % Interpolator (note: z must be increasing — here from -10 to 0)
@@ -103,7 +104,7 @@ fprintf('max_integration_error:  %f\n\n', solution.final_error_real - solution.s
 DEBUG = true;
 
 if (DEBUG)
-    eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance, true)  
+    eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance, false)  
     figure
     ylabel('Fr-X')
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;

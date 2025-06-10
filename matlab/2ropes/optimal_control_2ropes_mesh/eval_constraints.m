@@ -39,9 +39,9 @@ if debug
 end
 
 disp('positive  number represent constraint violation')
-if any(c(wall_constraints_idx:  num_constr.wall_constraints)>constr_tolerance)
+if any(c(wall_constraints_idx:  num_constr.wall_constraints)>=constr_tolerance)
     disp('1- wall constraints violated')
-    c(1:  num_constr.wall_constraints)
+    c(wall_constraints_idx:  num_constr.wall_constraints)
 end     
 
 
@@ -51,7 +51,7 @@ if any( c(retraction_force_constraints_idx+1:retraction_force_constraints_idx+nu
 end  
 
 
-if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>constr_tolerance)
+if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>=constr_tolerance)
     disp('3 -force constraints violated')
     disp('unilateral (Fun >fmin)')
     c(  force_constraints_idx + 1) 
@@ -63,14 +63,14 @@ if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_const
 end
 
 
-if any(c(final_point_constraints_idx+1: final_point_constraints_idx + num_constr.initial_final_constraints)>constr_tolerance)
+if any(c(final_point_constraints_idx+1: final_point_constraints_idx + num_constr.initial_final_constraints)>=constr_tolerance)
     disp('4 final point ')
     c(final_point_constraints_idx+1: final_point_constraints_idx + num_constr.initial_final_constraints)
  
 end
 
 
-if any(c(via_point_idx+1: via_point_idx + num_constr.via_point)>constr_tolerance)
+if any(c(via_point_idx+1: via_point_idx + num_constr.via_point)>=constr_tolerance)
     disp('4 via point ')
     c(via_point_idx+1: via_point_idx + num_constr.via_point)
  
