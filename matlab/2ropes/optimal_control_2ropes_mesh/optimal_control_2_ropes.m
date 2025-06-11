@@ -46,7 +46,7 @@ params.jump_clearance = 1.0; % ensure at least this detachment from wall in the 
 wallDepth = 1; %how              
 gridSize = 100;
 maxRidgeDepth = 0.5;
-seed= "default";
+seed= 47;
 Lz = -20;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
 [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
@@ -57,8 +57,6 @@ p0(1) = wallSurfaceEval(p0(3),p0(2),  params);
 pf(1) = wallSurfaceEval(pf(3),pf(2),  params);
 % compute consistent normal 
 params.contact_normal = wallNormalEval(p0(3),p0(2), params)
-
-%constraints(solution.x, p0,  pf,Fleg_max, Fr_max, mu, params);
 
 mu = 0.8;
 

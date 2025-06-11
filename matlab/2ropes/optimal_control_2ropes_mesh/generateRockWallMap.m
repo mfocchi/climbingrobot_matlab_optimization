@@ -5,7 +5,7 @@ if nargin == 2
     wallDepth = 2;
     maxRidgeDepth = 0.5;
     debug = true
-     rng("default");
+     rng(47);
 end
 
 if nargin ==3
@@ -13,19 +13,19 @@ if nargin ==3
     wallDepth = 2;
     maxRidgeDepth = 0.5;
     debug = false
-     rng("default");
+     rng(47);
 end
 
 
 if nargin  ==4
     maxRidgeDepth = 0.5;
     debug = false
-     rng("default");
+     rng(47);
 end
 
 if nargin  ==5
     debug = false
-     rng("default");
+     rng(47);
 end
 
 if nargin ==6
@@ -44,8 +44,10 @@ weights = [0.5, 0.25, 0.15, 0.1];
 smoothKernel = fspecial('gaussian', [15, 15], 3);
 for i = 1:length(frequencies)
     scale = frequencies(i);
-    noise = imresize(rand(floor(gridSize/scale)), [gridSize gridSize], 'bilinear');
-    X =  weights(i) * imfilter(noise, smoothKernel, 'replicate');
+    % rand(N) returns an N-by-N matrix
+    noise = rand(floor(gridSize/scale))
+    noise_resized = imresize(noise, [gridSize gridSize], 'bilinear');
+    X =  weights(i) * imfilter(noise_resized, smoothKernel, 'replicate');
 end
 % Normalize and % Scale to realistic wall height (e.g., meters)
 X = X - min(X(:));
@@ -65,6 +67,7 @@ X(round(gridSize*0.3):15 +round(gridSize*0.3),:) =X(round(gridSize*0.3):15 + rou
 %3) pillars
 numPillars = 10;
 for i = 1:numPillars
+    %randi(100) in MATLAB gives a uniform integer from 1 to 100, inclusive.
     cz = randi(gridSize);
     cy = randi(gridSize);
     [Z, Y] = meshgrid(1:gridSize, 1:gridSize);
