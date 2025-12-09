@@ -1,5 +1,0 @@
-The video presents a kinematic description of the CLIO robot and of the
-optimal control problem used to plan jumping trajectories. Next are shown simulations to validate 
-the accuracy of the simplied model against the high detail one. Then, multiple jumping targets are reached in
-a Gazebo simulation using the trajectories optimized with the simplified model. Finally, a reachability analysis is 
-illustrated to show the limitations of the approach.

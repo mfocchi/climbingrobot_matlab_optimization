@@ -9,6 +9,7 @@ cd(actual_dir);
 
 USEGENCODE = true;
 COPYTOLOCOSIM = false;
+stand_alone_cpp = false;
 
 %Initial position
 p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
@@ -69,7 +70,33 @@ if ~isfile('optimize_cpp_mex.mexa64')
     cfg.IntegrityChecks = false;
     cfg.SaturateOnIntegerOverflow = false;
     codegen -config cfg  optimize_cpp -args {[0, 0, 0], [0, 0, 0], 0, 0, 0, 0,  coder.cstructname(params, 'param') } -nargout 1 -report
+    
 end
+
+% if stand_alone_cpp
+% 
+%     % Choose SHARED LIB target (for ctypes/pybind11 at runtime)
+%     cfg = coder.config('dll');              % shared library: .dll / .so / .dylib
+%     cfg.TargetLang = 'C';                   % 'C' is easiest for Python interop
+%     cfg.GenerateReport = true;
+% 
+%     % Argument types (mirror your mex run):
+%     aT = coder.typeof(0, [1 3], [false false]);   % 1x3 double
+%     bT = coder.typeof(0, [1 3], [false false]);
+%     sT = coder.typeof(0);                         % scalar double
+% 
+%     % params: reuse your existing struct shape
+%     % IMPORTANT: 'params' must be a populated MATLAB struct template with fixed field types.
+%     % coder.cstructname controls the C typename in the header (here: 'param')
+%     paramT = coder.cstructname(params, 'param');
+% 
+%     % If the output has a known shape/type, you can also specify -nargout 1 (as you did for mex).
+%     codegen -config cfg optimize_cpp -args {aT, bT, sT, sT, sT, sT, paramT} -nargout 1 -report
+% 
+% 
+% 
+% end
+
 
 mpc_fun   = 'optimize_cpp';
 if USEGENCODE  
@@ -104,13 +131,35 @@ DEBUG = true;
 if (DEBUG)
     eval_constraints(solution.c, solution.num_constr, solution.constr_tolerance, false)  
     figure
-    ylabel('Fr-X')
+    
     plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;
     plot(solution.time,-Fr_max*ones(size(solution.Fr_l)),'k');
     plot(solution.time,solution.Fr_l,'r');
     plot(solution.time,solution.Fr_r,'b');
     legend({'min','max','Frl','Frr'});
+    title('Forces')
+
+
+    figure
+    R = 0.025;
+    Kt = 0.083;
+    plot(solution.time,0*ones(size(solution.Fr_l)),'k'); hold on; grid on;
+    plot(solution.time,-Fr_max*ones(size(solution.Fr_l))*R,'k');
+    plot(solution.time,solution.Fr_l*R,'r');
+    plot(solution.time,solution.Fr_r*R,'b');
+    legend({'min','max','Left','Right'});
+    title('Torque Nm')
+   
+    figure
+    RADS2RPM = 60/(2*pi);
+    Kt = 0.083;
     
+    plot(solution.time,solution.l1d/R*RADS2RPM,'r'); hold on; grid on;
+    plot(solution.time,solution.l2d/R*RADS2RPM,'b');
+    legend({'Left','Right'});
+ title('Speed RPM')
+   
+
     figure
     subplot(3,1,1)
     plot(solution.time, solution.p(1,:),'r') ; hold on;   grid on; 
