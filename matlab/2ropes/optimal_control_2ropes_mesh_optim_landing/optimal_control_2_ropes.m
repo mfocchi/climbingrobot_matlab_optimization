@@ -54,6 +54,8 @@ params.patch_side =  1;
 
 % Interpolator (note: z must be increasing — here from -10 to 0)
 p0(1) = wallSurfaceEval(p0(3),p0(2),  params);
+% This is  needed to eval the cost and let the optimization find a landin
+% point in a patch of side  params.patch_side and center landing_patch_center
 landing_patch_center(1) = wallSurfaceEval(landing_patch_center(3),landing_patch_center(2),  params);
 
 % compute consistent normal 
