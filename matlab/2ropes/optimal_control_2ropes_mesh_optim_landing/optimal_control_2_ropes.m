@@ -12,10 +12,10 @@ COPYTOLOCOSIM = true;
  
 
 %Initial position
-p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
+p0 = [0.5, 3.5, -6]; % there is singularity for px = 0!
 %center of the selected landing patch
-landing_patch_center = [0.5, 4,-4];
-Fleg_max = 600;
+landing_patch_center = [0.5, 3,-7];
+Fleg_max = 300;
 Fr_max = 90; % max rope force 
 Fr_min = 10; % min rope force 
 
@@ -38,7 +38,7 @@ params.w2=0; %hoist work
 params.w3=300; % landing cost
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
-params.jump_clearance = 1.0; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
+params.jump_clearance = 0.5; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
 
 %generate mesh surface
 wallDepth = 1; %how              
@@ -132,7 +132,7 @@ if (DEBUG)
     plot(solution.time,solution.l1d/R*RADS2RPM,'r'); hold on; grid on;
     plot(solution.time,solution.l2d/R*RADS2RPM,'b');
     legend({'Left','Right'});
- title('Speed RPM')
+    title('Speed RPM')
    
 
     figure
@@ -165,8 +165,8 @@ fprintf('Average Poiwer [W]: %f \n\n', solution.average_power);
 
 if COPYTOLOCOSIM
     fprintf(2,"copying to locosim\n")
-    copyfile codegen/mex/optimize_cpp/ ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen_mesh_landing/mex/optimize_cpp
-    copyfile optimize_cpp_mex.mexa64 ~/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen_mesh_landing/
+    copyfile codegen/mex/optimize_cpp/ ~/Dropbox/SHARE_COMPUTER/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen_mesh_landing/mex/optimize_cpp
+    copyfile optimize_cpp_mex.mexa64 ~/Dropbox/SHARE_COMPUTER/trento_lab_home/ros_ws/src/locosim/robot_control/base_controllers/climbingrobot_controller/codegen_mesh_landing/
 end
 
 %1.384975
