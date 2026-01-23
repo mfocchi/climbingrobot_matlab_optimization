@@ -102,7 +102,7 @@ grid on;
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
-view(33,63);
+view(113,5);
 
 if (plot_energy)
     figure
