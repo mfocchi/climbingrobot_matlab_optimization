@@ -45,19 +45,20 @@ function cost = cost(x, p0,  pf, params)
     % to -180 and stays there! with sum(abs(diff(Fr_r))) +
     % sum(abs(diff(Fr_l))) but does not converge at all 
     smooth_correct = sum(diff(Fr_r).^2)+ sum(diff(Fr_l).^2); % this is nice but slower
-    smooth = sum(diff(Fr_r)) + sum(diff(Fr_l));
+    smooth = sum(diff(Fr_r)) + sum(diff(Fr_l)); %this gives negative values!
     
 
     landing_cost = evalCost(p_f(3), p_f(2), params);
     
 
-    %fprintf("\n smooth %f\n ", params.w1*smooth)
-    %fprintf(" hoist_work %f\n ",params.w2*hoist_work)  
-    %fprintf(" landing_cost %f\n ", params.w3*landing_cost)
+    fprintf("\n smooth %f\n ", params.w1*smooth_correct);
+    fprintf(" hoist_work %f\n ",params.w2*hoist_work);  
+    fprintf(" landing_cost %f\n ", params.w3*landing_cost);
 
     %cost =  0.001 * params.w1 *Ekinfcost +   params.w4 *smooth ;% converge
     %super slowly
-    cost =  params.w2 *hoist_work +   params.w1 *smooth + params.w3*landing_cost;% 72 iter
+    cost =    params.w1 *smooth_correct + params.w2 *hoist_work +   params.w3*landing_cost;% 72 iter
+    fprintf(" total_cost %f\n ", cost);
    % cost =    params.w4 *smooth ;% 27 iter
    % cost =    params.w4 *smooth_correct ;% 96 iter
 end

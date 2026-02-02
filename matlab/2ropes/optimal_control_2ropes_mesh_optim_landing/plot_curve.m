@@ -92,8 +92,8 @@ if strcmp(params.obstacle_avoidance,'mesh')
     %surface you need to set axis equal!
     arrow3d_points(p0,p0 + params.contact_normal(:)*2,'color','k');grid on;hold on;
     %surfnorm(params.mesh_x, params.mesh_y, params.mesh_z); % plots the     %normals (negative)
-     
-    h1=surf(-params.cost_x, params.cost_y, params.cost_z, 'FaceAlpha', 0.5);
+    % I plot the opposite of the cost to visualize it in the map
+    h1=surf(-params.cost_x/50, params.cost_y, params.cost_z, 'FaceAlpha', 0.5);
 
 end    
 

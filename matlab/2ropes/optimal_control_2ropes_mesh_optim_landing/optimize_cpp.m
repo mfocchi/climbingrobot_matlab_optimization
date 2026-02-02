@@ -6,7 +6,8 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     dt = 0.001; %for eval solution
     
     % needs to be fixed for code generation
-    constr_tolerance = 1e-3;
+    constr_tolerance = 0.5e-2;
+    %constr_tolerance = 1e-3;
     
     dt=0.001; % only to evaluate solution
 

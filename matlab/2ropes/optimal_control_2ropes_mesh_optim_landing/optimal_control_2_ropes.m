@@ -14,10 +14,10 @@ COPYTOLOCOSIM = true;
 %Initial position
 p0 = [0.5, 3.5, -6]; % there is singularity for px = 0!
 %center of the selected landing patch
-landing_patch_center = [0.5, 3,-7];
+landing_patch_center = [0.5, 3,-4]; %with landing [0.5, 3,-3]  with Fleg_max = 100 with constrain tis doing a big turn
 Fleg_max = 300;
-Fr_max = 90; % max rope force 
-Fr_min = 10; % min rope force 
+Fr_max = 190; % max rope force (previoously 90)
+Fr_min = 15; % min rope force (previously 10)
 
 % the order of params matters for code generation
 params.m = 10.08;   % Mass [kg]
@@ -33,9 +33,9 @@ params.b = anchor_distance;
 params.p_a1 = [0;0;0];
 params.p_a2 = [0;anchor_distance;0];
 params.g = 9.81;
-params.w1=1; % diff Fr1/2 smothing
+params.w1=1e-3; % diff Fr1/2 smothing
 params.w2=0; %hoist work
-params.w3=300; % landing cost
+params.w3=1000; % landing cost
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
 params.jump_clearance = 0.5; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
@@ -48,8 +48,9 @@ seed= 47;
 Lz = -20;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
 [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
-[params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, landing_patch_center + [0, -0.5, 0.5], 3);
-params.patch_side =  1;
+point_highest_cost = landing_patch_center + [0, 0.5, 0.5];
+[params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, point_highest_cost, 200);
+params.patch_side =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point
 
 
 % Interpolator (note: z must be increasing — here from -10 to 0)
