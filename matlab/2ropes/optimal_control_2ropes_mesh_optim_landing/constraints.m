@@ -138,10 +138,10 @@ if params.FRICTION_CONE %|Fut| < mu*Fun
 end
 
 %4- landing constraint, landing point inside the selected patch
-y_min = pf(2)-params.patch_side/2;
-y_max = pf(2)+params.patch_side/2;
-z_min = pf(3)-params.patch_side/2;
-z_max = pf(3)+params.patch_side/2;
+y_min = pf(2)-params.patch_side_y/2;
+y_max = pf(2)+params.patch_side_y/2;
+z_min = pf(3)-params.patch_side_z/2;
+z_max = pf(3)+params.patch_side_z/2;
 
 %constraint Y direction inside patch  bounds 
 %4.1 p_f(y) < ymax => p_f(2) -ymax < 0

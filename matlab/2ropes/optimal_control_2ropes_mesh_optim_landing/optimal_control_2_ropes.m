@@ -50,7 +50,8 @@ Ly = params.b;    % Width (horizontal extent) of wall in meters
 [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
 point_highest_cost = landing_patch_center + [0, 0.5, 0.5];
 [params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, point_highest_cost, 200);
-params.patch_side =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point
+params.patch_side_z =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point
+params.patch_side_y =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point
 
 
 % Interpolator (note: z must be increasing — here from -10 to 0)
