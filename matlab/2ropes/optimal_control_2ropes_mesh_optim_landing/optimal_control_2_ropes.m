@@ -20,7 +20,7 @@ Fr_max = 190; % max rope force (previoously 90)
 Fr_min = 15; % min rope force (previously 10)
 
 % the order of params matters for code generation
-params.m = 10.08;   % Mass [kg]
+params.m = 5.08;   % Mass [kg]
 %WORLD FRAME ATTACHED TO ANCHOR 1 (left)
 anchor_distance = 5;
 params.num_params = 4;   
@@ -39,6 +39,7 @@ params.w3=1000; % landing cost
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
 params.jump_clearance = 0.5; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
+params.debug = false;
 
 %generate mesh surface
 wallDepth = 1; %how              
@@ -48,7 +49,7 @@ seed= 47;
 Lz = -20;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
 [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
-point_highest_cost = landing_patch_center + [0, 0.5, 0.5];
+point_highest_cost = landing_patch_center + [0, -0.5, 0.5];
 [params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, point_highest_cost, 200);
 params.patch_side_z =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point
 params.patch_side_y =  1; % set to 0.1 if you want to go back to the previous case with fixed landing point

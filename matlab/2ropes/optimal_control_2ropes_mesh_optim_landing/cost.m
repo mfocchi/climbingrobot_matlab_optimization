@@ -51,14 +51,17 @@ function cost = cost(x, p0,  pf, params)
     landing_cost = evalCost(p_f(3), p_f(2), params);
     
 
-    fprintf("\n smooth %f\n ", params.w1*smooth_correct);
-    fprintf(" hoist_work %f\n ",params.w2*hoist_work);  
-    fprintf(" landing_cost %f\n ", params.w3*landing_cost);
 
     %cost =  0.001 * params.w1 *Ekinfcost +   params.w4 *smooth ;% converge
     %super slowly
     cost =    params.w1 *smooth_correct + params.w2 *hoist_work +   params.w3*landing_cost;% 72 iter
-    fprintf(" total_cost %f\n ", cost);
+
+    if params.debug
+        fprintf("\n smooth %f\n ", params.w1*smooth_correct);
+        fprintf(" hoist_work %f\n ",params.w2*hoist_work);  
+        fprintf(" landing_cost %f\n ", params.w3*landing_cost);
+        fprintf(" total_cost %f\n ", cost);
+    end
    % cost =    params.w4 *smooth ;% 27 iter
    % cost =    params.w4 *smooth_correct ;% 96 iter
 end
