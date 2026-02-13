@@ -1,4 +1,4 @@
-function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, params)
+function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, Fmesh, params)
 
 
 % ineq are <= 0
@@ -76,7 +76,7 @@ if strcmp(   params.obstacle_avoidance, 'none')
 elseif strcmp(params.obstacle_avoidance, 'mesh')
     %p_x > wall_x + jump_clearance => p_x -wall_z- jump_clearance  >0 => -p_x +wall_z + jump_clearance  <0
     for i=1:params.N_dyn
-        wall_x = wallSurfaceEval(p(3, i), p(2, i),params);
+        wall_x = wallSurfaceEval(p(3, i), p(2, i),params, Fmesh);
         ineq = [ineq (-p(1,i)+wall_x)];
         %fprintf('debug wall: %f %f \n',p(1,i),params.jump_clearance +wall_x);
     end
@@ -157,7 +157,7 @@ ineq= [ineq (-p_f(3)+z_min)];
 
 fixed_slack = 0.02;
 %4.5 constraint the X ||pf(x) -wall_x||<fixed_slack (otherwise it finds something in the air!)
-wall_x_min = wallSurfaceEval(p_f(3), p_f(2),params);
+wall_x_min = wallSurfaceEval(p_f(3), p_f(2),params, Fmesh);
 ineq = [ineq (norm(p_f(1)-wall_x_min)-fixed_slack) ];
 
 %old way 
@@ -166,7 +166,7 @@ ineq = [ineq (norm(p_f(1)-wall_x_min)-fixed_slack) ];
 
 %5 - jump clearance p_x > jump_clearance
 if number_of_constr.via_point >0
-    wall_x = wallSurfaceEval(p(3, params.N_dyn/2), p(2, params.N_dyn/2),params);
+    wall_x = wallSurfaceEval(p(3, params.N_dyn/2), p(2, params.N_dyn/2),params, Fmesh);
     ineq = [ineq (-p(1,params.N_dyn/2) +wall_x +params.jump_clearance)];
 end
 

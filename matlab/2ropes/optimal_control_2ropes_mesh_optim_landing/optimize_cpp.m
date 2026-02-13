@@ -33,7 +33,7 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
 
 
     tic
-    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Fcost, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu,  params) , options);
+    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Fcost, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu, Fmesh, params) , options);
     toc
 
     solution = eval_solution(x, dt,  p0, pf, params) ;
@@ -49,7 +49,7 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     solution.optim_output = output;  
 
     % evaluate constraint violation 
-    [cineq, ceq, num_constr, solution_constr] = constraints(x, p0,  pf,Fleg_max, Fr_max, mu, params);
+    [cineq, ceq, num_constr, solution_constr] = constraints(x, p0,  pf,Fleg_max, Fr_max, mu, Fmesh, params);
     solution.c = cineq; 
     solution.num_constr = num_constr;
     solution.solution_constr = solution_constr;
