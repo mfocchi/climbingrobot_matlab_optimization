@@ -1,4 +1,4 @@
-function cost = cost(x, p0,  pf, params)
+function cost = cost(x, p0,  pf, Fcost, params)
 
     Fleg = [ x(1); x(2); x(3)];
     Tf = x(4);
@@ -48,7 +48,7 @@ function cost = cost(x, p0,  pf, params)
     smooth = sum(diff(Fr_r)) + sum(diff(Fr_l)); %this gives negative values!
     
 
-    landing_cost = evalCost(p_f(3), p_f(2), params);
+    landing_cost = evalCost(p_f(3), p_f(2), Fcost, params);
     
 
 

@@ -14,6 +14,10 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     %compute initial state from jump param
     x0 = computeStateFromCartesian(params, p0);
 
+    %created interpolant
+    Fcost=createInterpolant(params.cost_x, params.mesh_y, params.mesh_z);
+
+
     %pendulum period
     T_pend = 2*pi*sqrt(x0(2)/params.g)/4; % half period TODO replace with linearized x0(2) = l10
  
@@ -28,7 +32,7 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
 
 
     tic
-    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu,  params) , options);
+    [x, final_cost, EXITFLAG, output] = fmincon(@(x) cost(x, p0,  pf, Fcost, params), x0,[],[],[],[],lb,ub,  @(x) constraints(x, p0,  pf, Fleg_max, Fr_max, mu,  params) , options);
     toc
 
     solution = eval_solution(x, dt,  p0, pf, params) ;
