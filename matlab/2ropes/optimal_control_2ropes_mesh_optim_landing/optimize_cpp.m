@@ -16,6 +16,7 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
 
     %created interpolant
     Fcost=createInterpolant(params.cost_x, params.mesh_y, params.mesh_z);
+    Fmesh=createInterpolant(params.mesh_x, params.mesh_y, params.mesh_z);
 
 
     %pendulum period
