@@ -170,6 +170,22 @@ if number_of_constr.via_point >0
     ineq = [ineq (-p(1,params.N_dyn/2) +wall_x +params.jump_clearance)];
 end
 
+%not used, consider using if you have issues
+% number_of_constr.map_boundary = 4*params.N_dyn;
+% %6 - map boudnary limits
+% for i=1:params.N_dyn
+%     %6.1 p(y) < ymax => p(2) -ymax < 0
+%     ineq= [ineq (p(2,i)-params.max_map_y) ];
+%     %6.2 p(y) > ymin => -p(2) < -ymin => -p(2) + ymin<0
+%     ineq= [ineq (-p(2,i)+params.min_map_y) ];    
+%     %constraint Z direction inside map  bounds
+%     %6.3 p(z) < zmax => p(3) -zmax < 0
+%     ineq= [ineq (p(3,i)-params.max_map_z)];
+%     %6.4 p(z) > zmin => -p(3) < -zmin => -p(3) + zmin<0
+%     ineq= [ineq (-p(3,i)+params.min_map_z)];
+% end
+
+
 eq = [];
 
 
