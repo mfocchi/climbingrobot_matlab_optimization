@@ -22,8 +22,8 @@ function solution = optimize_cpp(p0,  pf, Fleg_max, Fr_max, Fr_min, mu, params)
     %pendulum period
     T_pend = 2*pi*sqrt(x0(2)/params.g)/4; % half period TODO replace with linearized x0(2) = l10
  
-    Fr_l0 = 0*ones(1,params.N_dyn);
-    Fr_r0 = 0*ones(1,params.N_dyn);
+    Fr_l0 = -Fr_min*ones(1,params.N_dyn);
+    Fr_r0 = -Fr_min*ones(1,params.N_dyn);
     x0 = [  Fleg_max,  Fleg_max,  Fleg_max,        T_pend,         Fr_l0,                               Fr_r0]; %opt vars=   Flegx Flegy Flexz Tf  traj_Fr_l traj_Fr_r
     lb = [  -Fleg_max,   -Fleg_max, -Fleg_max          0.01, -Fr_max*ones(1,params.N_dyn), -Fr_max*ones(1,params.N_dyn)];
     ub = [  Fleg_max,    Fleg_max, Fleg_max,           inf,  -Fr_min*ones(1,params.N_dyn), -Fr_min*ones(1,params.N_dyn)];
