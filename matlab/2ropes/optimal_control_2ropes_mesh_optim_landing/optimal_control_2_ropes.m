@@ -8,7 +8,7 @@ actual_dir =  strjoin(dirpath,"/");
 cd(actual_dir);
 
 USEGENCODE = true;
-COPYTOLOCOSIM = true;
+COPYTOLOCOSIM = false;
  
 
 %Initial position
