@@ -9,7 +9,7 @@ y = linspace(0, Ly, gridSize);
 
 radius = 0.25;
 bulge = exp(-((Z-gaussian_center(3)).^2 + (Y-gaussian_center(2)).^2)/(2*(radius^2)));
-X =  -bulge*max_cost;  % bump height
+X = max_cost -bulge*max_cost;  % bump height
 
 
 end
