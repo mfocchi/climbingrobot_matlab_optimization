@@ -1,4 +1,4 @@
-function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, Fmesh, params)
+function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  patch_center,  Fleg_max, Fr_max, mu, Fmesh, params)
 
 
 % ineq are <= 0
@@ -8,9 +8,9 @@ Fr_l = x(params.num_params+1:params.num_params+params.N_dyn);
 Fr_r = x(params.num_params+params.N_dyn+1:params.num_params+2*params.N_dyn);
 
 
-% check they are column vectors
+% check initial point and landing point  are column vectors
 p0 = p0(:);
-pf = pf(:);
+patch_center = patch_center(:);
 
 % size not known
 ineq = zeros(1,0);
@@ -66,7 +66,7 @@ solution_constr.time = t;
 
 
 
-% 1 -N_dyn  constraint to do not enter the wall, p_x >=0
+% 1 -N_dyn  constraint to do not enter the wall, p_x >=0/mesh
 
 if strcmp(   params.obstacle_avoidance, 'none')
     for i=1:params.N_dyn
@@ -89,7 +89,7 @@ end
 % disp('after wall')
 % length(ineq)
 
-% 2- N_dyn constraints on retraction force   -Fr_max < Fr < 0
+% 2- N_dyn constraints on rope forces   -Fr_max < Fr < 0
 % unilaterality
 
 if number_of_constr.retraction_force_constraints>0
@@ -138,12 +138,13 @@ if params.FRICTION_CONE %|Fut| < mu*Fun
 end
 
 %4- landing constraint, landing point inside the selected patch
-y_min = pf(2)-params.patch_side_y/2;
-y_max = pf(2)+params.patch_side_y/2;
-z_min = pf(3)-params.patch_side_z/2;
-z_max = pf(3)+params.patch_side_z/2;
+y_min = patch_center(2)-params.patch_side_y/2;
+y_max = patch_center(2)+params.patch_side_y/2;
+z_min = patch_center(3)-params.patch_side_z/2;
+z_max = patch_center(3)+params.patch_side_z/2;
 
-%constraint Y direction inside patch  bounds 
+%constraint Y direction inside patch  bounds, p_f is the patch center in
+%world frame
 %4.1 p_f(y) < ymax => p_f(2) -ymax < 0
 ineq= [ineq (p_f(2)-y_max) ];
 %4.2 p_f(y) > ymin => -p_f(2) < -ymin => -p_f(2) + ymin<0
@@ -156,12 +157,14 @@ ineq= [ineq (p_f(3)-z_max)];
 ineq= [ineq (-p_f(3)+z_min)];
 
 fixed_slack = 0.02;
-%4.5 constraint the X ||pf(x) -wall_x||<fixed_slack (otherwise it finds something in the air!)
+%4.5 constraint the X ||p_f(x) -wall_x||<fixed_slack (otherwise it finds something in the air!)
 wall_x_min = wallSurfaceEval(p_f(3), p_f(2),params, Fmesh);
 ineq = [ineq (norm(p_f(1)-wall_x_min)-fixed_slack) ];
 
+ 
+
 %old way 
-% ineq= [ineq (norm(p_f - pf) - fixed_slack)];
+% ineq= [ineq (norm(p_f - patch_center) - fixed_slack)];
 % number_of_constr.final_constraints =  1;
 
 %5 - jump clearance p_x > jump_clearance

@@ -21,7 +21,7 @@ if full_update
     min_x = min(min(solution.p(1,:)), landing_patch_center(1))-3 ;
     max_x = max(max(solution.p(1,:)), landing_patch_center(1))+3 ;
     min_y = min(min(solution.p(2,:)), landing_patch_center(2))-3 ;
-    max_y = max(max(solution.p(2,:)), landing_patch_center(2)) +3 ;
+    max_y = params.p_a2(2);
 
     min_z = min(min(p0(3)), min(landing_patch_center(3)))-4;
     max_z = 2;
@@ -34,15 +34,7 @@ if full_update
     set(gca,'ZLim',[min_z max_z])
     
     
-    %     drawing a wall at X = 0
-    p1 = [0 min_y min_z];
-    p2 = [0 max_y min_z];
-    p3 = [0 max_y max_z];
-    p4 = [0 min_y max_z];
-    Xw = [p1(1) p2(1) p3(1) p4(1)];
-    Yw = [p1(2) p2(2) p3(2) p4(2)];
-    Zw = [p1(3) p2(3) p3(3) p4(3)];
-    h(3) = fill3(Xw, Yw, Zw, 'b', 'FaceAlpha',.5  );
+    
 
     % % half cone
     % cone_center = p0';
@@ -102,7 +94,7 @@ grid on;
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
-view(113,5);
+view(147,8.6);
 
 if (plot_energy)
     figure

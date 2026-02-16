@@ -38,7 +38,7 @@ if debug
 
 end
 
-disp('positive  number represent constraint violation')
+disp('EVAL CONSTRAINTS: positive  number represent constraint violation\n')
 if any(c(wall_constraints_idx:  num_constr.wall_constraints)>constr_tolerance)
     disp('1)- wall constraints violated')
     disp(c(wall_constraints_idx:  num_constr.wall_constraints))
@@ -52,7 +52,7 @@ end
 
 
 if any(c(force_constraints_idx+1: force_constraints_idx + num_constr.force_constraints)>constr_tolerance)
-    disp('3) -force constraints violated')
+    disp('3) - leg force constraints violated')
     disp('unilateral (Fun >fmin)')
     disp(c(  force_constraints_idx + 1))
     disp('actuation (Fun < fun max)')
@@ -93,7 +93,7 @@ end
 
 if any(c(via_point_idx+1: via_point_idx + num_constr.via_point)>constr_tolerance)
     disp('5) via point constraint violated')
-    c(via_point_idx+1: via_point_idx + num_constr.via_point)
+    disp(c(via_point_idx+1: via_point_idx + num_constr.via_point))
  
 end
     
