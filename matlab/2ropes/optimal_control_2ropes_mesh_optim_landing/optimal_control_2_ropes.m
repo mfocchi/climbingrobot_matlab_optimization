@@ -12,9 +12,9 @@ COPYTOLOCOSIM = false;
  
 
 %Initial position
-p0 = [0.5, 3.5, -6]; % there is singularity for px = 0!
+p0 = [0.5, 5.5, -6]; % there is singularity for px = 0!
 %center of the selected landing patch
-landing_patch_center = [0.5, 3,-4]; %with landing [0.5, 3,-3]  with Fleg_max = 100 with constrain tis doing a big turn
+landing_patch_center = [0.5, 8.5,-4]; %with landing [0.5, 3,-3]  with Fleg_max = 100 with constrain tis doing a big turn
 Fleg_max = 300;
 Fr_max = 190; % max rope force (previoously 90)
 Fr_min = 15; % min rope force (previously 10)
@@ -22,7 +22,7 @@ Fr_min = 15; % min rope force (previously 10)
 % the order of params matters for code generation
 params.m = 5.08;   % Mass [kg]
 %WORLD FRAME ATTACHED TO ANCHOR 1 (left)
-anchor_distance = 5;
+anchor_distance = 10;
 params.num_params = 4;   
 params.int_method = 'rk4';
 params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
@@ -46,17 +46,30 @@ wallDepth = 1; %how
 gridSize = 100;
 maxRidgeDepth = 0.5;
 seed= 47;
-Lz = -20;         % Height of wall in meters
+
+%rock wall terrain
+% Lz = -20;         % Height of wall in meters
+% Ly = params.b;    % Width (horizontal extent) of wall in meters
+% [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
+% N_patches_z = 20;
+% N_patches_y = 10;
+
+
+%hemispheric obstacle terrain
+Lz = -10;         % Height of wall in meters
 Ly = params.b;    % Width (horizontal extent) of wall in meters
-[params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
-point_lowest_cost = landing_patch_center + [0, -0.5, 0.5];
+[params.mesh_x , params.mesh_y, params.mesh_z] = generateHemisphericMap(Lz, Ly,Lz / 2, Ly / 2, 1.5, gridSize, 0.01);
+N_patches_z = 10;
+N_patches_y = 10;
+
+point_lowest_cost = landing_patch_center + [0, 0.5, 0.5];
 [params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, point_lowest_cost, 20);
 
 %TODO different grid sizes
-N_patches_z = 20;
-N_patches_y = 5;
 params.patch_side_z =  abs(Lz)/N_patches_z; % set to 0.1 if you want to go back to the previous case with fixed landing point
 params.patch_side_y =  abs(Ly)/N_patches_y; % set to 0.1 if you want to go back to the previous case with fixed landing point
+
+%not used, we do not want to constrain the trajectory during the jump 
 % params.min_map_z=Lz;
 % params.max_map_z=0;
 % params.min_map_y=0;
@@ -107,10 +120,8 @@ switch solution.problem_solved
 end
 plot_curve( solution,solution.solution_constr, p0, landing_patch_center, mu,  false, 'r', true, params);
 
-fprintf('Fleg:  %f %f %f \n\n',solution.Fleg(1), solution.Fleg(2), solution.Fleg(3))
-fprintf('cost:  %f\n\n',solution.cost)
-fprintf('final_kin_energy:  %f\n\n',solution.Ekinf)
-fprintf('final_error_real:  %f\n\n',solution.final_error_real)
+%fprintf('final_kin_energy:  %f\n\n',solution.Ekinf)
+%fprintf('final_error_real:  %f\n\n',solution.final_error_real)
 
 %-0.7472         0    0.7472   -0.8808         0    0.7849   -1.0812  
 DEBUG = true;
@@ -164,6 +175,9 @@ if (DEBUG)
     ylabel('Z')   
 end
 
+
+ 
+fprintf('cost:  %f\n\n',solution.cost);
 fprintf('Leg impulse force: %f %f %f\n\n', solution.Fleg);
 fprintf('Jump Duration: %f\n\n', solution.Tf);
 fprintf('Landing Target: %f %f %f\n\n', solution.achieved_target);
