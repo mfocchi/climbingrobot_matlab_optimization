@@ -1,6 +1,5 @@
 function [ineq, eq, number_of_constr, solution_constr] = constraints(x,   p0,  pf,  Fleg_max, Fr_max, mu, params)
 
- 
 % ineq are <= 0
 Fleg = [ x(1); x(2); x(3)];
 Tf = x(4);
@@ -126,7 +125,6 @@ Fut_norm = sqrt(Futy^2 +Futz^2);
 Fun_min = 0;
 
 %3 ------------------------------ Fleg constraints
-
 % unilateral
 ineq = [ineq  (-Fun + Fun_min)]  ; %(Fun >fmin ) 
 %max force 
@@ -164,6 +162,15 @@ end
 
 eq = [];
 
+%6 force fleg to be along base x axis an contact normal
+%new model base frame (psi is associated to the rope plane so we have
+%a rotation of (pi/2 -psi) about the y axis
+% wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
+%            0, 1,          0, 
+%         -sin(pi/2-psi), 0, cos(pi/2-psi)];
+%w_base_x_axis = [cos(pi/2-psi), 0, -sin(pi/2-psi)];
+ineq = [ineq (norm(Futy)-0.05) ];
+ineq = [ineq (norm(Futz)-0.05) ];
 
 % if any(isinf(ineq))
 %     disp('Infn in constraint')

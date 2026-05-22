@@ -15,7 +15,7 @@ stand_alone_cpp = false;
 p0 = [0.5, 2.5, -6]; % there is singularity for px = 0!
 %FINAL TARGET
 pf= [0.5, 4,-4];
-Fleg_max = 600;
+Fleg_max = 300;
 Fr_max = 90; % max rope force 
 Fr_min = 10; % min rope force 
 
