@@ -62,7 +62,7 @@ X =X / max(X(:)) * wallDepth;
 % Z(ridge) = Z(ridge) + 2.6;  % Raise ridge
 
 % Vertical ridge
-X(round(gridSize*0.3):15 +round(gridSize*0.3),:) =X(round(gridSize*0.3):15 + round(gridSize*0.3), :) + maxRidgeDepth;
+X(round(gridSize*0.6):15 +round(gridSize*0.6),:) =X(round(gridSize*0.6):15 + round(gridSize*0.6), :) + maxRidgeDepth;
 
 %3) pillars
 numPillars = 10;

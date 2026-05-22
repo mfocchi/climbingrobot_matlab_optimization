@@ -67,10 +67,10 @@ alpha = (pi - acos((l2^2 -b^2 -l1^2)/(2*b*l1)))
 p_val = vpa(subs(p,{psi(t),l1(t),l2(t), b},{0, 6.5, 6.5,5}),4)
 alpha_val = vpa(subs(alpha, {psi(t),l1(t),l2(t), b},{0, 6.5, 6.5,5}),4)
  
-% position clean
+% position clean replace l1(t) with l1 etc
 p1 = subs(p, {str2sym('l1(t)') , str2sym('l2(t)'),str2sym('psi(t)')},   {str2sym('l1'), str2sym('l2'),str2sym('psi')});
 
-%compute velocity
+%compute velocity of the robot in function of state variable
 p_d = simplify(diff(p, t),'Steps',50);
 
 % velocity clean

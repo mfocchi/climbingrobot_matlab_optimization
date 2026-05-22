@@ -183,7 +183,26 @@ if number_of_constr.via_point >0
 
 end
 
+
 eq = [];
+
+%6 force fleg to be along base x axis
+ 
+%new model base frame (psi is associated to the rope plane so we have
+%a rotation of (pi/2 -psi) about the y axis
+% wRb =[ cos(pi/2-psi), 0, sin(pi/2-psi),
+%            0, 1,          0, 
+%         -sin(pi/2-psi), 0, cos(pi/2-psi)];
+%w_base_x_axis = [cos(pi/2-psi), 0, -sin(pi/2-psi)];
+% w_base_y_axis = [0;1; 0];
+% w_base_z_axis = [sin(pi/2-psi); 0; cos(pi/2-psi)];
+% 
+% eq = [eq (w_base_y_axis' * Fleg) ];
+% eq = [eq (w_base_z_axis' * Fleg)];
+
+
+
+
 
 
 % if any(isinf(ineq))

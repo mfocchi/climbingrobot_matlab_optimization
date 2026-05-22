@@ -12,17 +12,44 @@ COPYTOLOCOSIM = false;
  
 
 %Initial position
-p0 = [0.5, 5.5, -6]; % there is singularity for px = 0!
+%p0 = [0.5, 5.5, -6]; % there is singularity for px = 0!
 %center of the selected landing patch
-landing_patch_center = [0.5, 8.5,-4]; %with landing [0.5, 3,-3]  with Fleg_max = 100 with constrain tis doing a big turn
-Fleg_max = 300;
+%landing_patch_center = [0.5, 8.5,-4];
+
+p0=[0.16497  , 1.40134, -12.23755];
+landing_patch_center = [  -0.15810077398391273,   4.950461324787307,   -16.320080196075907];
+
+Fleg_max = 150;
 Fr_max = 190; % max rope force (previoously 90)
 Fr_min = 15; % min rope force (previously 10)
+
+
+%generate mesh surface
+wallDepth = 1; %how              
+gridSize = 100;
+maxRidgeDepth = 0.5;
+seed= 47;
+
+%rock wall terrain
+Lz = -20;         % Height of wall in meters
+Ly = 5;    % Width (horizontal extent) of wall in meters
+[mesh_x , mesh_y, mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
+N_patches_z = 20;
+N_patches_y = 10;
+
+
+%hemispheric obstacle terrain
+% Lz = -10;         % Height of wall in meters
+% Ly = 10;    % Width (horizontal extent) of wall in meters
+% [mesh_x , mesh_y, mesh_z] = generateHemisphericMap(Lz, Ly,Lz / 2, Ly / 2, 1.5, gridSize, 0.01);
+% N_patches_z = 10;
+% N_patches_y = 10;
+
 
 % the order of params matters for code generation
 params.m = 5.08;   % Mass [kg]
 %WORLD FRAME ATTACHED TO ANCHOR 1 (left)
-anchor_distance = 10;
+anchor_distance = Ly;
 params.num_params = 4;   
 params.int_method = 'rk4';
 params.N_dyn = 30; %dynamic constraints (number of knowts in the discretization) 
@@ -38,31 +65,13 @@ params.w2=0; %hoist work
 params.w3=1000; % landing cost
 params.T_th =  0.05;
 params.obstacle_avoidance  =  'mesh'; %'none', 'mesh' %strings should have same length for code generation
-params.jump_clearance = 0.5; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
+params.jump_clearance = 1.; % ensure at least this detachment from wall in the middle of the jump (not set for obstacle_avoidance = none) 
 params.debug = false;
 
-%generate mesh surface
-wallDepth = 1; %how              
-gridSize = 100;
-maxRidgeDepth = 0.5;
-seed= 47;
-
-%rock wall terrain
-% Lz = -20;         % Height of wall in meters
-% Ly = params.b;    % Width (horizontal extent) of wall in meters
-% [params.mesh_x , params.mesh_y, params.mesh_z] = generateRockWallMap(Lz, Ly, gridSize, wallDepth,maxRidgeDepth, seed, false);
-% N_patches_z = 20;
-% N_patches_y = 10;
-
-
-%hemispheric obstacle terrain
-Lz = -10;         % Height of wall in meters
-Ly = params.b;    % Width (horizontal extent) of wall in meters
-[params.mesh_x , params.mesh_y, params.mesh_z] = generateHemisphericMap(Lz, Ly,Lz / 2, Ly / 2, 1.5, gridSize, 0.01);
-N_patches_z = 10;
-N_patches_y = 10;
-
-point_lowest_cost = landing_patch_center + [0, 0.5, 0.5];
+params.mesh_x = mesh_x;
+params.mesh_y = mesh_y;
+params.mesh_z = mesh_z;
+point_lowest_cost = landing_patch_center + [0, 0.0, 0.0];
 [params.cost_x , params.cost_y, params.cost_z] = generateCostMap(Lz, Ly, gridSize, point_lowest_cost, 20);
 
 %TODO different grid sizes

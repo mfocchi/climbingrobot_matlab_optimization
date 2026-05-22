@@ -170,7 +170,10 @@ ineq = [ineq (norm(p_f(1)-wall_x_min)-fixed_slack) ];
 %5 - jump clearance p_x > jump_clearance
 if number_of_constr.via_point >0
     wall_x = wallSurfaceEval(p(3, params.N_dyn/2), p(2, params.N_dyn/2),params, Fmesh);
-    ineq = [ineq (-p(1,params.N_dyn/2) +wall_x +params.jump_clearance)];
+    ineq = [ineq (-p(1,params.N_dyn/2) + wall_x +params.jump_clearance)];
+    %not working with 3 via points
+    %ineq = [ineq (-p(1,floor(0.75*params.N_dyn)) +wall_x +params.jump_clearance*0.5)];
+    %ineq = [ineq (-p(1,floor(0.25*params.N_dyn)) +wall_x +params.jump_clearance*0.5)];
 end
 
 %not used, consider using if you have issues

@@ -71,6 +71,14 @@ plot3(solution.p(1,:), solution.p(2,:), solution.p(3,:) ,'Color',color_input ) ;
 % discrete traj
 plot3(solution_constr.p(1,:), solution_constr.p(2,:), solution_constr.p(3,:) ,'o', 'Color', color_input ) ;
 
+% jump clearance
+plot3(solution_constr.p(1,params.N_dyn/2), solution_constr.p(2,params.N_dyn/2), solution_constr.p(3,params.N_dyn/2) ,'.','Markersize',50, 'Color', 'g' ) ;
+
+wall_x = wallSurfaceEval(solution_constr.p(3, params.N_dyn/2), solution_constr.p(2, params.N_dyn/2),params);
+
+plot3(wall_x, solution_constr.p(2,params.N_dyn/2), solution_constr.p(3,params.N_dyn/2) ,'.','Markersize',50, 'Color', 'g' ) ;
+
+
 % landing_patch_center 
 plot3(landing_patch_center(1), landing_patch_center(2), landing_patch_center(3), 'Marker', '.', 'Color','g', 'MarkerSize',40) ;
 
